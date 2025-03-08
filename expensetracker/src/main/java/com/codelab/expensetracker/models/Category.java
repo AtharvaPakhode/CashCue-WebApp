@@ -1,12 +1,17 @@
 package com.codelab.expensetracker.models;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 import javax.validation.constraints.*;
 
 @Entity
+@Table(name="ET_category_table")
 public class Category {
 
+    @Id
     @NotBlank(message = "Category name cannot be blank")
     @Size(min = 3, max = 50, message = "Category name must be between 3 and 50 characters")
     private String categoryName;
