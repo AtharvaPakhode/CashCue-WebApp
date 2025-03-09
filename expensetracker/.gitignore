@@ -31,4 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/templates/about.html
+/src/main/resources/templates/open-url/about.html

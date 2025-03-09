@@ -13,6 +13,6 @@ public class UrlController {
     public String register(Model model) {
         model.addAttribute("title", "Register Page");
         model.addAttribute("user", new User());  // Initialize a new user object for the form
-        return "register";
+        return "open-url/register";
     }
 }
