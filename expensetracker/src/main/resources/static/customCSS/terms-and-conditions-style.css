@@ -1,0 +1,131 @@
+/* General Styles */
+body {
+
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    color: #333;
+    width: 100%;
+}
+
+/* Image Section at the Top */
+.image-container {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height: 100%;
+    width: 100%; /* Reduced height for the image */
+    overflow: hidden;
+}
+
+.image-container img {
+    width: 20%;
+    height: 20%;
+    object-fit: contain;
+}
+
+/* Header Section */
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+}
+
+.header h1 {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 5rem;
+    font-weight: 700;
+    color: black;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.header p {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.5rem;
+    color: black;
+}
+
+/* Content Container */
+.content-container {
+    font-family: 'Times New Roman', Times, serif;
+    padding: 40px 10%; /* Adjusted left and right padding */
+    max-width: 2000px; /* Ensure content doesn't stretch too wide */
+    margin: 0 auto; /* Centers the content */
+    border-radius: 10px;
+    background: transparent; /* No background to avoid box-like appearance */
+}
+
+/* Section Styles */
+.section {
+    margin-bottom: 50px;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2b1a19;
+    border-bottom: 3px solid black;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Terms Container Content */
+.terms-container p {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    text-align: justify;
+    text-indent: 30px; /* Indentation for paragraphs */
+}
+
+.terms-container strong {
+    font-weight: 700;
+    color: #4a2a2a;
+}
+
+ul {
+    margin-top: 10px;
+    padding-left: 25px;
+    list-style-type: square;
+}
+
+ul li {
+    font-size: 1.125rem;
+    margin-bottom: 12px;
+}
+
+/* Footer */
+footer {
+    background-color: black;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    margin-top: 50px;
+    border-radius: 0 0 10px 10px;
+}
+
+footer p {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .content-container {
+        padding: 30px 5%; /* Adjust padding for mobile */
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .terms-container p {
+        font-size: 1rem;
+    }
+}

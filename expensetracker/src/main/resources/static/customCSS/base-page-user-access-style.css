@@ -1,0 +1,134 @@
+/*---------------sidebar style start---------------*/
+
+.sidebar {
+    height: 100vh;            /* Full height of the viewport */
+    width: 250px;             /* Sidebar width */
+    position: fixed;          /* Fix it to the left */
+    top: 0;                   /* Align it to the top of the page */
+    left: 0;                  /* Align it to the left */
+    background-color:white ; /*  background color */
+    padding-top: 60px;        /* Space at the top */
+}
+
+.sidebar a {
+    color: black;             /* Link text color */
+    padding: 10px 20px;       /* Padding around the text */
+    text-decoration: none;    /* Remove underline from links */
+    font-size: 16px;          /* Font size */
+    display: block;           /* Make the links block-level elements */
+    font-family: 'Roboto', sans-serif;
+    font-weight: 10;         /* Lighter font weight */
+}
+
+.sidebar a:hover {
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;;
+    color: black;; /* Hover background color */
+}
+
+.sidebar a i {
+
+    margin-right: 5px;           /* Add margin to the right of the icons */
+}
+
+.sidebar .profile {
+    position: absolute;       /* Position profile at the bottom */
+    bottom: 0;                /* Align it to the bottom */
+    width: 100%;              /* Make it full-width */
+    padding: 10px;            /* Padding around profile section */
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;  /*  background for profile */
+    text-align: center;       /* Center the profile content */
+}
+
+.profile img {
+    border-radius: 50%;       /* Make the profile picture round */
+    width: 40px;              /* Profile picture size */
+    height: 40px;             /* Profile picture size */
+}
+
+.profile .username {
+    color: black;             /* White text for the username */
+    font-size: 16px;          /* Font size for the username */
+    margin-top: 5px;          /* Space between profile image and username */
+    font-family: 'Roboto', sans-serif;
+}
+
+
+/*---------------sidebar style end---------------*/
+
+
+/*---------------navbar style start---------------*/
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color:white;   /* Background color of the navbar */
+    padding: 10px 20px;        /* Padding around the navbar */
+    margin-left: 250px;        /* To prevent navbar from overlapping with sidebar */
+    position: fixed;           /* Fix the navbar at the top */
+    width: calc(100% - 250px); /* Ensure it takes the remaining width */
+    top: 0;                    /* Align it to the top */
+    z-index: 1000;             /* Keep navbar above content */
+    height: 60px;              /* Set a fixed height for the navbar */
+}
+
+.navbar .app-name {
+    color: black;              /* Text color for the app name */
+    font-size: 24px;           /* Font size for the app name */
+    font-family: 'Roboto', sans-serif;
+    font-weight: Bolder;          /* Slightly bold for the app name */
+     background: linear-gradient(to right, #9faeaa, #2f3d3b);  /* Gradient background */
+        -webkit-background-clip: text;  /* Clip background to the text */
+        color: transparent;             /* Make text color transparent so gradient shows */
+
+}
+
+.navbar .nav-links a {
+    color: black;              /* Text color for navbar links */
+    text-decoration: none;     /* Remove underline from links */
+    padding: 8px 16px;         /* Padding around the navbar links */
+    font-size: 14px;           /* Font size for the navbar links */
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;          /* Lighter font weight */
+    transition: background-color 0.3s ease;  /* Smooth transition for hover */
+}
+
+.navbar .nav-links a:hover {
+    background-color: #575757; /* Hover background color */
+    color: white;              /* White text on hover */
+}
+
+/* Make navbar and sidebar responsive on smaller screens */
+@media (max-width: 768px) {
+    .navbar {
+        margin-left: 0;         /* Navbar takes the full width on smaller screens */
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar .nav-links a {
+        padding: 10px 20px;      /* More padding for mobile links */
+        font-size: 18px;         /* Adjust font size for mobile */
+    }
+
+    .sidebar {
+        width: 200px;           /* Reduce sidebar width on small screens */
+    }
+
+    .profile img {
+        width: 30px;            /* Smaller profile image on mobile */
+        height: 30px;           /* Smaller profile image on mobile */
+    }
+}
+
+/*---------------navbar style end---------------*/
+
+
+/*---------------main content style start---------------*/
+
+.dynamic-content{
+    margin-left: 250px;
+    margin-top:100px;
+}
+
+/*---------------main content style end---------------*/

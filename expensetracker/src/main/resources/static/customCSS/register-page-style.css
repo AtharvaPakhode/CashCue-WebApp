@@ -1,0 +1,20 @@
+.register-page-background-image{
+    background: linear-gradient(rgba(0, 0, 0, 0.59), rgba(0, 0, 0, 0.59)),
+    url(/images/background-image-register-page.jpg); /* Gradient overlay with background image */
+    background-size: cover; /* Ensure the background image covers the entire container */
+    background-position: center; /* Center the background image */
+    background-attachment: fixed; /* Make the background image fixed while scrolling */
+    height: 100vh; /* Make sure the background covers the full height of the viewport */
+    width: 100%; /* Ensure the background spans the entire width of the container */
+}
+
+
+
+
+
+#registerbutton:disabled {
+    pointer-events: auto;  !important/* Allow mouse events to trigger on disabled button */
+}
+
+
+

@@ -1,0 +1,120 @@
+From SecurityConfiguration Class :
+
+Step 1: passwordEncoder() Bean:
+Purpose: This bean creates an instance of BCryptPasswordEncoder,
+         which is used to encode passwords securely using the BCrypt algorithm.
+
+What Happens: This step is executed first,
+              so the BCryptPasswordEncoder bean is available for later use
+              when Spring Security needs to encode or decode passwords.
+
+Why it Happens First: You need to define a PasswordEncoder bean
+               before it can be injected into any other components
+               like the DaoAuthenticationProvider.
+
+---------------------------------------------------------------------------------
+
+Step 2: authenticationProvider() Bean
+
+Purpose: This bean defines the DaoAuthenticationProvider,
+         which is responsible for authenticating the user from a data source (like a database)
+         using the UserDetailsService and the PasswordEncoder.
+
+What Happens: The authenticationProvider bean is created next.
+              The DaoAuthenticationProvider is set up with the
+               userDetailsService and passwordEncoder.
+              This provider will use your CustomUserDetailsService
+              to load user data (username, password, authorities)
+              and the BCryptPasswordEncoder to verify the password.
+
+Why it Happens Second: This step depends on both the UserDetailsService and PasswordEncoder beans,
+                        so they must be defined before authenticationProvider.
+
+---------------------------------------------------------------------------------
+Step 3: userDetailsService() Bean
+
+Purpose: This bean defines the UserDetailsService (in this case, CustomUserDetailsService),
+          which is responsible for loading the user's information (username, password, roles)
+          from a data source (usually a database).
+
+What Happens: The userDetailsService() method returns an instance of CustomUserDetailsService.
+              The CustomUserDetailsService will be used by the DaoAuthenticationProvider
+              to load the user's details based on the username (email in your case).
+
+
+Why it Happens Third: This step happens last in the sequence because
+                      CustomUserDetailsService is injected into the authenticationProvider bean,
+                      so it must be created before authenticationProvider.
+
+
+---------------------------------------------------------------------------------
+Step 4: CustomUserDetailsService - Load User by Username
+
+Purpose:This method in CustomUserDetailsService loads the user's information
+        (like password, roles) from the database based on the provided username
+        (email in this case). It is responsible for fetching the User object
+        and transforming it into a UserDetails object.
+
+What Happens: When a user attempts to log in,
+              Spring Security will invoke the loadUserByUsername()
+              method of CustomUserDetailsService
+              (which was injected into the DaoAuthenticationProvider in Step 2).
+              The method looks up the user in the database using the UserRepository.
+              If the user is found, a CustomUserDetails object is created and returned.
+              If not, a UsernameNotFoundException is thrown.
+
+Why it Happens Fourth:  This step occurs when Spring Security needs to
+                        load the user's information during authentication.
+                        The authentication process requires this method to
+                        fetch user details using the username (email),
+                        and it is invoked by the DaoAuthenticationProvider
+                        after the beans for the encoder and authentication provider have been set up.
+
+---------------------------------------------------------------------------------
+
+Step 5: CustomUserDetails - UserDetails Implementation
+
+Purpose:This class (CustomUserDetails) is a custom implementation of the UserDetails interface,
+        which Spring Security uses for handling user authentication.
+        It contains the user’s credentials (like email, password) and
+        authorities (roles) that are necessary for authentication and authorization.
+
+What Happens:   when the loadUserByUsername() method in CustomUserDetailsService
+                retrieves the user object, it then creates a CustomUserDetails object
+                and returns it. This object contains all the necessary user information
+                (like password, roles, etc.) required for authentication.
+                Spring Security will use this object to verify the user's credentials
+                and grant them access.
+
+Why it Happens Fifth: This step is required after loadUserByUsername() because
+                      CustomUserDetails is the actual object
+                      returned to Spring Security containing the necessary user details,
+                      such as the password and authorities,
+                      needed to complete the authentication process.
+
+---------------------------------------------------------------------------------
+
+The key part is authenticationProvider() —
+it depends on both passwordEncoder() and userDetailsService().
+But here’s the trick:
+Even though authenticationProvider() references userDetailsService() (in setUserDetailsService()),
+ actual instantiation of userDetailsService() doesn’t need to happen before authenticationProvider().
+
+Spring will automatically resolve this dependency for you at runtime,
+meaning it knows how to create and inject userDetailsService()
+into authenticationProvider() even if  userDetailsService() method is defined later in the code.
+
+---------------------------------------------------------------------------------
+
+The Runtime Flow:
+Spring creates the passwordEncoder() first because passwordEncoder()
+doesn’t depend on any other beans — it’s simple.
+
+Spring creates the authenticationProvider() next:
+At this point, authenticationProvider() knows it needs userDetailsService(),
+but userDetailsService() has not been initialized yet.
+Spring sees that userDetailsService() is referenced inside authenticationProvider(),
+so it delays the creation of authenticationProvider() until userDetailsService() is created.
+Spring will initialize userDetailsService() when it's needed for authenticationProvider().
+
+Finally, userDetailsService() is created
