@@ -20,6 +20,17 @@
             <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
 
 
+                <!-- Display Message if exists (e.g., success or error messages) -->
+                <div th:if="${session.customMessage}"
+                     th:classappend="${session.customMessage.type}"
+                     class="alert alert-primary register-alert text-center"
+                     role="alert">
+                    <p th:text="${session.customMessage.content}"></p>
+                </div>
+
+                <th:block th:text="${@customSession.removeMessageFromSession()}"></th:block>
+
+
 
                <!--   This dologin parameter is same as
                loginProcessingUrl("/dologin") in securityconfiguration-->

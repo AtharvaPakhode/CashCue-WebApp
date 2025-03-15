@@ -22,10 +22,8 @@
                     <p th:text="${session.customMessage.content}"></p>
                 </div>
 
-                <!-- Remove the message from the session after displaying -->
-                <!-- Call the method to remove the message from the session -->
-                <th:block th:each="__ : ${T(com.codelab.expensetracker.helper.CustomSession).removeMessageFromSession()}"></th:block>
 
+                <th:block th:text="${@customSession.removeMessageFromSession()}"></th:block>
                 <!-- Forgot Password Form -->
                 <form id="verifyOTPform" th:action="@{/verify-otp}" method="post" th:object="${user}">
 

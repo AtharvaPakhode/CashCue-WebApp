@@ -252,7 +252,7 @@ public class UrlController {
             existingUser.setUserPassword(bCryptPasswordEncoder.encode(newPassword));
             userRepository.save(existingUser);
             session.setAttribute("customMessage", new CustomDisplayMessage("Password reset successfully.", "alert-success"));
-            Thread.sleep(2);
+            
 
             // Optional: Send confirmation email after password reset
             try {
