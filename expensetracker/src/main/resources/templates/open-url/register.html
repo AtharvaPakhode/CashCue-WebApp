@@ -2,7 +2,7 @@
 <html lang="en"  xmlns:th="http://www.thymeleaf.org" th:replace ="~{base-page::layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
-    <title>Register Here</title>
+    <title th:text="${title}"></title>
 
 </head>
 <body>
@@ -59,22 +59,28 @@
                                     </div>
 
                                     <!-- Password Field -->
-                                    <div class="d-flex flex-row align-items-center mb-4">
+                                    <div class="d-flex flex-row align-items-center mb-4" style="position: relative;">
                                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                         <div data-mdb-input-init class="form-outline flex-fill mb-0">
                                             <input th:classappend="${#fields.hasErrors('userPassword') ? 'is-invalid' : ''}"
                                                    type="password" id="userpassword" name="userPassword" class="form-control" placeholder="Create a password" />
+                                            <!-- Eye Icon for password visibility -->
+                                            <i class="fas fa-eye-slash position-absolute" id="toggle-password"
+                                               style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                                             <!-- Error message for the password field -->
                                             <div class="invalid-feedback" th:each="e : ${#fields.errors('userPassword')}" th:text="${e}"></div>
                                         </div>
                                     </div>
 
                                     <!-- Confirm Password Field -->
-                                    <div class="d-flex flex-row align-items-center mb-4">
+                                    <div class="d-flex flex-row align-items-center mb-4" style="position: relative;">
                                         <i class="fas fa-key fa-lg me-3 fa-fw"></i>
                                         <div data-mdb-input-init class="form-outline flex-fill mb-0">
                                             <input th:classappend="${#fields.hasErrors('confirmPassword') ? 'is-invalid' : ''}"
                                                    type="password" id="confirmpassword" name="confirmPassword" class="form-control" placeholder="Confirm your password" />
+                                            <!-- Eye Icon for confirm password visibility -->
+                                            <i class="fas fa-eye-slash position-absolute" id="toggle-confirm-password"
+                                               style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                                             <!-- Error message for the confirm password field -->
                                             <div class="invalid-feedback" th:each="e : ${#fields.errors('confirmPassword')}" th:text="${e}"></div>
                                         </div>

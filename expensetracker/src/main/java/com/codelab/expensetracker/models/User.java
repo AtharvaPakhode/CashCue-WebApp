@@ -3,6 +3,7 @@ package com.codelab.expensetracker.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -24,7 +25,9 @@ public class User {
     @NotBlank
     private String userEmail;
 
-
+    @NotBlank
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&]).{8,128}$",
+            message = "Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long.")
     private String userPassword;
 
     @Transient

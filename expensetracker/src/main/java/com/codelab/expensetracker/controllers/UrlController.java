@@ -4,10 +4,8 @@ import com.codelab.expensetracker.helper.CustomDisplayMessage;
 import com.codelab.expensetracker.helper.OTPgenerator;
 import com.codelab.expensetracker.models.User;
 import com.codelab.expensetracker.repositories.UserRepository;
-import com.codelab.expensetracker.securityconfiguration.CustomUserDetailsService;
 import com.codelab.expensetracker.services.EmailService;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -59,20 +57,25 @@ public class UrlController {
                            Model model,
                            HttpSession session) {
 
-        // Print the agreement checkbox value to console for debugging
-        System.out.println("Agreement value: " + agreement);
+        
 
         try {
             // Check if user has agreed to the terms and conditions
             if (!agreement) {
+                session.setAttribute("customMessage", new CustomDisplayMessage("Please agree to the terms and conditions", "alert-danger"));
                 throw new Exception("Please agree to the terms and conditions");
             }
 
+            // check if password & confirm password fields are not empty and both are equal or not
             if (user.getUserPassword() != null && user.getConfirmPassword() != null) {
                 if (!user.getUserPassword().equals(user.getConfirmPassword())) {
+                    System.out.println(user.getUserPassword());
+                    System.out.println(user.getConfirmPassword());
                     result.rejectValue("confirmPassword", "error.user", "Passwords do not match.");
                 }
             } else {
+                System.out.println(user.getUserPassword());
+                System.out.println(user.getConfirmPassword());
                 result.rejectValue("userPassword", "error.user", "Password cannot be empty.");
                 result.rejectValue("confirmPassword", "error.user", "Confirm password cannot be empty.");
             }
@@ -80,14 +83,18 @@ public class UrlController {
             // If there are validation errors, return the user to the signup form
             if (result.hasErrors()) {
                 System.out.println("ERROR: " + result.toString());
-                model.addAttribute("user", user);
                 return "open-url/register";
             }
+            
+            
+                   
+            
 
             // Set default properties for the new user
             user.setUserRole("ROLE_USER");
             user.setUserStatus(true);
             user.setUserImageURL("contactDefault.png");
+            
 
             // Encrypt the password before saving
             user.setUserPassword(bCryptPasswordEncoder.encode(user.getUserPassword()));
@@ -96,19 +103,20 @@ public class UrlController {
             // Save the user to the database
             User saved_user = this.userRepository.save(user);
 
-            // Add a success message to the session
+            
             model.addAttribute("user", user);
-            session.setAttribute("customMessage", new CustomDisplayMessage("Successfully Registered - Click on login button to proceed", "alert-success"));
+
+            // Add a success message to the session
+            session.setAttribute("customMessage", new CustomDisplayMessage("Successfully Registered -Please login to proceed", "alert-success"));
 
         } catch (DataIntegrityViolationException e) {
+            
             // Handle any errors, log them and display an error message
-
-            model.addAttribute("user", user);
             session.setAttribute("customMessage", new CustomDisplayMessage("This user email is already registered", "alert-danger"));
             return "open-url/register";
+            
         } catch (Exception e) {
             e.printStackTrace();
-            model.addAttribute("user", user);
             session.setAttribute("customMessage", new CustomDisplayMessage("Something went wrong", "alert-danger"));
             return "open-url/register";
         }

@@ -40,3 +40,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // --------------------------------------------------------------------------
+
+//code for eye button for password and confirm password fields
+
+document.addEventListener("DOMContentLoaded", function () {
+    const togglePassword = document.getElementById("toggle-password");
+    const toggleConfirmPassword = document.getElementById("toggle-confirm-password");
+    const passwordField = document.getElementById("userpassword");
+    const confirmPasswordField = document.getElementById("confirmpassword");
+
+    // Toggle password visibility
+    togglePassword.addEventListener("click", function () {
+        const type = passwordField.type === "password" ? "text" : "password";
+        passwordField.type = type;
+
+        // Toggle the eye icon
+        this.classList.toggle("fa-eye-slash");
+        this.classList.toggle("fa-eye");
+    });
+
+    // Toggle confirm password visibility
+    toggleConfirmPassword.addEventListener("click", function () {
+        const type = confirmPasswordField.type === "password" ? "text" : "password";
+        confirmPasswordField.type = type;
+
+        // Toggle the eye icon
+        this.classList.toggle("fa-eye-slash");
+        this.classList.toggle("fa-eye");
+    });
+});
+
+
+// --------------------------------------------------------------------------

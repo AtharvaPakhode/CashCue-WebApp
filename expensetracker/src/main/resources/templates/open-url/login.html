@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org" th:replace ="base-page::layout(~{::section})">
+<html lang="en"  xmlns:th="http://www.thymeleaf.org" th:replace ="~{base-page::layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
-    <title>Login Here</title>
-
-
-
-
+    <title th:text="${title}"></title>
 </head>
 <body>
 
