@@ -22,7 +22,11 @@ import javax.validation.Valid;
 
 import static java.lang.Thread.*;
 
-
+/**
+ * UrlController handles all the user-related actions like registration, login, password reset,
+ * and OTP verification. It communicates with the service layer and the repository layer to
+ * process user requests and returns the appropriate views or redirects.
+ */
 @Controller
 public class UrlController {
 
@@ -36,12 +40,14 @@ public class UrlController {
     private OTPgenerator otpGenerator;
 
     @Autowired
-    private  EmailService emailService;
+    private EmailService emailService;
 
-
-
-
-
+    /**
+     * Displays the registration form to the user.
+     *
+     * @param model The Model object that will hold attributes for the view.
+     * @return The registration page view.
+     */
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("title", "Register Page");
@@ -49,15 +55,23 @@ public class UrlController {
         return "open-url/register";
     }
 
-
+    /**
+     * Handles the form submission for user registration.
+     * Validates the input and saves the user if everything is correct.
+     *
+     * @param user The user object with the form data.
+     * @param result The result of the validation.
+     * @param agreement The checkbox indicating whether the user agrees to terms and conditions.
+     * @param model The Model object to pass data to the view.
+     * @param session The HTTP session to store custom messages.
+     * @return The appropriate page based on the result of the registration.
+     */
     @PostMapping("/signup")
     public String register(@Valid @ModelAttribute("user") User user,
                            BindingResult result,
                            @RequestParam(value = "registercheckbox", defaultValue = "false") boolean agreement,
                            Model model,
                            HttpSession session) {
-
-        
 
         try {
             // Check if user has agreed to the terms and conditions
@@ -66,65 +80,57 @@ public class UrlController {
                 throw new Exception("Please agree to the terms and conditions");
             }
 
-            // check if password & confirm password fields are not empty and both are equal or not
+            // Validate that password and confirm password are not empty and match
             if (user.getUserPassword() != null && user.getConfirmPassword() != null) {
                 if (!user.getUserPassword().equals(user.getConfirmPassword())) {
-                    System.out.println(user.getUserPassword());
-                    System.out.println(user.getConfirmPassword());
                     result.rejectValue("confirmPassword", "error.user", "Passwords do not match.");
                 }
             } else {
-                System.out.println(user.getUserPassword());
-                System.out.println(user.getConfirmPassword());
                 result.rejectValue("userPassword", "error.user", "Password cannot be empty.");
                 result.rejectValue("confirmPassword", "error.user", "Confirm password cannot be empty.");
             }
 
-            // If there are validation errors, return the user to the signup form
+            // If validation errors exist, return to the registration form
             if (result.hasErrors()) {
-                System.out.println("ERROR: " + result.toString());
                 return "open-url/register";
             }
-            
-            
-                   
-            
 
             // Set default properties for the new user
             user.setUserRole("ROLE_USER");
             user.setUserStatus(true);
-            user.setUserImageURL("contactDefault.png");
-            
+            user.setUserImageURL("userDefault.png");
 
-            // Encrypt the password before saving
+            // Encrypt the password before saving to the database
             user.setUserPassword(bCryptPasswordEncoder.encode(user.getUserPassword()));
 
-
             // Save the user to the database
-            User saved_user = this.userRepository.save(user);
+            this.userRepository.save(user);
 
-            
+            // Add user data and success message to session
             model.addAttribute("user", user);
-
-            // Add a success message to the session
-            session.setAttribute("customMessage", new CustomDisplayMessage("Successfully Registered -Please login to proceed", "alert-success"));
+            session.setAttribute("customMessage", new CustomDisplayMessage("Successfully Registered - Please login to proceed", "alert-success"));
 
         } catch (DataIntegrityViolationException e) {
-            
-            // Handle any errors, log them and display an error message
+            // Handle email already taken error
             session.setAttribute("customMessage", new CustomDisplayMessage("This user email is already registered", "alert-danger"));
             return "open-url/register";
-            
         } catch (Exception e) {
+            // Handle generic error
             e.printStackTrace();
             session.setAttribute("customMessage", new CustomDisplayMessage("Something went wrong", "alert-danger"));
             return "open-url/register";
         }
 
-        // Redirect back to the register page
+        // Redirect to login page after successful registration
         return "open-url/login";
     }
 
+    /**
+     * Displays the login form to the user.
+     *
+     * @param model The Model object that will hold attributes for the view.
+     * @return The login page view.
+     */
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("title", "Login Page");
@@ -132,24 +138,42 @@ public class UrlController {
         return "open-url/login";
     }
 
-
+    /**
+     * Displays the terms and conditions page to the user.
+     *
+     * @param model The Model object that will hold attributes for the view.
+     * @return The terms and conditions page view.
+     */
     @GetMapping("/terms")
-    public String terms(Model model) {
+    public String termsAndConditions(Model model) {
         model.addAttribute("title", "Terms And Conditions");
         model.addAttribute("user", new User());  // Initialize a new user object for the form
         return "open-url/terms-and-conditions";
     }
 
+    /**
+     * Displays the forgot password page to the user.
+     *
+     * @param model The Model object that will hold attributes for the view.
+     * @return The forgot password page view.
+     */
     @GetMapping("/forgot-password")
-    public String fp(Model model) {
-
+    public String forgotPassword(Model model) {
         return "open-url/forgot-password";
     }
 
+    /**
+     * Sends OTP for email verification when the user has forgotten their password.
+     *
+     * @param model The Model object that will hold attributes for the view.
+     * @param user The user object with the email provided by the user.
+     * @param session The HTTP session to store custom messages.
+     * @return The appropriate page after OTP is generated or if an error occurs.
+     */
     @PostMapping("/forgot-password-otp")
-    public String fpr(Model model,
-                      @ModelAttribute("user") User user,
-                      HttpSession session) {
+    public String EmailVerificationForm(Model model,
+                                        @ModelAttribute("user") User user,
+                                        HttpSession session) {
         model.addAttribute("title", "Forgot Password");
         String userEmailTo = user.getUserEmail();
 
@@ -166,8 +190,7 @@ public class UrlController {
 
             // Send OTP via email
             try {
-                emailService.sendEmail("noreply.cswiz@gmail.com", userEmailTo, "WELCOME",
-                        "Your one-time OTP is: " + otpGenerator.getOtp());
+                emailService.sendEmail("noreply.cswiz@gmail.com", userEmailTo, "WELCOME", "Your one-time OTP is: " + otpGenerator.getOtp());
             } catch (Exception e) {
                 session.setAttribute("customMessage", new CustomDisplayMessage("Failed to send OTP. Please try again.", "alert-danger"));
                 return "open-url/forgot-password";
@@ -180,8 +203,15 @@ public class UrlController {
         return "open-url/verify-OTP-FP";
     }
 
-
-
+    /**
+     * Verifies the OTP entered by the user.
+     *
+     * @param model The Model object that will hold attributes for the view.
+     * @param userEmail The email address of the user.
+     * @param otpEntered The OTP entered by the user.
+     * @param session The HTTP session to store custom messages.
+     * @return The appropriate page based on OTP verification success or failure.
+     */
     @PostMapping("/verify-otp")
     public String verifyOtp(Model model,
                             @RequestParam("userEmail") String userEmail,
@@ -204,8 +234,14 @@ public class UrlController {
         }
     }
 
-
-
+    /**
+     * Resends OTP to the user's email if they request it.
+     *
+     * @param model The Model object that will hold attributes for the view.
+     * @param userEmail The email address of the user requesting a new OTP.
+     * @param session The HTTP session to store custom messages.
+     * @return The OTP verification page with a new OTP sent to the user.
+     */
     @PostMapping("/resend-otp")
     public String resendOtp(Model model,
                             @RequestParam("userEmail") String userEmail,
@@ -234,7 +270,16 @@ public class UrlController {
         return "open-url/verify-OTP-FP";
     }
 
-
+    /**
+     * Resets the user's password after successful OTP verification.
+     *
+     * @param userEmail The email address of the user.
+     * @param newPassword The new password entered by the user.
+     * @param confirmPassword The confirmation of the new password.
+     * @param model The Model object to pass data to the view.
+     * @param session The HTTP session to store custom messages.
+     * @return The appropriate page based on password reset success or failure.
+     */
     @PostMapping("/reset-password")
     public String resetPassword(@RequestParam("userEmail") String userEmail,
                                 @RequestParam("newPassword") String newPassword,
@@ -260,7 +305,6 @@ public class UrlController {
             existingUser.setUserPassword(bCryptPasswordEncoder.encode(newPassword));
             userRepository.save(existingUser);
             session.setAttribute("customMessage", new CustomDisplayMessage("Password reset successfully.", "alert-success"));
-            
 
             // Optional: Send confirmation email after password reset
             try {
@@ -269,7 +313,7 @@ public class UrlController {
                 e.printStackTrace();
             }
 
-
+            // Redirect to login page after successful password reset
             return "redirect:/login";  // Redirect to login page
 
         } catch (Exception e) {
@@ -277,10 +321,4 @@ public class UrlController {
             return "open-url/create-new-password"; // Show error and stay on the same page
         }
     }
-
-
-
-
-
-
 }

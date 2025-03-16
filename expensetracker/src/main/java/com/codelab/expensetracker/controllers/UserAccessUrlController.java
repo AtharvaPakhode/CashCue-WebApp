@@ -31,10 +31,15 @@ public class UserAccessUrlController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal) {
+        model.addAttribute("title", "Dashboard");
+        
 
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
 
+        System.out.println(user.getUserName());
+        
+        model.addAttribute("user", user);
 
 
 
@@ -45,10 +50,37 @@ public class UserAccessUrlController {
 //        model.addAttribute("expensesPercentage", expensesPercentage);
 
 
-        model.addAttribute("title", "Dashboard");
+        
 
 
         return "user-access-url/dashboard";
+    }
+
+    @GetMapping("/settings")
+    public String settings(Model model, Principal principal) {
+        model.addAttribute("title", "Dashboard");
+
+
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+
+        System.out.println(user.getUserName());
+
+        model.addAttribute("user", user);
+
+
+
+        // Adding attributes to the model to pass to Thymeleaf template
+//        model.addAttribute("savings", savings);
+//        model.addAttribute("expenses", monthlySpending);
+//        model.addAttribute("savingsPercentage", savingsPercentage);
+//        model.addAttribute("expensesPercentage", expensesPercentage);
+
+
+
+
+
+        return "user-access-url/settings";
     }
 
 }

@@ -1,0 +1,69 @@
+
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    .card-header h4 {
+        font-size: 1.1em;
+    }
+
+    .form-control {
+        font-size: 0.9em;
+    }
+
+    .btn {
+        font-size: 0.9em;
+    }
+
+    .text-center img {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+
+/* Gradient Background for Danger Zone */
+.card-delete-header {
+    background: linear-gradient(135deg, #dc3545, #ff6f61); /* Red to Light Red gradient */
+    color: white;
+}
+
+.btn-danger {
+    background: red; /* Red to White gradient */
+    border: none; /* Remove the border */
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #8b0000, #dc3545); /* Reverse gradient on hover */
+}
+
+
+/* Custom Switch Color (Unchecked state) */
+.form-check-input {
+    background-color: #ccc; /* Light gray background when unchecked */
+    border-radius: 50px; /* Round border for the switch */
+    transition: background-color 0.3s ease;
+}
+
+/* Custom color for checked state */
+.form-check-input:checked {
+    background-color: green; /* Green color when checked */
+}
+
+/* Thumb color when checked */
+.form-check-input:checked[type="checkbox"] {
+    background-color: green; /* White thumb when checked */
+}
+
+/* Thumb color when unchecked */
+.form-check-input[type="checkbox"] {
+    background-color: #fff; /* White thumb when unchecked */
+    transition: transform 0.3s ease;
+}
+
+
+
+

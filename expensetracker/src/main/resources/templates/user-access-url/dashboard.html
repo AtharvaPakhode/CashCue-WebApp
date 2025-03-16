@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org" th:replace ="base-page-user-access::layout(~{::section})">
+<html lang="en"  xmlns:th="http://www.thymeleaf.org" th:replace ="~{base-page-user-access::layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
@@ -9,9 +9,9 @@
 
 <section>
 
-<div class="dynamic-content">
+<div class="dynamic-content" th:object="${user}">
     <div class="welcome-message">
-        <span class="welmsg1">Welcome DYNAMIC NAME</span>
+        <span class="welmsg1" th:text="'WELCOME ' + ${user.userName.toUpperCase()}"></span>
         <span class="welmsg2">Here's your financial overview</span>
     </div>
     <div class="container ">
@@ -111,6 +111,11 @@
         </div>
     </div>
 </div>
+
+    <div th:fragment="scripts">
+
+    </div>
+
 
 </section>
 

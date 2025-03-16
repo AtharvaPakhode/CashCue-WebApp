@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base-page-user-access::layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" type="text/css" th:href="@{/customCSS/base-page-user-access-style.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/customCSS/dashboard-page-style.css}">
+
+</head>
+<body>
+
+<section>
+    <div class="dynamic-content" th:object="${user}">
+        <div class="container mt-5">
+            <!-- Personal Information Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="card-title">Personal Information</h4>
+                </div>
+                <div class="card-body">
+
+                    <!-- Profile Image Section -->
+                    <div class="text-center mb-4">
+                        <img src="#"  class=profile-image-setting-page alt="Profile Image"  style="width: 100px; height: 100px;">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">User Name</label>
+                        <input type="text" id="userName" class="form-control" th:value="${user.userName}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" class="form-control" th:value="${user.userEmail}" readonly>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Password Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="card-title">Password</h4>
+                </div>
+                <div class="card-body">
+
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+
+                </div>
+            </div>
+
+            <!-- Security Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="card-title">Security</h4>
+                </div>
+                <div class="card-body">
+
+                        <div class="mb-3 form-check form-switch">
+                            <input type="checkbox" id="twoFactor" class="form-check-input " >
+                            <label class="form-check-label" for="twoFactor">Two-Factor Authentication</label>
+                        </div>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+
+                </div>
+            </div>
+
+            <!-- Danger Zone Section -->
+            <div class="card mb-4">
+                <div class="card-header card-delete-header" style="background-color: red; color: white;">
+                    <h4 class="card-title">Danger Zone</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+
+                        <div>
+                            <p class="mb-2 " style="font-weight:bold">Delete Account</p>
+                            <p class="text-muted mb-3">Permanently delete your account and all associated data.</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger ">Delete Account</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- Include scripts -->
+<div th:fragment="scripts">
+
+</div>
+
+
+</body>
+</html>
