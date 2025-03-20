@@ -22,14 +22,26 @@
         <div class="container mt-5">
             <!-- Personal Information Section -->
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header card-info-header">
                     <h4 class="card-title">Personal Information</h4>
                 </div>
                 <div class="card-body">
 
                     <!-- Profile Image Section -->
                     <div class="text-center mb-4">
-                        <img src="#"  class=profile-image-setting-page alt="Profile Image"  style="width: 100px; height: 100px;">
+                        <img    th:src="${user.userImageURL == 'userDefault.png' ? '/images/userDefault.png' : '/userprofileimages/' + user.userImageURL}"
+                                class=profile-image-setting-page alt="Profile Image"  style="width: 100px; height: 100px;">
+                        <form id="changeProfilePhotoForm" method="post" th:action="@{/user/change-profile-image}" enctype="multipart/form-data">
+                            <input type="file" id="profileImageInput" name="profileImage" class="d-none" accept=".png, .gif, .jpeg, .jpg" onchange="this.form.submit()">
+
+                            <div class="mt-2">
+                                <!-- Button to trigger the file input -->
+                                <button type="button" class="btn btn-secondary btn-sm change-photo" onclick="document.getElementById('profileImageInput').click();">
+                                    Change Profile Photo
+                                </button>
+                            </div>
+                        </form>
+
                     </div>
 
                     <div class="mb-3">
@@ -46,19 +58,19 @@
 
             <!-- Password Section -->
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header card-password-header">
                     <h4 class="card-title">Password</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body ">
 
-                        <button type="submit" class="btn btn-primary">Change Password</button>
+                        <button type="submit" class="btn btn-primary password-change">Change Password</button>
 
                 </div>
             </div>
 
             <!-- Security Section -->
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header card-security-header">
                     <h4 class="card-title">Security</h4>
                 </div>
                 <div class="card-body">
@@ -67,7 +79,7 @@
                             <input type="checkbox" id="twoFactor" class="form-check-input " >
                             <label class="form-check-label" for="twoFactor">Two-Factor Authentication</label>
                         </div>
-                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <button type="submit" class="btn btn-success save-changes">Save Changes</button>
 
                 </div>
             </div>

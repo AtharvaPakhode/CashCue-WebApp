@@ -65,5 +65,108 @@
 }
 
 
+/* Gradient Background for Password */
+.card-password-header {
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
+    color: black;
+}
+
+.password-change {
+    background: none; /* No background */
+    border: 3px solid #c2edda; /* Border color */
+    border-radius: 20px; /* Rounded corners */
+    color: black; /* Text color */
+    padding: 10px 20px; /* Padding to make the button look good */
+    font-size: 16px; /* Font size for better readability */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.password-change:hover {
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Background on hover */
+    color: black; /* Text color */
+    outline: none; /* Remove any outline on hover */
+    box-shadow: none; /* Remove any box-shadow on hover */
+    border: 3px solid #c2edda; /* Ensure border stays the same */
+}
+
+.password-change:focus {
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Background on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: none; /* Remove any box-shadow */
+    border: 3px solid #c2edda; /* Keep the same border color when focused */
+    color: black; /* Keep text color the same */
+}
+
+
+
+/* Gradient Background for Password */
+.card-security-header {
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
+    color: black;
+}
+
+.save-changes {
+    background: none; /* No background */
+    border: 3px solid #c2edda; /* Border color */
+    border-radius: 20px; /* Rounded corners */
+    color: black; /* Text color */
+    padding: 10px 20px; /* Padding to make the button look good */
+    font-size: 16px; /* Font size for better readability */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.save-changes:hover {
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Background on hover */
+    color: black; /* Text color */
+    outline: none; /* Remove any outline on hover */
+    box-shadow: none; /* Remove any box-shadow on hover */
+    border: 3px solid #c2edda; /* Ensure border stays the same */
+}
+
+.save-changes:focus {
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Background on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: none; /* Remove any box-shadow */
+    border: 3px solid #c2edda; /* Keep the same border color when focused */
+    color: black; /* Keep text color the same */
+}
+
+
+.card-info-header {
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
+    color: black;
+}
+
+.change-photo {
+        background: white;
+        color: black;
+        border: 3px solid #c2edda;
+        border-radius: 20px;
+        padding: 8px;
+    }
+
+    .change-photo:hover {
+        background: linear-gradient(to right, #c2edda, #a0d6d2);
+        color: black;
+        border: 3px solid #c2edda;
+    }
+
+    /* Prevent the button from turning grey when clicked */
+    .change-photo:focus, .change-photo:active {
+        background: white; /* Keeps the background as white */
+        color: black; /* Ensures the text remains black */
+        border: 3px solid #c2edda; /* Keeps the border the same */
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
