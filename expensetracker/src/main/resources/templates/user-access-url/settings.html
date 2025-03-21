@@ -22,6 +22,20 @@
         <div class="container mt-5">
             <!-- Personal Information Section -->
             <div class="card mb-4">
+
+                <!-- Display Message if exists (e.g., success or error messages) -->
+                <div th:if="${session.customMessage}"
+                     th:classappend="${session.customMessage.type}"
+                     class="alert alert-primary register-alert text-center"
+                     role="alert">
+                    <p th:text="${session.customMessage.content}"></p>
+                </div>
+
+                <!-- Remove the message from the session after displaying -->
+                <th:block th:text="${@customSession.removeMessageFromSession()}"></th:block>
+
+
+
                 <div class="card-header card-info-header">
                     <h4 class="card-title">Personal Information</h4>
                 </div>
@@ -30,9 +44,9 @@
                     <!-- Profile Image Section -->
                     <div class="text-center mb-4">
                         <img    th:src="${user.userImageURL == 'userDefault.png' ? '/images/userDefault.png' : '/userprofileimages/' + user.userImageURL}"
-                                class=profile-image-setting-page alt="Profile Image"  style="width: 100px; height: 100px;">
+                                class=profile-image-setting-page alt="Profile Image"   style="width: 175px; height: 175px; border-radius: 50%; border: 1px solid #c2edda;">
                         <form id="changeProfilePhotoForm" method="post" th:action="@{/user/change-profile-image}" enctype="multipart/form-data">
-                            <input type="file" id="profileImageInput" name="profileImage" class="d-none" accept=".png, .gif, .jpeg, .jpg" onchange="this.form.submit()">
+                            <input type="file" id="profileImageInput" name="profileImage" class="d-none" accept="image/*" onchange="this.form.submit()">
 
                             <div class="mt-2">
                                 <!-- Button to trigger the file input -->
