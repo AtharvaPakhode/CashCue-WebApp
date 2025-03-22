@@ -64,10 +64,10 @@
     background-color:white;   /* Background color of the navbar */
     padding: 10px 20px;        /* Padding around the navbar */
     margin-left: 250px;        /* To prevent navbar from overlapping with sidebar */
-    position: fixed;           /* Fix the navbar at the top */
+    position: absolute;           /* Fix the navbar at the top */
     width: calc(100% - 250px); /* Ensure it takes the remaining width */
     top: 0;                    /* Align it to the top */
-    z-index: 1000;             /* Keep navbar above content */
+    z-index: 999;             /* Keep navbar above content */
     height: 60px;              /* Set a fixed height for the navbar */
 }
 
