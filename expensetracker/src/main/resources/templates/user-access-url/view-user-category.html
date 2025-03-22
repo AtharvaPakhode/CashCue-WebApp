@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base-page-user-access::layout(~{::section})}">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>
+        Categories
+    </title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+</head>
+<body>
+<section>
+<div class="flex dynamic-content">
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+
+        <!-- Categories Section -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-4xl font-bold">
+                    Categories
+                </h1>
+                <button class=" text-black px-4 py-2 rounded"
+                        style="background-color: #c2edda">
+                    Add Category
+                </button>
+            </div>
+            <div class="relative mb-4">
+                <input class="w-full pt-2 pb-2 pl-10 border rounded bg-gray-100" placeholder="Search categories..." type="text"/>
+                <i class="fas fa-search absolute left-3 top-3  text-gray-400">
+                </i>
+            </div>
+            <div class="space-y-4">
+                <!-- Check if there are categories -->
+                <div th:if="${categories != null}">
+                    <div th:each="category : ${categories}" style="border: 3px solid #c2edda" class="flex items-center justify-between p-2 bg-white rounded-lg shadow mb-2">
+                        <div class="flex items-center">
+                            <!-- You can replace the icon depending on the category type -->
+
+                            <div>
+                                <div class=" ml-2 font-bold" th:text="${category.categoryName}"></div>
+                                <div class="ml-2 text-gray-500">
+                                    Budget: <span th:text="${category.categoryMonthlyBudget}"></span> Rs/month
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex ">
+                            <i class="fas fa-edit text-black cursor-pointer mr-2" title="Edit Category"></i>
+                            <i class="fas fa-trash text-black cursor-pointer mr-5" title="Delete Category"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Show message if no categories -->
+                <div th:unless="${categories != null}" class="text-center text-gray-500">
+                    No categories found
+                </div>
+            </div>
+            <nav aria-label="Page navigation example" style="margin-top: 20px;">
+                <ul class="pagination justify-content-center">
+                    <!-- Previous Page Button -->
+                    <li class="page-item" th:if="${currentPage != 0}">
+                        <a class="page-link" th:href="@{/user/category/{page}(page=${currentPage-1})}"
+                           style="background-color:#c2edda;color:black"
+                           aria-label="Previous">
+                             <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <!-- Page Number Links -->
+                    <li th:classappend="${currentPage == i ? 'active' : ''}" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item">
+                        <a class="page-link" th:href="@{/user/category/{page}(page=${i})}"
+                           style="background-color: #c2edda; color:black">
+                            <span th:text="${i + 1}"></span> <!-- Display page number starting from 1 -->
+                        </a>
+                    </li>
+
+                    <!-- Next Page Button -->
+                    <li class="page-item" th:if="${currentPage+1 != totalPages}">
+                        <a class="page-link" th:href="@{/user/category/{page}(page=${currentPage+1})}"
+                           style="background-color: #c2edda;color:black"
+                           aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <!-- Create New Category Section -->
+        <div>
+            <h2 class="text-xl font-bold mb-4">
+                Create New Category
+            </h2>
+            <form th:action="@{/user/process-save-category}" id="saveCategoryForm" method="post" th:object="${category}">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-black font-semibold mb-2">
+                            Category Name
+                        </label>
+                        <input name="categoryName" id="categoryName"class="w-full p-2 border rounded bg-white" placeholder="Enter category name" type="text"/>
+                    </div>
+                    <div>
+                        <label class="block ext-black font-semibold mb-2">
+                            Monthly Budget
+                        </label>
+                        <div class="flex items-center">
+                            <input name="monthlyBudget" id="monthlyBudget" class="w-full p-2 border rounded bg-white" placeholder="Enter amount in INR" type="text"/>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4">
+                    <button type="reset" class=" text-black px-4 py-2 rounded"
+                            style="background-color: #c2edda">
+                        Cancel
+                    </button>
+                    <button type="submit" class=" text-black px-4 py-2 rounded"
+                            style="background-color: #c2edda">
+                        Save Category
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+</section>
+<div th:fragment="scripts">
+
+</div>
+</body>
+</html>

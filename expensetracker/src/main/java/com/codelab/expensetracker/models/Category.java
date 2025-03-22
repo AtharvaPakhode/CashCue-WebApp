@@ -17,8 +17,7 @@ public class Category {
     private String categoryName;
 
     @NotNull(message = "Monthly budget cannot be null")
-    @DecimalMin(value = "0.01", message = "Monthly budget must be greater than 0")
-    private double categoryMonthlyBudget;
+    private String categoryMonthlyBudget;
 
     @ManyToOne
     private User user; // Reference to the User entity (foreign key relationship)
@@ -27,7 +26,12 @@ public class Category {
     public Category() {
     }
 
-    public Category(String categoryName, double categoryMonthlyBudget, User user) {
+    public Category(String categoryName, String categoryMonthlyBudget) {
+        this.categoryName = categoryName;
+        this.categoryMonthlyBudget = categoryMonthlyBudget;
+    }
+
+    public Category(String categoryName, String categoryMonthlyBudget, User user) {
         this.categoryName = categoryName;
         this.categoryMonthlyBudget = categoryMonthlyBudget;
         this.user = user;
@@ -42,11 +46,11 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public double getCategoryMonthlyBudget() {
+    public String getCategoryMonthlyBudget() {
         return categoryMonthlyBudget;
     }
 
-    public void setCategoryMonthlyBudget(double categoryMonthlyBudget) {
+    public void setCategoryMonthlyBudget(String categoryMonthlyBudget) {
         this.categoryMonthlyBudget = categoryMonthlyBudget;
     }
 
@@ -67,4 +71,6 @@ public class Category {
                 ", user=" + user +
                 '}';
     }
+    
+    
 }

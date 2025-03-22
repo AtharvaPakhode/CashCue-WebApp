@@ -2,19 +2,21 @@ package com.codelab.expensetracker.controllers;
 
 
 import com.codelab.expensetracker.helper.CustomDisplayMessage;
+import com.codelab.expensetracker.models.Category;
 import com.codelab.expensetracker.models.User;
 import com.codelab.expensetracker.repositories.CategoryRepository;
 import com.codelab.expensetracker.repositories.ExpenseRepository;
 import com.codelab.expensetracker.repositories.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.File;
 import java.nio.file.Files;
@@ -22,6 +24,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+
+
+
 
 @Controller
 @RequestMapping("/user")
@@ -181,6 +186,63 @@ public class UserAccessUrlController {
 
         // Redirect to the user settings page after the update process is complete
         return "redirect:/user/settings";
+    }
+    
+    
+    @GetMapping("/add-expense")
+    public String addExpense(Model model, Principal principal){
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+        model.addAttribute("user",user);
+        return "user-access-url/add-expense";
+    }
+
+    @GetMapping("/category/{page}")
+    public String category(@PathVariable("page") Integer page, Model model, Principal principal){
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+
+        int id = user.getUserId();
+        Pageable pageable =  PageRequest.of(page, 8);
+        Page<Category> CategoryList = this.categoryRepository.findCategoriesByUser(id,  pageable);
+
+        model.addAttribute("categories", CategoryList);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", CategoryList.getTotalPages());
+        
+        
+        model.addAttribute("user",user);
+        return "user-access-url/view-user-category";
+    }
+    
+    @PostMapping("/process-save-category")
+    public String saveCategory(@ModelAttribute("category") Category category,Model model, Principal principal,HttpSession session,
+                               @RequestParam("categoryName") String categoryName,
+                               @RequestParam("monthlyBudget")String monthlyBudget){
+        
+        try{
+            String name = principal.getName();
+            User user = this.userRepository.getUserByName(name);
+            model.addAttribute("user", user);
+
+            category.setUser(user);
+            category.setCategoryName(categoryName.toUpperCase());
+            category.setCategoryMonthlyBudget(monthlyBudget);
+            Category savedCategory =this.categoryRepository.save(category);
+
+            System.out.println(savedCategory.getCategoryName());
+            System.out.println(savedCategory.getCategoryMonthlyBudget());
+
+            this.userRepository.save(user);
+
+            
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return "redirect:/user/category/0";
+
     }
 
 }

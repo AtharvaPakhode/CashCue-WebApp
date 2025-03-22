@@ -159,11 +159,18 @@
     }
 
 
+.profile-image-setting-page {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
 
-
-
-
-
+@media (max-width: 768px) {
+    .profile-image-setting-page {
+        width: 100px; /* Adjust image size for mobile */
+        height: 100px;
+    }
+}
 
 
 
