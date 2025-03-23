@@ -7,11 +7,14 @@ import com.codelab.expensetracker.models.User;
 import com.codelab.expensetracker.repositories.CategoryRepository;
 import com.codelab.expensetracker.repositories.ExpenseRepository;
 import com.codelab.expensetracker.repositories.UserRepository;
+import com.codelab.expensetracker.services.CategoryService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +43,10 @@ public class UserAccessUrlController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    
+    @Autowired
+    private CategoryService categoryService;
+
 
 
 
@@ -55,6 +62,7 @@ public class UserAccessUrlController {
         System.out.println(user.getUserName());
         
         model.addAttribute("user", user);
+        model.addAttribute("page","dashboard"); // for page specific CSS
 
 
 
@@ -82,6 +90,7 @@ public class UserAccessUrlController {
         
 
         model.addAttribute("user", user);
+        model.addAttribute("page","settings"); // for page specific CSS
 
 
 
@@ -194,8 +203,16 @@ public class UserAccessUrlController {
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
         model.addAttribute("user",user);
+        model.addAttribute("page","addExpense"); // for page specific CSS
         return "user-access-url/add-expense";
     }
+    
+    
+    
+    //postmapping
+
+
+    
 
     @GetMapping("/category/{page}")
     public String category(@PathVariable("page") Integer page, Model model, Principal principal){
@@ -205,6 +222,9 @@ public class UserAccessUrlController {
         int id = user.getUserId();
         Pageable pageable =  PageRequest.of(page, 8);
         Page<Category> CategoryList = this.categoryRepository.findCategoriesByUser(id,  pageable);
+
+        // If there are no categories, set totalPages to 1 to avoid errors in pagination
+        int totalPages = (CategoryList.getTotalElements() == 0) ? 0 : CategoryList.getTotalPages();
 
         model.addAttribute("categories", CategoryList);
         model.addAttribute("currentPage", page);
@@ -244,5 +264,21 @@ public class UserAccessUrlController {
         return "redirect:/user/category/0";
 
     }
+
+
+    @DeleteMapping("/deleteCategory/{name}")
+    public ResponseEntity<String> deleteCategory(@PathVariable("name") String name) {
+        // Logic to delete the category from the database or any other source
+        boolean isDeleted = categoryService.deleteCategoryByName(name);
+
+        if (isDeleted) {
+            // Success response with a custom message
+            return ResponseEntity.ok("Category deleted successfully.");
+        } else {
+            // Failure response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete category.");
+        }
+    }
+
 
 }

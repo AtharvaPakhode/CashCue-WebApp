@@ -67,7 +67,7 @@
     position: absolute;           /* Fix the navbar at the top */
     width: calc(100% - 250px); /* Ensure it takes the remaining width */
     top: 0;                    /* Align it to the top */
-    z-index: 999;             /* Keep navbar above content */
+    z-index: 1000;             /* Keep navbar above content */
     height: 60px;              /* Set a fixed height for the navbar */
 }
 

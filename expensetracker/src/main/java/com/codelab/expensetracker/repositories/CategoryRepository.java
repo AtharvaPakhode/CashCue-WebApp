@@ -13,4 +13,6 @@ public interface CategoryRepository  extends JpaRepository<Category, String> {
 
     @Query("from Category c where c.user.userId = :id")
     Page<Category> findCategoriesByUser(@Param("id") int id, Pageable pageable);
+    
+    
 }

@@ -1,36 +1,50 @@
-// Show Modal Function
+document.addEventListener('DOMContentLoaded', function() {
+    // Hide the modals after the DOM has loaded
+    const editModal = document.getElementById('edit-modal');
+    const deleteModal = document.getElementById('delete-modal');
+
+    editModal.style.display = 'none';
+    deleteModal.style.display = 'none';
+    editModal.style.visibility = 'hidden';
+    deleteModal.style.visibility = 'hidden';
+});
+
+// Function to show the edit modal
 const showEditModal = (name, budget) => {
     // Populate the form with the current category data
     document.getElementById('categoryNameChange').value = name;
     document.getElementById('monthlyBudgetChange').value = budget;
 
+    const editModal = document.getElementById('edit-modal');
+    const backdrop = document.getElementById('modal-backdrop');
+    const navbar = document.getElementById('navbar');
+
     // Show the modal and backdrop
-        const modal = document.getElementById('edit-modal');
-        const backdrop = document.getElementById('modal-backdrop');
-        const navbar =document.getElementById('navbar');
-    // Show the modal and backdrop
-    document.getElementById('edit-modal').classList.remove('hidden');
-    document.getElementById('modal-backdrop').classList.remove('hidden');
+    editModal.style.visibility = 'visible';  // Make sure it is visible
+    editModal.style.display = 'flex';  // Ensure it's shown in the layout
+    backdrop.classList.remove('hidden');  // Show the backdrop
 
-
-
-    //Set the modal z-index to ensure it's on top of the backdrop
-        modal.style.zIndex = '60';
-        backdrop.style.zIndex = '50';
-        navbar.style.zIndex="40";
+    // Set the modal z-index to ensure it's on top of the backdrop
+    editModal.style.zIndex = '60';
+    backdrop.style.zIndex = '50';
+    navbar.style.zIndex = "40";
 
     // Set the form action to update the category
     const form = document.getElementById('editCategoryForm');
     form.action = `/user/category/update/${name}`;
-}
-
-
+};
 
 // Close Modal
 const closeEditModal = () => {
-    document.getElementById('edit-modal').classList.add('hidden');
-    document.getElementById('modal-backdrop').classList.add('hidden');
-}
+    const editModal = document.getElementById('edit-modal');
+    const backdrop = document.getElementById('modal-backdrop');
+
+    editModal.classList.add('hidden');
+    backdrop.classList.add('hidden');
+
+    editModal.style.visibility = 'hidden';  // Hide the modal's visibility
+    editModal.style.display = 'none';  // Ensure it's removed from the layout
+};
 
 // Attach event listener to close modal button
 document.getElementById('close-modal-btn').addEventListener('click', closeEditModal);
@@ -40,11 +54,9 @@ document.querySelectorAll('.edit-btn').forEach(button => {
     button.addEventListener('click', (e) => {
         const name = e.target.dataset.name;
         const budget = e.target.dataset.budget;
-        showEditModal( name, budget);
+        showEditModal(name, budget);
     });
 });
-
-
 
 // Handle form submission for saving changes
 document.getElementById('editCategoryForm').addEventListener('submit', function(e) {
@@ -70,37 +82,33 @@ document.getElementById('editCategoryForm').addEventListener('submit', function(
     });
 });
 
-
-
 // Function to show the delete confirmation modal
 const showDeleteModal = (name) => {
     const deleteModal = document.getElementById('delete-modal');
     const deleteMessage = document.getElementById('delete-modal-message');
     const confirmButton = document.getElementById('delete-confirm-btn');
-    const cancelButton = document.getElementById('delete-cancel-btn');
-    const navbar =document.getElementById('navbar');
+    const navbar = document.getElementById('navbar');
 
     deleteMessage.textContent = `Are you sure you want to delete the category: "${name}"?`;
+
     deleteModal.classList.remove('hidden');
     document.getElementById('modal-backdrop').classList.remove('hidden');
+    deleteModal.style.visibility = 'visible';  // Make sure it is visible
+    deleteModal.style.display = 'flex';  // Ensure it's shown in the layout
 
     // Set the delete modal and backdrop z-index
-        deleteModal.style.zIndex = '60';
-        document.getElementById('modal-backdrop').style.zIndex = '50';
-        navbar.style.zIndex="40";
+    deleteModal.style.zIndex = '60';
+    document.getElementById('modal-backdrop').style.zIndex = '50';
+    navbar.style.zIndex = "40";
 
-
-    confirmButton.onclick = () => deleteCategory(id);
-    cancelButton.onclick = () => closeDeleteModal();
-}
-
+    confirmButton.onclick = () => deleteCategory(name);
+};
 
 // Function to delete the category (You can call your API here)
-const deleteCategory = (id) => {
+const deleteCategory = (name) => {
+    console.log(name);
 
-    fetch(`/user/category/deleteCategory/${id}`, {
-        method: 'DELETE'
-    })
+    fetch(`/user/deleteCategory/${name}`, { method: 'DELETE' })
     .then(response => {
         if (response.ok) {
             closeDeleteModal();
@@ -112,19 +120,25 @@ const deleteCategory = (id) => {
     .catch(error => {
         console.error('Error deleting category:', error);
     });
-}
+};
 
 // Function to close the delete confirmation modal
 const closeDeleteModal = () => {
-    document.getElementById('delete-modal').classList.add('hidden');
-    document.getElementById('modal-backdrop').classList.add('hidden');
-}
+    const deleteModal = document.getElementById('delete-modal');
+    const backdrop = document.getElementById('modal-backdrop');
+
+    deleteModal.classList.add('hidden');
+    backdrop.classList.add('hidden');
+
+    deleteModal.style.visibility = 'hidden';  // Hide the modal's visibility
+    deleteModal.style.display = 'none';  // Ensure it's removed from the layout
+};
 
 // Attach event listeners to delete buttons
 document.querySelectorAll('.delete-btn').forEach(button => {
     button.addEventListener('click', (e) => {
-              const name = e.target.dataset.name;  // Assuming category name is available in data-name
-              showDeleteModal(name);
+        const name = e.target.dataset.name;  // Assuming category name is available in data-name
+        showDeleteModal(name);
     });
 });
 

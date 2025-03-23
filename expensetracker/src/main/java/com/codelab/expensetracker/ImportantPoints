@@ -1,0 +1,57 @@
+1.How to add page specific CSS in thymeleaf :
+
+e.g :
+----------------------------------Base page head tag ----------------------------------
+
+<div th:switch="${page}">
+
+        <div th:case="page name which is add in the controller">
+            <link rel="stylesheet" type="text/css" th:href="@{/customCSS/dashboard-page-style.css}">
+        </div>
+        <div th:case="'page name which is add in the controller'">
+            <link rel="stylesheet" type="text/css" th:href="@{/customCSS/settings-page-style.css}">
+        </div>
+        <div th:case="'page name which is add in the controller'">
+            <link rel="stylesheet" type="text/css" th:href="@{/customCSS/add-expense-page-style.css}">
+        </div>
+
+        <!-- Default case (if no page is matched) -->
+        <div th:case="*">
+            <!-- Optionally load a default or common style if needed -->
+        </div>
+
+    </div>
+
+
+----------------------------------Controller ----------------------------------
+@Controller
+public class UserController {
+
+    @GetMapping("/user/dashboard")
+    public String dashboard(Model model) {
+        model.addAttribute("page", "dashboard");
+        .
+        .
+
+    }
+
+    @GetMapping("/user/settings")
+    public String settings(Model model) {
+        model.addAttribute("page", "settings");
+        .
+        .
+    }
+
+    @GetMapping("/user/add-expense")
+    public String addExpense(Model model) {
+        model.addAttribute("page", "add-expense");
+        .
+        .
+    }
+
+    // Other mappings...
+}
+
+========================================================================================================
+
+2.
