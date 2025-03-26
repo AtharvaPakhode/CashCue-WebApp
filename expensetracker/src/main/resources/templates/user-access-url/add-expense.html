@@ -40,12 +40,17 @@
                         Category
                     </label>
 
-                        <select class="w-full p-3 border border-gray-300 rounded-xl bg-gray-100">
-                            <option>Select a category</option>
-                            <option>Food</option>
-                            <option>Transport</option>
-                            <option>Entertainment</option>
-                        </select>
+                    <!-- categories == list passed from the controller to view by addattribute-->
+                    <!-- category == iterator used to iterate over list-->
+                    <select class="w-full p-3 border border-gray-300 rounded-xl bg-gray-100" name="category">
+                        <!-- Check if categories are empty -->
+                        <option th:if="${categories == null or categories.isEmpty()}" disabled>No categories added</option>
+
+                        <!-- If categories exist, render options -->
+                        <option th:if="${categories != null and not categories.isEmpty()}" >Select a category</option>
+
+                        <option th:each="category : ${categories}"  th:text="${category.categoryName}"></option>
+                    </select>
 
 
                 </div>
@@ -62,9 +67,12 @@
                         Payment Method
                     </label>
                     <select class="w-full p-3 border border-gray-300 rounded-xl bg-gray-100">
-                        <option>
-                            Select payment method
-                        </option>
+                        <option>Select payment method</option>
+                        <option>Cash</option>
+                        <option>UPI</option>
+                        <option>Net Banking</option>
+                        <option>Credit card</option>
+                        <option>Debit card</option>
                     </select>
                 </div>
                 <div>

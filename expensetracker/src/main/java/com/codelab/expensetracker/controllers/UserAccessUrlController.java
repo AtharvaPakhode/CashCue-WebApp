@@ -9,6 +9,7 @@ import com.codelab.expensetracker.repositories.ExpenseRepository;
 import com.codelab.expensetracker.repositories.UserRepository;
 import com.codelab.expensetracker.services.CategoryService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,18 +18,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
-
-
+import java.util.List;
 
 
 @Controller
@@ -202,8 +204,13 @@ public class UserAccessUrlController {
     public String addExpense(Model model, Principal principal){
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
+        
+        List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
+        
+        model.addAttribute("categories",categoryList);
         model.addAttribute("user",user);
         model.addAttribute("page","addExpense"); // for page specific CSS
+
         return "user-access-url/add-expense";
     }
     
@@ -215,54 +222,60 @@ public class UserAccessUrlController {
     
 
     @GetMapping("/category/{page}")
-    public String category(@PathVariable("page") Integer page, Model model, Principal principal){
+    public String category(@PathVariable("page") Integer page, 
+                           @RequestParam(name = "search", required = false) String search,
+                           Model model, Principal principal){
+        
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
 
         int id = user.getUserId();
-        Pageable pageable =  PageRequest.of(page, 8);
-        Page<Category> CategoryList = this.categoryRepository.findCategoriesByUser(id,  pageable);
-
-        // If there are no categories, set totalPages to 1 to avoid errors in pagination
-        int totalPages = (CategoryList.getTotalElements() == 0) ? 0 : CategoryList.getTotalPages();
-
-        model.addAttribute("categories", CategoryList);
+        if(search == null || search.isEmpty()){
+            
+            Pageable pageable =  PageRequest.of(page, 8);
+            Page<Category> CategoryList = this.categoryRepository.findCategoriesByUser(id,  pageable);
+            // If there are no categories, set totalPages to 1 to avoid errors in pagination
+            int totalPages = (CategoryList.getTotalElements() == 0) ? 0 : CategoryList.getTotalPages();
+            model.addAttribute("totalPages", CategoryList.getTotalPages());
+            model.addAttribute("categories", CategoryList);
+            
+        }
+        else {
+            Category categories = categoryService.searchCategories(search,id);
+            model.addAttribute("categories", categories);
+        }
+        
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", CategoryList.getTotalPages());
-        
-        
         model.addAttribute("user",user);
+        model.addAttribute("category", new Category());
         return "user-access-url/view-user-category";
     }
-    
+
     @PostMapping("/process-save-category")
-    public String saveCategory(@ModelAttribute("category") Category category,Model model, Principal principal,HttpSession session,
+    public String saveCategory(@ModelAttribute("category") Category category,
+                               Model model, Principal principal,
+                               HttpSession session,
                                @RequestParam("categoryName") String categoryName,
-                               @RequestParam("monthlyBudget")String monthlyBudget){
-        
-        try{
+                               @RequestParam("categoryMonthlyBudget") double categoryMonthlyBudget) {
+
+        try {
             String name = principal.getName();
             User user = this.userRepository.getUserByName(name);
             model.addAttribute("user", user);
 
             category.setUser(user);
             category.setCategoryName(categoryName.toUpperCase());
-            category.setCategoryMonthlyBudget(monthlyBudget);
-            Category savedCategory =this.categoryRepository.save(category);
+            category.setCategoryMonthlyBudget(categoryMonthlyBudget);
 
-            System.out.println(savedCategory.getCategoryName());
-            System.out.println(savedCategory.getCategoryMonthlyBudget());
-
+            // Save the category to the database
+            this.categoryRepository.save(category);
             this.userRepository.save(user);
 
-            
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return "redirect:/user/category/0";
-
+        return "redirect:/user/category/0";  // Redirect back to category page after saving
     }
 
 
@@ -278,6 +291,30 @@ public class UserAccessUrlController {
             // Failure response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete category.");
         }
+    }
+
+    @PostMapping("/updateCategory/{name}")
+    public String updateCategory(@ModelAttribute("category") Category category,
+                                 @PathVariable("name") String categoryName,
+                                 @RequestParam String categoryNameChange,
+                                 @RequestParam double categoryMonthlyBudget,
+                                 Model model, Principal principal) {
+
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+        int id = user.getUserId();
+        model.addAttribute("user", user);
+        model.addAttribute("category", category);
+
+        
+        // Logic to find and update the category
+        category = categoryService.searchCategories(categoryName, id);
+        category.setCategoryName(categoryNameChange);
+        category.setCategoryMonthlyBudget(categoryMonthlyBudget);
+
+        // Save the updated category to the database
+        this.categoryRepository.save(category);
+        return "redirect:/user/category/0";  // Redirect back to category page after updating
     }
 
 

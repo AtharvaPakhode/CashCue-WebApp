@@ -1,37 +1,36 @@
 package com.codelab.expensetracker.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import javax.validation.constraints.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name="ET_category_table")
 public class Category {
 
+   
     @Id
     @NotBlank(message = "Category name cannot be blank")
-    @Size(min = 3, max = 50, message = "Category name must be between 3 and 50 characters")
+    @Size(min = 2, max = 50, message = "Category name must be between 2 and 50 characters")
     private String categoryName;
 
-    @NotNull(message = "Monthly budget cannot be null")
-    private String categoryMonthlyBudget;
+    @DecimalMin(value = "0.0", inclusive = false, message = "Budget must be greater than zero")
+    private double categoryMonthlyBudget;
 
-    @ManyToOne
-    private User user; // Reference to the User entity (foreign key relationship)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     // Constructors
     public Category() {
     }
 
-    public Category(String categoryName, String categoryMonthlyBudget) {
+    public Category(String categoryName, double categoryMonthlyBudget) {
         this.categoryName = categoryName;
         this.categoryMonthlyBudget = categoryMonthlyBudget;
     }
 
-    public Category(String categoryName, String categoryMonthlyBudget, User user) {
+    public Category(String categoryName, double categoryMonthlyBudget, User user) {
         this.categoryName = categoryName;
         this.categoryMonthlyBudget = categoryMonthlyBudget;
         this.user = user;
@@ -46,11 +45,11 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public String getCategoryMonthlyBudget() {
+    public double getCategoryMonthlyBudget() {
         return categoryMonthlyBudget;
     }
 
-    public void setCategoryMonthlyBudget(String categoryMonthlyBudget) {
+    public void setCategoryMonthlyBudget(double categoryMonthlyBudget) {
         this.categoryMonthlyBudget = categoryMonthlyBudget;
     }
 

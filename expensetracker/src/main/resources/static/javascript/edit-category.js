@@ -31,7 +31,7 @@ const showEditModal = (name, budget) => {
 
     // Set the form action to update the category
     const form = document.getElementById('editCategoryForm');
-    form.action = `/user/category/update/${name}`;
+    form.action = `/user/updateCategory/${name}`;
 };
 
 // Close Modal
@@ -58,29 +58,23 @@ document.querySelectorAll('.edit-btn').forEach(button => {
     });
 });
 
-// Handle form submission for saving changes
-document.getElementById('editCategoryForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent default form submission
+// Function to update the category (You can call your API here)
+const updateCategory = (name) => {
+    console.log(name);
 
-    const formData = new FormData(this);
-
-    fetch(this.action, {
-        method: 'POST',
-        body: formData
-    })
+    fetch(`/user/updateCategory/${name}`, { method: 'POST' })
     .then(response => {
         if (response.ok) {
-            // Close the modal and reload the page or update the UI dynamically
-            closeEditModal();
-            location.reload(); // or update the category list dynamically
+            closeDeleteModal();
+            location.reload();
         } else {
-            // Handle errors here (e.g., show an error message)
+            console.error('Failed to delete the category');
         }
     })
-    .catch(err => {
-        console.error('Error updating category:', err);
+    .catch(error => {
+        console.error('Error deleting category:', error);
     });
-});
+};
 
 // Function to show the delete confirmation modal
 const showDeleteModal = (name) => {
