@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -32,8 +33,8 @@ public class Expense {
     @Size(min = 3, max = 50, message = "Payment method must be between 3 and 50 characters")
     private String paymentMethod;
 
-    @NotNull(message = "Date cannot be null")
-    private Date date;
+    
+    private LocalDate date;
 
     @Size(max = 500, message = "Description must be under 500 characters")
     private String description;
@@ -45,7 +46,7 @@ public class Expense {
     public Expense() {
     }
 
-    public Expense(int expenseId, String name, double amount, String category, String paymentMethod, Date date, String description, User user) {
+    public Expense(int expenseId, String name, double amount, String category, String paymentMethod, LocalDate date, String description, User user) {
         this.expenseId = expenseId;
         this.name = name;
         this.amount = amount;
@@ -97,11 +98,11 @@ public class Expense {
         this.paymentMethod = paymentMethod;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

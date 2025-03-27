@@ -3,6 +3,7 @@ package com.codelab.expensetracker.controllers;
 
 import com.codelab.expensetracker.helper.CustomDisplayMessage;
 import com.codelab.expensetracker.models.Category;
+import com.codelab.expensetracker.models.Expense;
 import com.codelab.expensetracker.models.User;
 import com.codelab.expensetracker.repositories.CategoryRepository;
 import com.codelab.expensetracker.repositories.ExpenseRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -210,17 +214,60 @@ public class UserAccessUrlController {
         model.addAttribute("categories",categoryList);
         model.addAttribute("user",user);
         model.addAttribute("page","addExpense"); // for page specific CSS
+        model.addAttribute("expense", new Expense());
 
         return "user-access-url/add-expense";
     }
+
+//    @RequestParam("expenseTitle")String expenseTitle,
+//    @RequestParam("amount")double amount,
+//    @RequestParam("category")String category,
+//    @RequestParam("dateOfExpense") Date dateOfExpense,
+//    @RequestParam("paymentMethod")String paymentMethod,
+//    @RequestParam("expenseDescription")String expenseDescription
     
-    
-    
-    //postmapping
+    @PostMapping("/add-expense-process")
+    public String addExpenseForm(@Valid @ModelAttribute("expense") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Expense expense,
+                                 BindingResult bindingResult,
+                                 Model model,
+                                 Principal principal
+                                 ){
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+        model.addAttribute("user",user);
+        
+        try{
+            
+
+            if (bindingResult.hasErrors()) {
+                List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
+                model.addAttribute("categories",categoryList);
+                System.out.println("failed");
+                System.out.println(bindingResult.getAllErrors());
+                return "user-access-url/add-expense";
+
+                // Adjust the view name to match your view
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        System.out.println("helooooooooooooooooo");
+
+        
+
+        // If no errors, process the expense (save to DB or further logic)
+        System.out.println(expense.toString());
+
+
+
+        return "user-access-url/add-expense";
+    }
 
 
     
-
+//----------------------------------------------------------------------------------------------------------------
     @GetMapping("/category/{page}")
     public String category(@PathVariable("page") Integer page, 
                            @RequestParam(name = "search", required = false) String search,
