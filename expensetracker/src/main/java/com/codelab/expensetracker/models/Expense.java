@@ -17,25 +17,24 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int expenseId;
 
-    @NotBlank(message = "Expense name cannot be blank")
+    
     @Size(min = 1, max = 255, message = "Expense name must be between 1 and 255 characters")
     private String name;
 
-    @NotNull(message = "Amount cannot be null")
+    @NotNull
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private double amount;
 
     @NotBlank(message = "Category cannot be blank")
-    @Size(min = 3, max = 50, message = "Category name must be between 3 and 50 characters")
     private String category;
 
     @NotBlank(message = "Payment method cannot be blank")
-    @Size(min = 3, max = 50, message = "Payment method must be between 3 and 50 characters")
     private String paymentMethod;
 
-    
+    @NotNull(message = "Date cannot be blank")
     private LocalDate date;
 
+    
     @Size(max = 500, message = "Description must be under 500 characters")
     private String description;
 

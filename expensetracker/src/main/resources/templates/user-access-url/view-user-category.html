@@ -26,7 +26,7 @@
                 <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                     <!-- Modal Header -->
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                        <h3 class="text-xl font-semibold ">
                             Edit category
                         </h3>
                         <button id="close-modal-btn" type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="authentication-modal">
@@ -42,19 +42,19 @@
                         <form id="editCategoryForm" class="space-y-4" action="#" method="post" th:object="${category}">
                             <!-- Category Name Field -->
                             <div>
-                                <label for="categoryNameChange" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+                                <label for="categoryNameChange" class="block mb-2 text-sm font-medium ">Category</label>
                                 <input type="text" name="categoryNameChange" id="categoryNameChange"
                                        pattern="^[A-Za-z]+$"
                                        title="Only alphabets, underscores, and hyphens are allowed."
-                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark"
+                                       class="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                                        required />
                             </div>
 
                             <!-- Monthly Budget Field -->
                             <div>
-                                <label for="monthlyBudgetChange" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monthly Budget</label>
+                                <label for="monthlyBudgetChange" class="block mb-2 text-sm font-medium ">Monthly Budget</label>
                                 <input type="number" name="categoryMonthlyBudget" id="monthlyBudgetChange"
-                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark" required />
+                                       class="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-black-500 focus:border-black-500 block w-full p-2.5 " required />
                             </div>
 
                             <!-- Save Changes Button -->

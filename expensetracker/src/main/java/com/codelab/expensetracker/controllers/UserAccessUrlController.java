@@ -230,8 +230,8 @@ public class UserAccessUrlController {
     public String addExpenseForm(@Valid @ModelAttribute("expense") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Expense expense,
                                  BindingResult bindingResult,
                                  Model model,
-                                 Principal principal
-                                 ){
+                                 Principal principal,
+                                 @RequestParam("category") String category){
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
         model.addAttribute("user",user);
@@ -246,19 +246,24 @@ public class UserAccessUrlController {
                 System.out.println(bindingResult.getAllErrors());
                 return "user-access-url/add-expense";
 
-                // Adjust the view name to match your view
+            }
+            System.out.println(category);
+            if(category == null){
+                bindingResult.rejectValue("category", "error.category", "Please select category");
             }
 
         }
         catch(Exception e){
             e.printStackTrace();
         }
-        System.out.println("helooooooooooooooooo");
+        
 
         
 
         // If no errors, process the expense (save to DB or further logic)
         System.out.println(expense.toString());
+        List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
+        model.addAttribute("categories",categoryList);
 
 
 
