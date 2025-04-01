@@ -219,12 +219,6 @@ public class UserAccessUrlController {
         return "user-access-url/add-expense";
     }
 
-//    @RequestParam("expenseTitle")String expenseTitle,
-//    @RequestParam("amount")double amount,
-//    @RequestParam("category")String category,
-//    @RequestParam("dateOfExpense") Date dateOfExpense,
-//    @RequestParam("paymentMethod")String paymentMethod,
-//    @RequestParam("expenseDescription")String expenseDescription
     
     @PostMapping("/add-expense-process")
     public String addExpenseForm(@Valid @ModelAttribute("expense") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Expense expense,
@@ -257,19 +251,26 @@ public class UserAccessUrlController {
             e.printStackTrace();
         }
         
-
         
-
-        // If no errors, process the expense (save to DB or further logic)
         System.out.println(expense.toString());
         List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
         model.addAttribute("categories",categoryList);
-
-
+        
+        expense.setUser(user);
+        this.expenseRepository.save(expense);
+        
 
         return "user-access-url/add-expense";
     }
-
+//----------------------------------------------------------------------------------------------------------------
+    @GetMapping("/expense-history")
+    public String expenseHistory(Model model,Principal principal){
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+        model.addAttribute("user",user);
+        
+        return "user-access-url/expense-history";
+    }
 
     
 //----------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base-page-user-access::layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<section class="bg-gray-50 text-gray-800">
+<div class="flex  dynamic-content min-h-screen">
+
+
+  <!-- Main Content -->
+  <div class="flex-1 p-6">
+
+
+
+
+    <!-- Recent Transactions -->
+    <div class="mt-6">
+
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold">Recent Transactions</h2>
+      </div>
+
+      <div class="bg-white mt-4 p-4 rounded-lg shadow">
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+
+            <div class="flex items-center space-x-4">
+              <div>
+                <p class="text-gray-800">Grocery Store</p>  <!--  expense title  -->
+                <p class="text-gray-500">Oct 15</p>  <!--  expense date  -->
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+              <p class="text-gray-500">Food & Dining</p>   <!--  category  -->
+              <p class="text-red-600">-$78.35</p>  <!-- red if amount exceeds // green if within limit   -->
+            </div>
+
+          </div>
+      </div>
+    </div>
+
+    <!-- Spending by Category -->
+    <div class="mt-10">
+
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold">Spending by Category</h2>
+        <a href="#" class="text-purple-600">View Report</a>
+      </div>
+
+      <label for="monthSelect" class="block text-black font-semibold ml-3 mt-4 mb-2">Select Month</label>
+      <select id="monthSelect" name="month" class="w-full p-3 border border-gray-300 rounded-xl bg-gray-100">
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+
+
+      <div class="bg-white mt-4 p-4 rounded-lg shadow">
+
+        <div class="mt-4 space-y-4">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+              <i class="fas fa-utensils text-purple-600"></i>
+              <div>
+                <p class="text-gray-800">Food & Dining</p>
+                <p class="text-gray-500">$485.25 (26%)</p>
+              </div>
+            </div>
+            <i class="fas fa-chevron-right text-gray-600"></i>
+          </div>
+        </div>
+
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div th:fragment="scripts">
+  <script src="https://cdn.tailwindcss.com"></script>
+</div>
+
+</body>
+
+</html>
