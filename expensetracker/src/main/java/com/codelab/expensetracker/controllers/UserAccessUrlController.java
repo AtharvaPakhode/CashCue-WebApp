@@ -225,62 +225,81 @@ public class UserAccessUrlController {
                                  BindingResult bindingResult,
                                  Model model,
                                  Principal principal,
-                                 @RequestParam("category") String category){
+                                 @RequestParam("category") Category category){
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
-        model.addAttribute("user",user);
-        
-        try{
-            
+        model.addAttribute("user", user);
 
+        try {
             if (bindingResult.hasErrors()) {
                 List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
-                model.addAttribute("categories",categoryList);
+                model.addAttribute("categories", categoryList);
                 System.out.println("failed");
                 System.out.println(bindingResult.getAllErrors());
                 return "user-access-url/add-expense";
-
             }
-            System.out.println(category);
-            if(category == null){
+
+            if (category == null) {
                 bindingResult.rejectValue("category", "error.category", "Please select category");
             }
-
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // Convert the bound LocalDate to LocalDateTime (choose one option below)
+
+        // Option 1: Set to start of day (midnight)
+        if(expense.getDate() != null) {
+            expense.setLocalDateTime(expense.getDate().atStartOfDay());
+        }
+
         
-        
+
         System.out.println(expense.toString());
         List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
-        model.addAttribute("categories",categoryList);
+        model.addAttribute("categories", categoryList);
+        
+        System.out.println(expense.getLocalDateTime());
         
         expense.setUser(user);
         this.expenseRepository.save(expense);
-        
 
         return "user-access-url/add-expense";
     }
 //----------------------------------------------------------------------------------------------------------------
-    @GetMapping("/expense-history")
-    public String expenseHistory(Model model,Principal principal){
+    @GetMapping("/expense-history/{page}")
+    public String expenseHistory(@PathVariable("page") Integer page, Model model,Principal principal){
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
+        
+        
         model.addAttribute("user",user);
         model.addAttribute("page","expenseHistory");
+
+        Pageable pageable =  PageRequest.of(page, 2);
+        Page<Expense> recentTransaction = this.expenseRepository.findTransactionsByUser(user,  pageable);
         
-        List<Expense> recentTransaction = this.expenseRepository.getExpenseByUser(user);
+
+
         List<Category>userCategories = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
         
         model.addAttribute("userTransactions",recentTransaction);
         model.addAttribute("userCategories",userCategories);
 
+        int totalPages = (recentTransaction.getTotalElements() == 0) ? 0 : recentTransaction.getTotalPages();
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentPage", page);
+
         
         
         return "user-access-url/expense-history";
     }
-
+    
+//    @PostMapping("/expense-history-filters")
+//    public String applyFilters(Model model,Principal principal){
+//        
+//
+//    }
     
 //----------------------------------------------------------------------------------------------------------------
     @GetMapping("/category/{page}")

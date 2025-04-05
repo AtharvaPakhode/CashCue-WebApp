@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -25,14 +26,18 @@ public class Expense {
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private double amount;
 
-    @NotBlank(message = "Category cannot be blank")
-    private String category;
+    @ManyToOne
+    private Category category;
 
     @NotBlank(message = "Payment method cannot be blank")
     private String paymentMethod;
 
+    @Transient // So Spring doesn't try to save it to DB
     @NotNull(message = "Date cannot be blank")
-    private LocalDate date;
+    private LocalDate date; // for binding the form input
+
+    
+    private LocalDateTime dateTime;
 
     
     @Size(max = 500, message = "Description must be under 500 characters")
@@ -45,13 +50,13 @@ public class Expense {
     public Expense() {
     }
 
-    public Expense(int expenseId, String name, double amount, String category, String paymentMethod, LocalDate date, String description, User user) {
+    public Expense(int expenseId, String name, double amount, Category category, String paymentMethod, LocalDateTime dateTime, String description, User user) {
         this.expenseId = expenseId;
         this.name = name;
         this.amount = amount;
         this.category = category;
         this.paymentMethod = paymentMethod;
-        this.date = date;
+        this.dateTime = dateTime;
         this.description = description;
         this.user = user;
     }
@@ -81,11 +86,11 @@ public class Expense {
         this.amount = amount;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 
@@ -97,12 +102,12 @@ public class Expense {
         this.paymentMethod = paymentMethod;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getLocalDateTime() {
+        return dateTime;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setLocalDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
     public String getDescription() {
@@ -119,6 +124,14 @@ public class Expense {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public  LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     // toString Method
