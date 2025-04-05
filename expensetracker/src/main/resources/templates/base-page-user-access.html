@@ -33,6 +33,9 @@
         <div th:case="'addExpense'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/add-expense-page-style.css}">
         </div>
+        <div th:case="'expenseHistory'">
+            <link rel="stylesheet" type="text/css" th:href="@{/customCSS/expense-history-page-style.css}">
+        </div>
         <!-- Default case (if no page is matched) -->
         <div th:case="*">
             <!-- Optionally load a default or common style if needed -->

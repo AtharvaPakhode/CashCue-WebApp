@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+  <div th:replace="~{base-page-user-access :: styles-expense-hostory}" />
+
 </head>
 <body>
 
@@ -21,10 +24,116 @@
 
       <div class="flex justify-between items-center">
         <h2 class="text-xl font-bold">Recent Transactions</h2>
+
+        <button class="bg-purple-600 text-white px-4 py-2 rounded " id="filterTransactions">
+          Filter Transactions
+        </button>
+
       </div>
 
 
-      //filter button
+
+
+      <form class="space-y-6 mt-3" id="filterForm" th:object="${category}">
+
+
+        <div>
+          <label class="block text-lg font-semibold mb-2">Category</label>
+          <div class="flex gap-4">
+            <label class="checkbox-filter-container">
+              <input type="checkbox" id="category1">
+              <div class="checkmark"></div>
+            </label>
+            <label class="checkbox-filter-container">
+              <input type="checkbox" id="category2">
+              <div class="checkmark"></div>
+            </label>
+            <label class="checkbox-filter-container">
+              <input type="checkbox" id="category3">
+              <div class="checkmark"></div>
+            </label>
+          </div>
+        </div>
+
+
+
+        <div>
+          <label class="block text-lg font-semibold mb-2">
+            Payment Method
+          </label>
+          <select class="w-full p-2 border border-gray-300 rounded bg-gray-50">
+            <option>
+              All Payment Methods
+            </option>
+          </select>
+        </div>
+
+
+        <div>
+          <label class="block text-lg font-semibold mb-2">
+            Amount Range
+          </label>
+          <div class="flex space-x-4">
+            <div class="flex-1">
+              <label class="block text-sm mb-1">
+                Minimum Amount
+              </label>
+              <div class="flex items-center">
+                <input class="w-full p-2 border border-gray-300 rounded bg-gray-50" type="number"/>
+              </div>
+            </div>
+            <div class="flex-1">
+              <label class="block text-sm mb-1">
+                Maximum Amount
+              </label>
+              <div class="flex items-center">
+                <input class="w-full p-2 border border-gray-300 rounded bg-gray-50" type="number"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div>
+          <label class="block text-lg font-semibold mb-2">
+            Date Range
+          </label>
+          <div class="flex space-x-4">
+            <div class="flex-1">
+              <label class="block text-sm mb-1">
+                Start Date
+              </label>
+              <div class="flex items-center">
+                <input class="w-full p-2 border border-gray-300 rounded bg-gray-50" placeholder="MM/DD/YYYY" type="text"/>
+                <i class="fas fa-calendar-alt ml-2">
+                </i>
+              </div>
+            </div>
+            <div class="flex-1">
+              <label class="block text-sm mb-1">
+                End Date
+              </label>
+              <div class="flex items-center">
+                <input class="w-full p-2 border border-gray-300 rounded bg-gray-50" placeholder="MM/DD/YYYY" type="text"/>
+                <i class="fas fa-calendar-alt ml-2">
+                </i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="flex space-x-4">
+          <button class="bg-purple-600 text-white px-4 py-2 rounded" type="submit">
+            Apply Filters
+          </button>
+          <button class="border border-gray-300 text-gray-700 px-4 py-2 rounded" type="reset">
+            Reset
+          </button>
+        </div>
+
+
+      </form>
 
 
 

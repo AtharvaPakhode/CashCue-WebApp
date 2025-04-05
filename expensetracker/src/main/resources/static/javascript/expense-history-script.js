@@ -1,13 +1,19 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const filterSelect = document.getElementById("filterSelect");
-    const dateFilter = document.getElementById("dateFilter");
-    const amountFilter = document.getElementById("amountFilter");
+document.addEventListener("DOMContentLoaded", () => {
+    const filterBtn = document.getElementById("filterTransactions");
+    const filterForm = document.getElementById("filterForm");
 
-    function toggleFilterFields() {
-        const filterValue = filterSelect.value;
-        dateFilter.style.display = (filterValue === "date") ? "block" : "none";
-        amountFilter.style.display = (filterValue === "amount") ? "block" : "none";
-    }
+    // Initially hide the form
+    filterForm.style.display = "none";
 
-    filterSelect.addEventListener("change", toggleFilterFields);
-});
+    // Toggle form visibility when filter button is clicked
+    filterBtn.addEventListener("click", () => {
+      filterForm.style.display = filterForm.style.display === "none" ? "block" : "none";
+    });
+
+    // Hide form on Apply Filters
+    filterForm.addEventListener("submit", (e) => {
+      e.preventDefault(); // Prevent actual form submission (remove this if you want form to submit)
+      // You can handle filter logic here before hiding the form
+      filterForm.style.display = "none";
+    });
+  });

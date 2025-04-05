@@ -268,10 +268,15 @@ public class UserAccessUrlController {
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
         model.addAttribute("user",user);
+        model.addAttribute("page","expenseHistory");
         
         List<Expense> recentTransaction = this.expenseRepository.getExpenseByUser(user);
+        List<Category>userCategories = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
+        
+        model.addAttribute("userTransactions",recentTransaction);
+        model.addAttribute("userCategories",userCategories);
 
-        System.out.println(recentTransaction);
+        
         
         return "user-access-url/expense-history";
     }
