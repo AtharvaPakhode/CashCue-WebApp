@@ -4,12 +4,15 @@ package com.codelab.expensetracker.controllers;
 import com.codelab.expensetracker.helper.CustomDisplayMessage;
 import com.codelab.expensetracker.models.Category;
 import com.codelab.expensetracker.models.Expense;
+import com.codelab.expensetracker.models.Income;
 import com.codelab.expensetracker.models.User;
 import com.codelab.expensetracker.repositories.CategoryRepository;
 import com.codelab.expensetracker.repositories.ExpenseRepository;
+import com.codelab.expensetracker.repositories.IncomeRepository;
 import com.codelab.expensetracker.repositories.UserRepository;
 import com.codelab.expensetracker.services.CategoryService;
 import com.codelab.expensetracker.specification.ExpenseSpecification;
+import com.codelab.expensetracker.specification.IncomeSpecification;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,9 @@ public class UserAccessUrlController {
 
     @Autowired
     private ExpenseRepository expenseRepository;
+    
+    @Autowired
+    private IncomeRepository incomeRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -108,11 +114,7 @@ public class UserAccessUrlController {
 
 
 
-        // Adding attributes to the model to pass to Thymeleaf template
-//        model.addAttribute("savings", savings);
-//        model.addAttribute("expenses", monthlySpending);
-//        model.addAttribute("savingsPercentage", savingsPercentage);
-//        model.addAttribute("expensesPercentage", expensesPercentage);
+
 
         return "user-access-url/settings";
     }
@@ -210,7 +212,124 @@ public class UserAccessUrlController {
         // Redirect to the user settings page after the update process is complete
         return "redirect:/user/settings";
     }
-    
+
+    //----------------------------------------------------------------------------------------------------------------
+
+    @GetMapping("/add-income")
+    public String addIncome(Model model, Principal principal){
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+
+        model.addAttribute("user",user);
+        model.addAttribute("page","addIncome"); // for page specific CSS
+        model.addAttribute("income", new Income());
+        
+        return "user-access-url/add-income";
+    }
+
+
+    @PostMapping("/add-income-process")
+    public String addIncomeForm(@Valid @ModelAttribute("income") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Income income,
+                                 BindingResult bindingResult,
+                                 Model model,
+                                 Principal principal){
+        
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+        model.addAttribute("user", user);
+
+        try {
+            if (bindingResult.hasErrors()) {                
+                System.out.println("failed");
+                System.out.println(bindingResult.getAllErrors());
+                return "user-access-url/add-expense";
+            }
+
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Convert the bound LocalDate to LocalDateTime
+        if (income.getDate() != null) {
+            LocalTime currentTime = LocalTime.now();
+            income.setLocalDateTime(LocalDateTime.of(income.getDate(), currentTime));
+        }
+
+
+
+        System.out.println(income.toString());  //DEBUG
+
+        
+        System.out.println(income.getLocalDateTime());
+
+        income.setUser(user);
+        this.incomeRepository.save(income);
+
+        return "user-access-url/add-income";
+    }
+
+
+    @GetMapping("/income-history/{page}")
+    public String incomeHistory(
+            Model model,
+            Principal principal,            
+            @RequestParam(value = "minAmount", required = false) Double minAmount,
+            @RequestParam(value = "maxAmount", required = false) Double maxAmount,            
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @PathVariable("page") int page
+    ) {
+        String name = principal.getName();
+        User user = userRepository.getUserByName(name);
+
+        model.addAttribute("user", user);
+        model.addAttribute("page", "expenseHistory");
+
+        Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "dateTime"));
+
+        Specification<Income> spec;
+
+        boolean noFilters = (
+                minAmount == null &&
+                maxAmount == null &&               
+                startDate == null &&
+                endDate == null);
+
+        if (noFilters) {
+            spec = (root, query, cb) -> cb.equal(root.get("user"), user);
+        } else {
+            spec = IncomeSpecification.withFilters(user, minAmount, maxAmount, startDate, endDate);
+        }
+
+        Page<Income> filteredIncomes = incomeRepository.findAll(spec, pageable);
+        
+        for(Income f : filteredIncomes){
+            System.out.println(f.toString());
+        }
+
+        model.addAttribute("userTransactions", filteredIncomes);
+        model.addAttribute("totalPages", filteredIncomes.getTotalPages());
+        model.addAttribute("currentPage", page);
+
+        // Preserve filters
+        
+        model.addAttribute("minAmount", minAmount);
+        model.addAttribute("maxAmount", maxAmount);        
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
+
+
+        return "user-access-url/income-history";
+    }
+
+
+
+
+
+
+    //----------------------------------------------------------------------------------------------------------------
     
     @GetMapping("/add-expense")
     public String addExpense(Model model, Principal principal){
@@ -273,7 +392,7 @@ public class UserAccessUrlController {
 
         return "user-access-url/add-expense";
     }
-//----------------------------------------------------------------------------------------------------------------
+
 @GetMapping("/expense-history/{page}")
 public String expenseHistory(
         Model model,
@@ -292,7 +411,7 @@ public String expenseHistory(
     model.addAttribute("user", user);
     model.addAttribute("page", "expenseHistory");
 
-    Pageable pageable = PageRequest.of(page, 2, Sort.by(Sort.Direction.DESC, "dateTime"));
+    Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "dateTime"));
 
     List<Category> categories = new ArrayList<>();
     if (categoryNames != null && !categoryNames.isEmpty()) {

@@ -147,7 +147,7 @@
 
                         <!-- Page Number Links -->
                         <li th:classappend="${currentPage == i ? 'active' : ''}" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item">
-                            <a class="page-link" th:href="@{/user/categoryy/{page}(page=${i})}"
+                            <a class="page-link" th:href="@{/user/category/{page}(page=${i})}"
                                style="background-color: #c2edda; color:black">
                                 <span th:text="${i + 1}"></span> <!-- Display page number starting from 1 -->
                             </a>
