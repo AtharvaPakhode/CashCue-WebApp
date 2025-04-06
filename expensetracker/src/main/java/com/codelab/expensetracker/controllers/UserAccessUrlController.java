@@ -9,12 +9,15 @@ import com.codelab.expensetracker.repositories.CategoryRepository;
 import com.codelab.expensetracker.repositories.ExpenseRepository;
 import com.codelab.expensetracker.repositories.UserRepository;
 import com.codelab.expensetracker.services.CategoryService;
+import com.codelab.expensetracker.specification.ExpenseSpecification;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +29,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.File;
-import java.math.BigDecimal;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 
 @Controller
@@ -53,6 +59,8 @@ public class UserAccessUrlController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private ExpenseSpecification ExpenseSpecifications;
 
 
 
@@ -246,11 +254,10 @@ public class UserAccessUrlController {
             e.printStackTrace();
         }
 
-        // Convert the bound LocalDate to LocalDateTime (choose one option below)
-
-        // Option 1: Set to start of day (midnight)
-        if(expense.getDate() != null) {
-            expense.setLocalDateTime(expense.getDate().atStartOfDay());
+        // Convert the bound LocalDate to LocalDateTime 
+        if (expense.getDate() != null) {
+            LocalTime currentTime = LocalTime.now();
+            expense.setLocalDateTime(LocalDateTime.of(expense.getDate(), currentTime));
         }
 
         
@@ -267,39 +274,69 @@ public class UserAccessUrlController {
         return "user-access-url/add-expense";
     }
 //----------------------------------------------------------------------------------------------------------------
-    @GetMapping("/expense-history/{page}")
-    public String expenseHistory(@PathVariable("page") Integer page, Model model,Principal principal){
-        String name = principal.getName();
-        User user = this.userRepository.getUserByName(name);
-        
-        
-        model.addAttribute("user",user);
-        model.addAttribute("page","expenseHistory");
+@GetMapping("/expense-history/{page}")
+public String expenseHistory(
+        Model model,
+        Principal principal,
+        @RequestParam(value = "categories", required = false) List<String> categoryNames,
+        @RequestParam(value = "minAmount", required = false) Double minAmount,
+        @RequestParam(value = "maxAmount", required = false) Double maxAmount,
+        @RequestParam(value = "paymentMethod", required = false) String paymentMethod,
+        @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+        @PathVariable("page") int page
+) {
+    String name = principal.getName();
+    User user = userRepository.getUserByName(name);
 
-        Pageable pageable =  PageRequest.of(page, 2);
-        Page<Expense> recentTransaction = this.expenseRepository.findTransactionsByUser(user,  pageable);
-        
+    model.addAttribute("user", user);
+    model.addAttribute("page", "expenseHistory");
 
+    Pageable pageable = PageRequest.of(page, 2, Sort.by(Sort.Direction.DESC, "dateTime"));
 
-        List<Category>userCategories = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
-        
-        model.addAttribute("userTransactions",recentTransaction);
-        model.addAttribute("userCategories",userCategories);
-
-        int totalPages = (recentTransaction.getTotalElements() == 0) ? 0 : recentTransaction.getTotalPages();
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("currentPage", page);
-
-        
-        
-        return "user-access-url/expense-history";
+    List<Category> categories = new ArrayList<>();
+    if (categoryNames != null && !categoryNames.isEmpty()) {
+        categories = categoryRepository.findByCategoryNameInAndUserId(categoryNames, user.getUserId());
     }
+
+    Specification<Expense> spec;
+
+    boolean noFilters = (categoryNames == null || categoryNames.isEmpty()) &&
+            minAmount == null &&
+            maxAmount == null &&
+            (paymentMethod == null || paymentMethod.isEmpty()) &&
+            startDate == null &&
+            endDate == null;
+
+    if (noFilters) {
+        spec = (root, query, cb) -> cb.equal(root.get("user"), user);
+    } else {
+        spec = ExpenseSpecifications.withFilters(user, categories, minAmount, maxAmount, paymentMethod, startDate, endDate);
+    }
+
+    Page<Expense> filteredExpenses = expenseRepository.findAll(spec, pageable);
+
+    model.addAttribute("userTransactions", filteredExpenses);
+    model.addAttribute("userCategories", categoryRepository.ListOfCategoryByUser(user.getUserId()));
+    model.addAttribute("totalPages", filteredExpenses.getTotalPages());
+    model.addAttribute("currentPage", page);
+
+    // Preserve filters
+    model.addAttribute("filterCategories", categoryNames);
+    model.addAttribute("minAmount", minAmount);
+    model.addAttribute("maxAmount", maxAmount);
+    model.addAttribute("paymentMethod", paymentMethod);
+    model.addAttribute("startDate", startDate);
+    model.addAttribute("endDate", endDate);
+
     
-//    @PostMapping("/expense-history-filters")
-//    public String applyFilters(Model model,Principal principal){
-//        
-//
-//    }
+
+    return "user-access-url/expense-history";
+}
+
+
+
+    
     
 //----------------------------------------------------------------------------------------------------------------
     @GetMapping("/category/{page}")

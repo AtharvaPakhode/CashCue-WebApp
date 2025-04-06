@@ -22,8 +22,12 @@ public interface CategoryRepository  extends JpaRepository<Category, String> {
 
     @Query("FROM Category c WHERE LOWER(c.categoryName) LIKE LOWER(CONCAT('%', :name, '%')) AND c.user.userId = :id")
     Category findByCategoryNameContainingIgnoreCase(@Param("name")String name ,@Param("id") int id);
-        
-    
+
+    @Query("SELECT c FROM Category c WHERE c.categoryName IN :names AND c.user.userId = :userId")
+    List<Category> findByCategoryNameInAndUserId(@Param("names") List<String> names, @Param("userId") int userId);
+
+
+
 
 
 

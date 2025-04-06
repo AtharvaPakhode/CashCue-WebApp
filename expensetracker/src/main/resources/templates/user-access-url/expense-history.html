@@ -34,7 +34,9 @@
 
 
 
-      <form class="space-y-6 mt-3" id="filterForm" th:object="${userCategories}">
+      <form class="space-y-6 mt-3" id="filterForm" th:object="${userCategories}" th:action="@{/user/expense-history/0}" method="get">
+
+
 
         <label class="block text-lg font-semibold mb-2">
           Category
@@ -66,7 +68,7 @@
           <label class="block text-lg font-semibold mb-2">
             Payment Method
           </label>
-          <select class="w-full p-2 border border-gray-300 rounded bg-gray-50">
+          <select  name="paymentMethod" class="w-full p-2 border border-gray-300 rounded bg-gray-50">
             <option value="">Select payment method</option> <!-- Sends null to backend -->
             <option value="CASH">Cash</option>
             <option value="UPI">UPI</option>
@@ -87,7 +89,7 @@
                 Minimum Amount
               </label>
               <div class="flex items-center">
-                <input class="w-full p-2 border border-gray-300 rounded bg-gray-50" type="number"/>
+                <input  name="minAmount" class="w-full p-2 border border-gray-300 rounded bg-gray-50" type="number"/>
               </div>
             </div>
             <div class="flex-1">
@@ -95,7 +97,7 @@
                 Maximum Amount
               </label>
               <div class="flex items-center">
-                <input class="w-full p-2 border border-gray-300 rounded bg-gray-50" type="number"/>
+                <input name="maxAmount" class="w-full p-2 border border-gray-300 rounded bg-gray-50" type="number"/>
               </div>
             </div>
           </div>
@@ -112,7 +114,7 @@
                 Start Date
               </label>
               <div class="flex items-center">
-                <input class="w-full p-2 border border-gray-300 rounded bg-gray-50" placeholder="MM/DD/YYYY" type="date"/>
+                <input  name="startDate" class="w-full p-2 border border-gray-300 rounded bg-gray-50" placeholder="MM/DD/YYYY" type="date"/>
 
               </div>
             </div>
@@ -121,7 +123,7 @@
                 End Date
               </label>
               <div class="flex items-center">
-                <input class="w-full p-2 border border-gray-300 rounded bg-gray-50" placeholder="MM/DD/YYYY" type="date"/>
+                <input  name="endDate" class="w-full p-2 border border-gray-300 rounded bg-gray-50" placeholder="MM/DD/YYYY" type="date"/>
 
               </div>
             </div>
@@ -152,7 +154,7 @@
             <div class="flex items-center space-x-4">
               <div>
                 <p class="text-gray-800 font-bold" th:text="${transaction.name}">Expense Title</p>
-                <p class="text-gray-500" th:text="${#temporals.format(transaction.date, 'MMMM d, yyyy')}">Expense Date</p>
+                <p class="text-gray-500" th:text="${#temporals.format(transaction.localDateTime, 'MMMM dd, yyyy')}">Expense Date</p>
               </div>
             </div>
 
@@ -168,35 +170,63 @@
       </div>
 
 
-      <!-- Pagination Section -->
       <nav class="mt-6 flex justify-center" th:if="${totalPages > 0}">
         <ul class="flex space-x-2">
+
           <!-- Previous Page -->
           <li th:if="${currentPage > 0}">
-            <a th:href="@{/user/expense-history/{page}(page=${currentPage - 1})}"
-               style="background-color:#c2edda;color:black"
-               class="page-link"
-               aria-label="Previous">&laquo;</a>
+            <a th:href="@{/user/expense-history/{page}(page=${currentPage - 1},
+                categories=${filterCategories},
+                minAmount=${minAmount},
+                maxAmount=${maxAmount},
+                paymentMethod=${paymentMethod},
+                startDate=${startDate},
+                endDate=${endDate})}"
+               class="page-link px-3 py-1 rounded"
+               style="background-color:#c2edda; color:black">
+              &laquo;
+            </a>
           </li>
 
           <!-- Page Numbers -->
-          <!-- Page Number Links -->
-          <li th:classappend="${currentPage == i ? 'active' : ''}" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item">
-            <a class="page-link" th:href="@{/user/expense-history/{page}(page=${i})}"
-               style="background-color: #c2edda; color:black">
-              <span th:text="${i + 1}"></span> <!-- Display page number starting from 1 -->
+          <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${i == currentPage} ? 'font-bold underline'">
+            <a th:href="@{/user/expense-history/{page}(page=${i},
+                categories=${filterCategories},
+                minAmount=${minAmount},
+                maxAmount=${maxAmount},
+                paymentMethod=${paymentMethod},
+                startDate=${startDate},
+                endDate=${endDate})}"
+               class="page-link px-3 py-1 rounded"
+               style="background-color:#c2edda; color:black">
+              <span th:text="${i + 1}"></span>
             </a>
           </li>
 
           <!-- Next Page -->
           <li th:if="${currentPage + 1 < totalPages}">
-            <a th:href="@{/user/expense-history/{page}(page=${currentPage + 1})}"
-               style="background-color:#c2edda;color:black"
-               class="page-link"
-               aria-label="Next">&raquo;</a>
+            <a th:href="@{/user/expense-history/{page}(page=${currentPage + 1},
+                categories=${filterCategories},
+                minAmount=${minAmount},
+                maxAmount=${maxAmount},
+                paymentMethod=${paymentMethod},
+                startDate=${startDate},
+                endDate=${endDate})}"
+               class="page-link px-3 py-1 rounded"
+               style="background-color:#c2edda; color:black">
+              &raquo;
+            </a>
           </li>
+
         </ul>
       </nav>
+
+
+
+      <div th:if="${totalPages == 0}" class="text-center text-gray-500">
+        No Transactions found
+      </div>
 
 
       <!-- No Categories Found Message -->

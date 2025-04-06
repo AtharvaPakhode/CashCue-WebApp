@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Hide form on Apply Filters
     filterForm.addEventListener("submit", (e) => {
-      e.preventDefault(); // Prevent actual form submission (remove this if you want form to submit)
       // You can handle filter logic here before hiding the form
       filterForm.style.display = "none";
     });
   });
+
