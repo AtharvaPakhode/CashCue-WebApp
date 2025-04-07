@@ -6,7 +6,8 @@
         Add New Income
     </title>
 
-    <div th:replace="~{base-page-user-access :: styles-add-expense}" />
+
+
 </head>
 
 <body>
@@ -15,16 +16,17 @@
         <!-- Main Content -->
         <div class="flex-1 p-8">
             <div class="mb-4">
-                <h1 class="text-4xl font-bold mb-6">
+                <!-- Animated Heading -->
+                <h1 class="text-4xl font-bold mb-6 animate-slide-fade-in">
                     Add New Income
                 </h1>
 
-                <form class="space-y-6" th:action="@{/user/add-income-process}" method="post" th:object="${income}">
+                <!-- Animated Form -->
+                <form class="space-y-6 animate-fade-in-slow" th:action="@{/user/add-income-process}" method="post" th:object="${income}">
 
+                    <!-- Income Source -->
                     <div>
-                        <label class="block text-black font-semibold ml-3 mb-2">
-                            Income Source
-                        </label>
+                        <label class="block text-black font-semibold ml-3 mb-2">Income Source</label>
                         <input th:classappend="${#fields.hasErrors('source') ? 'border-red-500 bg-red-100' : ''}"
                                class="w-full p-3 border border-gray-300 rounded-xl bg-gray-100"
                                placeholder="Enter source of income" name="source" id="incomeSource" type="text" />
@@ -33,11 +35,10 @@
                         </div>
                     </div>
 
+                    <!-- Amount -->
                     <div class="flex items-center space-x-4">
                         <div class="flex-1">
-                            <label class="block text-black font-semibold ml-3 mb-2">
-                                Amount
-                            </label>
+                            <label class="block text-black font-semibold ml-3 mb-2">Amount</label>
                             <input th:classappend="${#fields.hasErrors('amount') ? 'border-red-500 bg-red-100' : ''}"
                                    class="w-full p-3 border border-gray-300 rounded-xl bg-gray-100"
                                    placeholder="Enter the amount" name="amount" id="incomeAmount" type="number" required />
@@ -47,10 +48,9 @@
                         </div>
                     </div>
 
+                    <!-- Date -->
                     <div>
-                        <label class="block text-black font-semibold ml-3 mb-2">
-                            Date
-                        </label>
+                        <label class="block text-black font-semibold ml-3 mb-2">Date</label>
                         <input th:classappend="${#fields.hasErrors('date') ? 'border-red-500 bg-red-100' : ''}"
                                class="w-full p-3 border border-gray-300 rounded-xl bg-gray-100"
                                placeholder="MM/DD/YYYY" name="date" id="incomeDate" type="date" />
@@ -59,10 +59,9 @@
                         </div>
                     </div>
 
+                    <!-- Description -->
                     <div>
-                        <label class="block text-black font-semibold ml-3 mb-2">
-                            Description (Optional)
-                        </label>
+                        <label class="block text-black font-semibold ml-3 mb-2">Description (Optional)</label>
                         <textarea id="incomeDescription"
                                   class="w-full p-3 border border-gray-300 rounded-xl bg-gray-100 h-24"
                                   placeholder="Add any additional details" name="description"></textarea>
@@ -71,13 +70,14 @@
                         </div>
                     </div>
 
+                    <!-- Buttons -->
                     <div class="flex justify-between items-center mt-6">
-                        <button id="cancel-income" class="px-6 py-3 text-black font-semibold rounded-md" type="reset"
-                                style="background-color: #c2edda">
+                        <button id="cancel-income" class="px-6 py-3 text-black font-semibold rounded-md"
+                                type="reset" style="background-color: #c2edda">
                             Cancel
                         </button>
-                        <button id="save-income" class="px-6 py-3 text-black font-semibold rounded-md" type="submit"
-                                style="background-color: #c2edda">
+                        <button id="save-income" class="px-6 py-3 text-black font-semibold rounded-md"
+                                type="submit" style="background-color: #c2edda">
                             Save Income
                         </button>
                     </div>
@@ -85,6 +85,7 @@
             </div>
         </div>
     </div>
+
 </section>
 
 <div th:fragment="scripts">

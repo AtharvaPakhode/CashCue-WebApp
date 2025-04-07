@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaSpecificationExecutor<Expense> {
@@ -23,21 +24,17 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
 
     @Query("SELECT e FROM Expense e WHERE e.user = :user ORDER BY e.dateTime DESC")
     Page<Expense> findTransactionsByUser(@Param("user") User user, Pageable pageable);
+    
+    @Query("SELECT SUM(e.amount)  From Expense e WHERE e.user = :user ")
+    double findSumOfExpensesOfUserByUserId(@Param("user") User user);
+
+    @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfMonth AND :endOfMonth")
+    Double findSumOfExpensesForCurrentMonth(@Param("user") User user,
+                                            @Param("startOfMonth") LocalDateTime startOfMonth,
+                                            @Param("endOfMonth") LocalDateTime endOfMonth);
 
     
 
-//    @Query("SELECT e FROM Expense e WHERE e.user = :user AND e.category = :category ORDER BY e.dateTime DESC")
-//    List<Expense> getExpenseByCategory(@Param("user") User user, @Param("category") String category);
-//
-//    @Query("SELECT e FROM Expense e WHERE e.user = :user AND e.amount BETWEEN :minAmount AND :maxAmount ORDER BY e.dateTime DESC")
-//    List<Expense> getExpenseByRangeOfAmount(@Param("user") User user, @Param("minAmount") double minAmount, @Param("maxAmount") double maxAmount);
-//
-//    @Query("SELECT e FROM Expense e WHERE e.user = :user AND e.paymentMethod = :paymentMethod ORDER BY e.dateTime DESC")
-//    List<Expense> getExpenseByPaymentMethod(@Param("user") User user, @Param("paymentMethod") String paymentMethod);
-//
-//    @Query("SELECT e FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startDate AND :endDate ORDER BY e.dateTime DESC")
-//    List<Expense> getExpenseByRangeOfDate(@Param("user") User user, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
-//    
-//
+
 
 }

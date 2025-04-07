@@ -1,0 +1,31 @@
+/* Slide and fade for heading */
+@keyframes slideFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fade for form */
+@keyframes fadeInSlow {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-slide-fade-in {
+    animation: slideFadeIn 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-fade-in-slow {
+    animation: fadeInSlow 1.2s ease-in forwards;
+    opacity: 0;
+}

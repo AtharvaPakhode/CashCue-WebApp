@@ -70,19 +70,55 @@
 
 
 .welcome-message {
-    display: flex;
-    flex-direction: column; /* Stack elements vertically */
-    align-items: center;    /* Center horizontally */
-    justify-content: center; /* Center vertically */
-    text-align: center;      /* Center text inside the spans */
-    margin-bottom:40px;
-    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    margin-bottom: 30px;
+    animation: fadeSlideIn 1s ease forwards;
+    opacity: 0;
 }
 
-.welmsg1{
-    font-size:30px;
-    font-weight:bolder;
+.welmsg1 {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: Black;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    animation: popIn 1s ease-out forwards;
 }
-.welmsg2{
-    font-size:18px;
+
+.welmsg2 {
+    display: block;
+    font-size: 1.2rem;
+    color: black;
+    margin-top: 5px;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-out 0.5s forwards;
+}
+
+/* Animations */
+@keyframes fadeSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }

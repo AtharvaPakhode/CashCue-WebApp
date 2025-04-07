@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IncomeRepository extends JpaRepository<Income, Integer> , JpaSpecificationExecutor<Income> {
@@ -20,6 +21,15 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> , JpaSp
 
     @Query("SELECT i FROM Income i WHERE i.user = :user ORDER BY i.dateTime DESC")
     Page<Income> findTransactionsByUser(@Param("user") User user, Pageable pageable);
+    
+    @Query("SELECT SUM(i.amount)  From Income i WHERE i.user = :user ")
+    double findSumOfExpensesOfUserByUserId(@Param("user") User user);
+
+    @Query("SELECT SUM(i.amount) FROM Income i WHERE i.user = :user AND i.dateTime BETWEEN :startOfMonth AND :endOfMonth")
+    Double findSumOfIncomeForCurrentMonth(@Param("user") User user,
+                                          @Param("startOfMonth") LocalDateTime startOfMonth,
+                                          @Param("endOfMonth") LocalDateTime endOfMonth);
+
 
 
 }

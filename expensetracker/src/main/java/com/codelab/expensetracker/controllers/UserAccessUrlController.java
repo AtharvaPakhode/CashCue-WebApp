@@ -74,30 +74,68 @@ public class UserAccessUrlController {
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal) {
         model.addAttribute("title", "Dashboard");
-        
 
+        // Get logged-in user
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
 
-        System.out.println(user.getUserName());
-        
+        // Define financial variables
+        Double sumOfIncomeByUser;
+        Double sumOfExpenseByUser;
+        Double monthlyIncome;
+        Double monthlyExpense;
+        Double totalBalance;
+        Double monthlySavings;
+
+        // Define start and end of the current month
+        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(LocalTime.MAX);
+
+        try {
+            // Fetch values from database (may return null)
+            sumOfIncomeByUser = incomeRepository.findSumOfExpensesOfUserByUserId(user);
+            sumOfExpenseByUser = expenseRepository.findSumOfExpensesOfUserByUserId(user);
+            Double monthlyIncomeRaw = incomeRepository.findSumOfIncomeForCurrentMonth(user, startOfMonth, endOfMonth);
+            Double monthlyExpenseRaw = expenseRepository.findSumOfExpensesForCurrentMonth(user, startOfMonth, endOfMonth);
+
+            // Handle nulls safely
+            sumOfIncomeByUser = (sumOfIncomeByUser != null) ? sumOfIncomeByUser : 0.0;
+            sumOfExpenseByUser = (sumOfExpenseByUser != null) ? sumOfExpenseByUser : 0.0;
+            monthlyIncome = (monthlyIncomeRaw != null) ? monthlyIncomeRaw : 0.0;
+            monthlyExpense = (monthlyExpenseRaw != null) ? monthlyExpenseRaw : 0.0;
+
+            // Calculate balance and savings
+            totalBalance = sumOfIncomeByUser - sumOfExpenseByUser;
+            monthlySavings = monthlyIncome - monthlyExpense;
+
+            // Print debug info
+            System.out.println("Total Balance    : ₹" + String.format("%.2f", totalBalance));
+            System.out.println("Monthly Income   : ₹" + String.format("%.2f", monthlyIncome));
+            System.out.println("Monthly Expense  : ₹" + String.format("%.2f", monthlyExpense));
+            System.out.println("Monthly Savings  : ₹" + String.format("%.2f", monthlySavings));
+
+            // Add to model
+            model.addAttribute("totalBalance", totalBalance);
+            model.addAttribute("monthlyIncome", monthlyIncome);
+            model.addAttribute("monthlyExpense", monthlyExpense);
+            model.addAttribute("monthlySavings", monthlySavings);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback values in case of error
+            model.addAttribute("totalBalance", 0.0);
+            model.addAttribute("monthlyIncome", 0.0);
+            model.addAttribute("monthlyExpense", 0.0);
+            model.addAttribute("monthlySavings", 0.0);
+        }
+
+        // Add user info and page class for styling
         model.addAttribute("user", user);
-        model.addAttribute("page","dashboard"); // for page specific CSS
+        model.addAttribute("page", "dashboard"); // for page-specific CSS if needed
 
-
-
-        // Adding attributes to the model to pass to Thymeleaf template
-//        model.addAttribute("savings", savings);
-//        model.addAttribute("expenses", monthlySpending);
-//        model.addAttribute("savingsPercentage", savingsPercentage);
-//        model.addAttribute("expensesPercentage", expensesPercentage);
-
-
-        
-
-
-        return "user-access-url/dashboard";
+        return "user-access-url/dashboard"; // Thymeleaf template
     }
+
 
     @GetMapping("/settings")
     public String settings(Model model, Principal principal) {
@@ -237,6 +275,7 @@ public class UserAccessUrlController {
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
         model.addAttribute("user", user);
+        
 
         try {
             if (bindingResult.hasErrors()) {                
@@ -342,7 +381,8 @@ public class UserAccessUrlController {
         model.addAttribute("user",user);
         model.addAttribute("page","addExpense"); // for page specific CSS
         model.addAttribute("expense", new Expense());
-
+        
+        
         return "user-access-url/add-expense";
     }
 
