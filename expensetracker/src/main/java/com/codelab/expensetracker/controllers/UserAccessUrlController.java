@@ -525,6 +525,7 @@ public String expenseHistory(
         model.addAttribute("currentPage", page);
         model.addAttribute("user",user);
         model.addAttribute("category", new Category());
+        model.addAttribute("page","category");
         return "user-access-url/view-user-category";
     }
 

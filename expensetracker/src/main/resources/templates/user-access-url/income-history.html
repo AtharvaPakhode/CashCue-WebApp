@@ -18,9 +18,9 @@
             <div class="mt-6">
 
                 <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-bold">Recent Incomes</h2>
+                    <h2 class="text-xl font-bold animate-slide-fade-in">Recent Incomes</h2>
 
-                    <button class="text-black px-4 py-2 rounded" id="filterTransactions">
+                    <button class="text-black px-4 py-2 rounded animate-slide-fade-in" id="filterTransactions">
                         Filter Incomes
                     </button>
                 </div>
@@ -75,7 +75,7 @@
 
                 </form>
 
-                <div class="mt-3" th:if="${userTransactions != null}">
+                <div class="mt-3 animate-fade-in-slow" th:if="${userTransactions != null}">
                     <div class="space-y-4" th:each="income : ${userTransactions}">
 
                         <!-- Each income box -->
@@ -100,7 +100,7 @@
                 </div>
 
                 <!-- Pagination -->
-                <nav class="mt-6 flex justify-center" th:if="${totalPages > 0}">
+                <nav class="mt-6 flex justify-center animate-fade-in-slow" th:if="${totalPages > 0}">
                     <ul class="flex space-x-2">
 
                         <!-- Previous Page -->
@@ -149,7 +149,7 @@
                     </ul>
                 </nav>
 
-                <div th:if="${totalPages == 0}" class="text-center text-gray-500">
+                <div th:if="${totalPages == 0}" class="text-center text-gray-500 animate-fade-in-slow">
                     No Incomes found
                 </div>
 

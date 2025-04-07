@@ -7,8 +7,7 @@
         Categories
     </title>
 
-    <!-- Include Styles for Categories View -->
-    <div th:replace="~{base-page-user-access :: styles-view-category}" />
+
 </head>
 <body>
 <!-- Main Content Section -->
@@ -20,7 +19,7 @@
 
         <!-- Edit Modal -->
         <div id="edit-modal" tabindex="-1" aria-hidden="true"
-             class="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+             class="animate-slide-fade-in flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
              style="visibility: hidden;">
             <div class="relative p-4 w-full max-w-md max-h-full">
                 <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
@@ -69,7 +68,7 @@
 
         <!-- Delete Modal -->
         <div id="delete-modal" tabindex="-1" aria-hidden="true"
-             class="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+             class="animate-slide-fade-in flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
              style="visibility: hidden;">
             <div class="relative p-4 w-full max-w-md max-h-full">
                 <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
@@ -101,19 +100,19 @@
         <div class="flex-1 p-8">
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-4">
-                    <h1 class="text-4xl font-bold">Categories</h1>
+                    <h1 class="text-4xl font-bold animate-slide-fade-in">Categories</h1>
                 </div>
 
                 <!-- Search Bar for Categories -->
                 <div class="relative mb-4">
                     <form th:action="@{/user/category/0}" method="get">
-                        <input class="w-full pt-2 pb-2 pl-10 border rounded bg-gray-100" placeholder="Search categories..." name="search" type="text" th:value="${search}">
-                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <input class="animate-slide-fade-in w-full pt-2 pb-2 pl-10 border rounded bg-gray-100" placeholder="Search categories..." name="search" type="text" th:value="${search}">
+                        <i class="animate-slide-fade-in fas fa-search absolute left-3 top-3 text-gray-400"></i>
                     </form>
                 </div>
 
                 <!-- Category List -->
-                <div class="space-y-4">
+                <div class="space-y-4  animate-fade-in-slow">
                     <div th:if="${categories != null}">
                         <div th:each="category : ${categories}" style="border: 3px solid #c2edda" class="flex items-center justify-between p-2 bg-white rounded-lg shadow mb-2">
                             <div class="flex items-center">
@@ -135,7 +134,7 @@
                 </div>
 
                 <!-- Pagination Section -->
-                <nav aria-label="Page navigation example" style="margin-top: 20px;" th:if="${totalPages > 0}">
+                <nav aria-label="Page navigation example" style="margin-top: 20px;" th:if="${totalPages > 0}" class="animate-fade-in-slow">
                     <ul class="pagination justify-content-center">
                         <!-- Previous Page Button -->
                         <li class="page-item" th:if="${currentPage > 0}">
@@ -164,12 +163,12 @@
                 </nav>
 
                 <!-- No Categories Found Message -->
-                <div th:if="${totalPages == 0}" class="text-center text-gray-500">
+                <div th:if="${totalPages == 0}" class="text-center text-gray-500 animate-fade-in-slow">
                     No categories found
                 </div>
 
                 <!-- Create New Category Form -->
-                <div>
+                <div class="animate-fade-in-slow">
                     <h2 class="text-xl font-bold mb-4">Create New Category</h2>
                     <form th:action="@{/user/process-save-category}" id="saveCategoryForm" method="post" th:object="${category}">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

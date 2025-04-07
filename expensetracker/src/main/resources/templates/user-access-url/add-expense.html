@@ -16,11 +16,11 @@
         <!-- Main Content -->
         <div class="flex-1 p-8">
             <div class="mb-4">
-                <h1 class="text-4xl font-bold mb-6">
+                <h1 class="text-4xl font-bold mb-6 animate-slide-fade-in">
                     Add New Expense
                 </h1>
 
-            <form class="space-y-6" th:action="@{/user/add-expense-process}" method="post" th:object="${expense}">
+            <form class="space-y-6 animate-fade-in-slow" th:action="@{/user/add-expense-process}" method="post" th:object="${expense}">
 
 
                 <div>
