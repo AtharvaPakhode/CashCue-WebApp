@@ -42,6 +42,9 @@
         <div th:case="'category'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/category-page-style.css}">
         </div>
+        <div th:case="'reports'">
+            <link rel="stylesheet" type="text/css" th:href="@{/customCSS/reports-page-style.css}">
+        </div>
         <!-- Default case (if no page is matched) -->
         <div th:case="*">
             <!-- Optionally load a default or common style if needed -->
@@ -64,7 +67,7 @@
     <a th:href="@{/user/expense-history/0}"><i class="fas fa-history"></i> Expense History</a>
 
     <a th:href="@{/user/category/0}"><i class="fas fa-tags"></i> Category</a>
-    <a th:href="@{/user/financial-reports}"><i class="fas fa-chart-line"></i> Financial Reports</a>
+    <a th:href="@{/user/reports}"><i class="fas fa-chart-line"></i> Financial Reports</a>
     <a th:href="@{/user/settings}"><i class="fas fa-cogs"></i> Settings</a>
 
 

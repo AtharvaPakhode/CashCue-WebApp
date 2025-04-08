@@ -595,5 +595,17 @@ public String expenseHistory(
         return "redirect:/user/category/0";  // Redirect back to category page after updating
     }
 
+//----------------------------------------------------------------------------------------------------------------
+
+    @GetMapping("/reports")
+    public String reports(Model model,Principal principal){
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+        
+        model.addAttribute("user",user);
+        model.addAttribute("page","reports");
+        return "user-access-url/reports";
+    }
+
 
 }
