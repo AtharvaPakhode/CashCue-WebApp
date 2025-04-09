@@ -598,12 +598,14 @@ public String expenseHistory(
 //----------------------------------------------------------------------------------------------------------------
 
     @GetMapping("/reports")
-    public String reports(Model model,Principal principal){
+    public String reports(@RequestParam(name = "period", required = false, defaultValue = "monthly") String period
+                          ,Model model,Principal principal){
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
         
         model.addAttribute("user",user);
         model.addAttribute("page","reports");
+        model.addAttribute("period", period);
         return "user-access-url/reports";
     }
 

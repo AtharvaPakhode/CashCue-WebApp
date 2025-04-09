@@ -1,30 +1,11 @@
-.button-hover-effect {
-    padding: 0.5rem 1rem;
-    background: linear-gradient(to right, #c2edda, #a0d6d2);
-    color: #000000; /* hover:text-black */
-    border: none;
-    border-radius: 0.375rem; /* rounded */
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
+.btn-active {
+  background-color: #1f2937;      /* Tailwind's bg-gray-800 */
+  color: #ffffff;                 /* white text */
+  border-radius: 0.5rem;          /* same as rounded-lg */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* similar to shadow-md */
+  }
 
 
-.button-hover-effect:active {
-    transform: scale(0.95);
-}
-
-
-.export-button{
-  padding: 0.5rem 1rem;
-      background: grey;
-      color: #000000; /* hover:text-black */
-      border: none;
-      border-radius: 0.375rem; /* rounded */
-      cursor: pointer;
-      transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-
-.button-hover-effect:active {
-    transform: scale(0.95);
+.btn-active .tooltip-content {
+  display: none !important;
 }

@@ -17,77 +17,93 @@
                     </h1>
                 </div>
                 <!-- Tabs -->
-                <div class="flex space-x-4 mb-6">
+                <div id ="buttonGroup" class="flex space-x-4 mb-6">
 
-                    <button
-                            class="mt-5 group relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 text-sm font-medium text-black rounded-lg bg-gray-200 hover:bg-[linear-gradient(to_right,_#c2edda,_#a0d6d2)] hover:text-black focus:outline-none"
-                    >
+
+
+                    <form id="selectCategoryForm" method="get" th:action="@{/user/reports}">
+                        <button name="period" value="monthly" type="submit"
+                                th:class="'mt-5 group relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 text-sm font-medium rounded-lg ' +
+              (${period} == 'monthly' ?
+               'btn-active bg-gray-800 text-white' :
+               'text-black bg-gray-200 hover:bg-[linear-gradient(to_right,_#c2edda,_#a0d6d2)] hover:text-black')">
+
   <span
-          class="relative px-5 py-2.5 transition-all ease-in duration-200 bg-transparent rounded-md"
+          class=" relative px-5 py-2.5 transition-all ease-in duration-200  rounded-md"
   >
     Monthly
   </span>
-                        <div
-                                class="ease-in duration-300 opacity-0 group-hover:block group-hover:opacity-100 transition-all"
-                        >
                             <div
-                                    class="ease-in-out duration-500 -translate-y-4 pointer-events-none transition-all group-hover:-translate-y-16 absolute left-1/2 z-50 flex -translate-x-1/2 flex-col items-center rounded-sm text-center text-sm text-slate-300"
+                                    class="ease-in duration-300 opacity-0 group-hover:block group-hover:opacity-100 transition-all"
                             >
-                                <div class="rounded-sm bg-black py-1 px-2">
-                                    <p class="whitespace-nowrap">Click to see your monthly reports</p>
+                                <div
+                                        class=" tooltip-content ease-in-out duration-500 -translate-y-4 pointer-events-none transition-all group-hover:-translate-y-16 absolute left-1/2 z-50 flex -translate-x-1/2 flex-col items-center rounded-sm text-center text-sm text-slate-300"
+                                >
+                                    <div class="rounded-sm bg-black py-1 px-2">
+                                        <p class="whitespace-nowrap">Click to see your monthly reports</p>
+                                    </div>
+                                    <div class="h-0 w-fit border-l-8 border-r-8 border-t-8 border-transparent border-t-black"></div>
                                 </div>
-                                <div class="h-0 w-fit border-l-8 border-r-8 border-t-8 border-transparent border-t-black"></div>
                             </div>
-                        </div>
-                    </button>
+                        </button>
 
 
 
 
-                    <button
-                            class="mt-5 group relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 text-sm font-medium text-black rounded-lg bg-gray-200 hover:bg-[linear-gradient(to_right,_#c2edda,_#a0d6d2)] hover:text-black focus:outline-none"
-                    >
+                        <button  name="period" value="quarterly" type="submit"
+                                 th:class="'mt-5 group relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 text-sm font-medium rounded-lg ' +
+              (${period} == 'quarterly' ?
+               'btn-active bg-gray-800 text-white' :
+               'text-black bg-gray-200 hover:bg-[linear-gradient(to_right,_#c2edda,_#a0d6d2)] hover:text-black')">
   <span
           class="relative px-5 py-2.5 transition-all ease-in duration-200 bg-transparent rounded-md"
   >
     Quarterly
   </span>
-                        <div
-                                class="ease-in duration-300 opacity-0 group-hover:block group-hover:opacity-100 transition-all"
-                        >
                             <div
-                                    class="ease-in-out duration-500 -translate-y-4 pointer-events-none transition-all group-hover:-translate-y-16 absolute left-1/2 z-50 flex -translate-x-1/2 flex-col items-center rounded-sm text-center text-sm text-slate-300"
+                                    class="ease-in duration-300 opacity-0 group-hover:block group-hover:opacity-100 transition-all"
                             >
-                                <div class="rounded-sm bg-black py-1 px-2">
-                                    <p class="whitespace-nowrap">Click to see your quarterly reports</p>
+                                <div
+                                        class="tooltip-content ease-in-out duration-500 -translate-y-4 pointer-events-none transition-all group-hover:-translate-y-16 absolute left-1/2 z-50 flex -translate-x-1/2 flex-col items-center rounded-sm text-center text-sm text-slate-300"
+                                >
+                                    <div class="rounded-sm bg-black py-1 px-2">
+                                        <p class="whitespace-nowrap">Click to see your quarterly reports</p>
+                                    </div>
+                                    <div class="h-0 w-fit border-l-8 border-r-8 border-t-8 border-transparent border-t-black"></div>
                                 </div>
-                                <div class="h-0 w-fit border-l-8 border-r-8 border-t-8 border-transparent border-t-black"></div>
                             </div>
-                        </div>
-                    </button>
+                        </button>
 
 
-                    <button
-                            class="mt-5 group relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 text-sm font-medium text-black rounded-lg bg-gray-200 hover:bg-[linear-gradient(to_right,_#c2edda,_#a0d6d2)] hover:text-black focus:outline-none"
-                    >
+
+
+
+                        <button  name="period" value="yearly" type="submit"
+                                 th:class="'mt-5 group relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 text-sm font-medium rounded-lg ' +
+              (${period} == 'yearly' ?
+               'btn-active bg-gray-800 text-white' :
+               'text-black bg-gray-200 hover:bg-[linear-gradient(to_right,_#c2edda,_#a0d6d2)] hover:text-black')">
   <span
           class="relative px-5 py-2.5 transition-all ease-in duration-200 bg-transparent rounded-md"
   >
     Yearly
   </span>
-                        <div
-                                class="ease-in duration-300 opacity-0 group-hover:block group-hover:opacity-100 transition-all"
-                        >
                             <div
-                                    class="ease-in-out duration-500 -translate-y-4 pointer-events-none transition-all group-hover:-translate-y-16 absolute left-1/2 z-50 flex -translate-x-1/2 flex-col items-center rounded-sm text-center text-sm text-slate-300"
+                                    class="ease-in duration-300 opacity-0 group-hover:block group-hover:opacity-100 transition-all"
                             >
-                                <div class="rounded-sm bg-black py-1 px-2">
-                                    <p class="whitespace-nowrap">Click to see your yearly reports</p>
+                                <div
+                                        class="tooltip-content ease-in-out duration-500 -translate-y-4 pointer-events-none transition-all group-hover:-translate-y-16 absolute left-1/2 z-50 flex -translate-x-1/2 flex-col items-center rounded-sm text-center text-sm text-slate-300"
+                                >
+                                    <div class="rounded-sm bg-black py-1 px-2">
+                                        <p class="whitespace-nowrap">Click to see your yearly reports</p>
+                                    </div>
+                                    <div class="h-0 w-fit border-l-8 border-r-8 border-t-8 border-transparent border-t-black"></div>
                                 </div>
-                                <div class="h-0 w-fit border-l-8 border-r-8 border-t-8 border-transparent border-t-black"></div>
                             </div>
-                        </div>
-                    </button>
+                        </button>
+
+
+                    </form>
 
 
 
@@ -308,7 +324,7 @@
 
 <div th:fragment="scripts">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="text/javascript" th:src="@{/javascript/income-history-script.js}"></script>
+    <script type="text/javascript" th:src="@{/javascript/reports-page-script.js}"></script>
 </div>
 </body>
 </html>

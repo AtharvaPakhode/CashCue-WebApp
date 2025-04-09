@@ -1,4 +1,4 @@
-1.How to add page specific CSS in thymeleaf :
+1.How to add page specific CSS in thymeleaf :  --> include in every template
 
 e.g :
 ----------------------------------Base page head tag ----------------------------------
@@ -54,4 +54,36 @@ public class UserController {
 
 ========================================================================================================
 
-2.
+2. Concept: Dynamic Content Filtering with Multiple Submit Buttons in a Single Form --> include in (Reports.html)
+
+🔄 Form Submission with Multiple Buttons
+When building user interfaces that allow filtering or toggling between different views
+(e.g., by category, type, or time period), you can use multiple <button> elements inside a single <form>.
+Each button submits the form with a unique value, allowing the backend to determine which content to l
+oad based on the selected option.
+
+All buttons share the same form and endpoint.
+Each button includes a name and a unique value, acting as a filter input.
+Upon clicking a button, the form is submitted with its corresponding value.
+The backend receives this value and returns data accordingly, but the page itself remains the same (only the content changes dynamically).
+
+
+State Handling: Active vs. Hover
+To provide clear visual feedback:
+✅ Active State
+       Indicates the currently selected option.
+       Can be applied by checking the submitted value and conditionally assigning an active class.
+       Typically styled with a distinctive background color, text color, or shadow to stand out.
+
+🎯 Hover State
+        Provides a visual cue when a user hovers over any interactive element.
+        Often uses lighter colors, gradients, or animations to signal interactivity.
+        Should be overridden or hidden when the element is in an active state (to avoid conflicting styles).
+
+🎨 Implementation Tips
+        Use conditional class assignment (server-side rendering or frontend logic) to add/remove active styles.
+        Ensure that active styles override hover effects when needed.
+        Use clear visual differences for active and hover states to improve UX.
+        Keep styling logic consistent across all buttons for maintainability.
+
+========================================================================================================
