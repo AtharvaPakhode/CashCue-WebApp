@@ -114,35 +114,29 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div class="bg-white p-4 rounded shadow">
                         <div class="flex items-center space-x-2 mb-2">
-                            <i class="fas fa-wallet text-purple-500">
-                            </i>
-                            <span class="text-gray-500"> Total Expenses  </span>
+                            <i class="fas fa-wallet text-teal-400"></i>
+                            <span class="text-gray-600 font-bold">Total Expenses for <span th:text="${periodLabel}"></span></span>
                         </div>
-                        <div class="text-2xl font-bold text-gray-800">
-                            $2,850
-                        </div>
+                        <div class="text-2xl font-bold text-gray-800" th:text="'₹ ' + ${totalExpense}">--</div>
                     </div>
+
                     <div class="bg-white p-4 rounded shadow">
                         <div class="flex items-center space-x-2 mb-2">
-                            <i class="fas fa-university text-purple-500">
-                            </i>
-                            <span class="text-gray-500"> Total Income  </span>
+                            <i class="fas fa-university text-teal-400"></i>
+                            <span class="text-gray-600 font-bold">Total Income for <span th:text="${periodLabel}"></span></span>
                         </div>
-                        <div class="text-2xl font-bold text-gray-800">
-                            $3,500
-                        </div>
+                        <div class="text-2xl font-bold text-gray-800" th:text="'₹ ' + ${totalIncome}">--</div>
                     </div>
+
                     <div class="bg-white p-4 rounded shadow">
                         <div class="flex items-center space-x-2 mb-2">
-                            <i class="fas fa-piggy-bank text-purple-500">
-                            </i>
-                            <span class="text-gray-500">Net Savings  </span>
+                            <i class="fas fa-piggy-bank text-teal-400"></i>
+                            <span class="text-gray-600 font-bold">Net Savings for <span th:text="${periodLabel}"></span></span>
                         </div>
-                        <div class="text-2xl font-bold text-gray-800">
-                            $650
-                        </div>
+                        <div class="text-2xl font-bold text-gray-800" th:text="'₹ ' + ${netSavings}">--</div>
                     </div>
                 </div>
+
                 <!-- Expense Trends -->
                 <div class="mb-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4">
@@ -150,12 +144,12 @@
                     </h2>
                     <div class="bg-white p-4 rounded shadow">
                         <div class="flex items-center space-x-2 mb-2">
-                            <i class="fas fa-chart-line text-purple-500">
+                            <i class="fas fa-chart-line text-teal-400">
                             </i>
-                            <span class="text-gray-500">  Monthly Expense Trend  </span>
+                            <span class="text-gray-600 font-bold" th:text="${periodLabel2Description}"> Expense Trend  </span>
                         </div>
-                        <div class="text-gray-500">
-                            Line chart showing expense trends over the past 6 months
+                        <div class="text-gray-500" th:text="${periodTrendDescription}">
+                            Line chart showing expense trend
                         </div>
 
                         <button
@@ -190,9 +184,9 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="bg-white p-4 rounded shadow flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <i class="fas fa-chart-pie text-purple-500">
+                                <i class="fas fa-chart-pie text-teal-400">
                                 </i>
-                                <span class="text-gray-500"> Spending by Category  </span>
+                                <span class="text-gray-600 font-bold"> Spending by Category  </span>
                             </div>
                             <div class="text-gray-500">
                                 Pie chart showing distribution of expenses across categories
@@ -234,8 +228,7 @@
                     <div class="bg-white p-4 rounded shadow">
                         <div class="flex justify-between items-center mb-2">
                             <div class="flex items-center space-x-2">
-                                <i class="fas fa-utensils text-gray-500">
-                                </i>
+
                                 <span class="text-gray-800">         Food        </span>
                             </div>
                             <div class="text-gray-800">

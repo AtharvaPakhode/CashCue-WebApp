@@ -1,6 +1,7 @@
 package com.codelab.expensetracker.controllers;
 
 
+import com.codelab.expensetracker.ExpensetrackerApplication;
 import com.codelab.expensetracker.helper.CustomDisplayMessage;
 import com.codelab.expensetracker.models.Category;
 import com.codelab.expensetracker.models.Expense;
@@ -599,13 +600,121 @@ public String expenseHistory(
 
     @GetMapping("/reports")
     public String reports(@RequestParam(name = "period", required = false, defaultValue = "monthly") String period
-                          ,Model model,Principal principal){
+                          ,Model model,Principal principal) {
+        
+        
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
+
+        String duration = period;
+        Double totalExpense = null;
+        Double totalIncome = null;
+        Double netSavings = null;
+
+
+        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(LocalTime.MAX);
+
+
+        int month = LocalDate.now().getMonthValue();
+        int year =LocalDate.now().getYear();
+        LocalDate startDate;
+        LocalDate endDate;
         
-        model.addAttribute("user",user);
-        model.addAttribute("page","reports");
+         
+              
+        
+        switch (duration) {
+            case "monthly":
+                totalExpense = this.expenseRepository.findSumOfExpensesForCurrentMonth(user, startOfMonth, endOfMonth);
+                totalIncome = this.incomeRepository.findSumOfIncomeForCurrentMonth(user, startOfMonth, endOfMonth);
+                totalExpense = (totalExpense != null) ? totalExpense : 0.0;
+                totalIncome = (totalIncome != null) ? totalIncome : 0.0;
+                
+                netSavings=totalIncome-totalExpense;
+                break;
+
+            case "quarterly":
+                if (month >= 1 && month <= 3) {
+                    startDate = LocalDate.of(year, 1, 1);
+                    endDate = LocalDate.of(year, 3, 31);
+                } else if (month >= 4 && month <= 6) {
+                    startDate = LocalDate.of(year, 4, 1);
+                    endDate = LocalDate.of(year, 6, 30);
+                } else if (month >= 7 && month <= 9) {
+                    startDate = LocalDate.of(year, 7, 1);
+                    endDate = LocalDate.of(year, 9, 30);
+                } else {
+                    startDate = LocalDate.of(year, 10, 1);
+                    endDate = LocalDate.of(year, 12, 31);
+                }
+                LocalDateTime startOfQuarter = startDate.atStartOfDay();
+                LocalDateTime endOfQuarter = endDate.atTime(LocalTime.MAX);
+
+                totalExpense=this.expenseRepository.findSumOfExpenseForQuarter(user, startOfQuarter, endOfQuarter);
+                totalIncome=this.incomeRepository.findSumOfIncomeForQuarter(user, startOfQuarter, endOfQuarter);
+                totalExpense = (totalExpense != null) ? totalExpense : 0.0;
+                totalIncome = (totalIncome != null) ? totalIncome : 0.0;
+                
+                netSavings=totalIncome-totalExpense;
+                
+                break;
+
+            case "yearly":
+                startDate=LocalDate.of(year,1,1);
+                endDate=LocalDate.of(year,12,31);
+
+                LocalDateTime startOfYear = startDate.atStartOfDay();
+                LocalDateTime endOfYear = endDate.atTime(LocalTime.MAX);
+
+                totalIncome = this.incomeRepository.findSumOfIncomeForYear(user, startOfYear, endOfYear);
+                totalExpense = this.expenseRepository.findSumOfExpenseForYear(user, startOfYear, endOfYear);
+                totalExpense = (totalExpense != null) ? totalExpense : 0.0;
+                totalIncome = (totalIncome != null) ? totalIncome : 0.0;
+                
+                netSavings=totalIncome-totalExpense;
+                
+                break;
+
+            default:
+                System.out.println("Invalid option.");
+                break;
+        }
+
+
+        
+
+        model.addAttribute("user", user);
+        model.addAttribute("page", "reports");
         model.addAttribute("period", period);
+        model.addAttribute("totalExpense", totalExpense);
+        model.addAttribute("totalIncome", totalIncome);
+        model.addAttribute("netSavings", netSavings);
+
+        
+        //for dynamic trends
+        String periodLabel = switch (period.toLowerCase()) {
+            case "monthly" -> "current month";
+            case "quarterly" -> "current quarter";
+            case "yearly" -> "current year";
+            default -> "Selected Period";
+        };
+        model.addAttribute("periodLabel", periodLabel);
+
+        //for dynamic trends
+        String periodLabel2 = switch (period.toLowerCase()) {
+            case "monthly" -> "Monthly";
+            case "quarterly" -> "Quarterly";
+            case "yearly" -> "Yearly";
+            default -> "Selected Period";
+        };
+        String periodLabel2Description = periodLabel2 + " Expense Trend";
+        String periodTrendDescription = "Line chart showing " + periodLabel2.toLowerCase() + " expense trends";
+
+        model.addAttribute("periodTrendDescription", periodTrendDescription);
+        model.addAttribute("periodLabel2Description", periodLabel2Description);
+        
+        
         return "user-access-url/reports";
     }
 

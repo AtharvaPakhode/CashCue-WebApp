@@ -33,7 +33,16 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
                                             @Param("startOfMonth") LocalDateTime startOfMonth,
                                             @Param("endOfMonth") LocalDateTime endOfMonth);
 
-    
+
+    @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfQuarter AND :endOfQuarter")
+    Double findSumOfExpenseForQuarter(@Param("user") User user,
+                                     @Param("startOfQuarter") LocalDateTime startOfQuarter,
+                                     @Param("endOfQuarter") LocalDateTime endOfQuarter);
+
+    @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfYear AND :endOfYear")
+    Double findSumOfExpenseForYear(@Param("user") User user,
+                                  @Param("startOfYear") LocalDateTime startOfYear,
+                                  @Param("endOfYear") LocalDateTime endOfYear);
 
 
 
