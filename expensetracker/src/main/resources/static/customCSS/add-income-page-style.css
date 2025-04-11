@@ -29,3 +29,31 @@
     animation: fadeInSlow 1.2s ease-in forwards;
     opacity: 0;
 }
+
+
+
+
+#save-income {
+  background-color: #1f2937;      /* Tailwind's bg-gray-800 */
+  color: #ffffff;                 /* white text */
+  border-radius: 0.5rem;          /* same as rounded-lg */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* similar to shadow-md */
+  }
+
+ #save-income:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+
+#cancel-income {
+  background-color: #1f2937;      /* Tailwind's bg-gray-800 */
+  color: #ffffff;                 /* white text */
+  border-radius: 0.5rem;          /* same as rounded-lg */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* similar to shadow-md */
+  }
+
+#cancel-income:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

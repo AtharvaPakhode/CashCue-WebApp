@@ -34,6 +34,7 @@
     position: absolute;       /* Position profile at the bottom */
     bottom: 0;                /* Align it to the bottom */
     width: 100%;              /* Make it full-width */
+    height:20vh;
     padding: 10px;            /* Padding around profile section */
     background: linear-gradient(to right, #c2edda, #a0d6d2) !important;  /*  background for profile */
     text-align: center;       /* Center the profile content */
@@ -41,16 +42,51 @@
 
 .profile img {
     border-radius: 50%;       /* Make the profile picture round */
-    width: 40px;              /* Profile picture size */
-    height: 40px;             /* Profile picture size */
+    width: 70px;              /* Profile picture size */
+    height: 70px;             /* Profile picture size */
+    margin-top: 15px;
+
 }
 
 .profile .username {
     color: black;             /* White text for the username */
     font-size: 16px;          /* Font size for the username */
-    margin-top: 5px;          /* Space between profile image and username */
+    margin-top: 15px;          /* Space between profile image and username */
     font-family: 'Roboto', sans-serif;
 }
+
+/* Keep the existing enhancements */
+.profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeSlideIn 0.8s ease-out;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: linear-gradient(to bottom right, #ffffff, #f0f0f5);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+
 
 
 /*---------------sidebar style end---------------*/
@@ -93,8 +129,8 @@
 }
 
 .navbar .nav-links a:hover {
-    background-color: #575757; /* Hover background color */
-    color: white;              /* White text on hover */
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
+    color: black;              /* White text on hover */
 }
 
 /* Make navbar and sidebar responsive on smaller screens */

@@ -74,7 +74,8 @@
 
     <!-- Profile Section at the bottom -->
     <div class="profile">
-        <img src="" alt="User Profile">
+        <img th:src="${user.userImageURL == 'userDefault.png' ? '/images/userDefault.png' : '/userprofileimages/' + user.userImageURL}"
+             alt="User Profile">
         <div class="username" th:text="${user.userName.toUpperCase()}"></div>
     </div>
 </div>
