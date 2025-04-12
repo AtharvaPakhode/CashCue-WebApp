@@ -52,12 +52,12 @@ document.getElementById('close-modal-btn').addEventListener('click', closeEditMo
 // Attach event listeners to edit buttons
 document.querySelectorAll('.edit-btn').forEach(button => {
     button.addEventListener('click', (e) => {
-        const name = e.target.dataset.name;
-        const budget = e.target.dataset.budget;
+        const btn = e.target.closest('.edit-btn'); // ensures you always get the right element
+        const name = btn.dataset.name;
+        const budget = btn.dataset.budget;
         showEditModal(name, budget);
     });
 });
-
 // Function to update the category (You can call your API here)
 const updateCategory = (name) => {
     console.log(name);

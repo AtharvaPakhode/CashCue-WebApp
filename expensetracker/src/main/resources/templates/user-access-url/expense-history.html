@@ -25,9 +25,42 @@
       <div class="flex justify-between items-center">
         <h2 class="text-xl font-bold animate-slide-fade-in">Recent Transactions</h2>
 
-        <button class=" text-black px-4 py-2 rounded  animate-slide-fade-in " id="filterTransactions">
-          Filter Transactions
+        <button
+                id="filterTransactions"
+                class="text-grey-50 mr-10 px-4 py-2 rounded animate-slide-fade-in group relative w-56 h-10 flex items-center justify-center overflow-hidden"
+        >
+          <!-- Text span -->
+          <span class="absolute left-0 w-full text-center text-grey-50 font-semibold transform transition-all duration-300 group-hover:-translate-x-full">
+    Filter Transactions
+  </span>
+
+          <!-- Icon span -->
+          <span class="absolute left-full w-full flex items-center justify-center text-grey-50 transform transition-all duration-300 group-hover:-translate-x-full">
+    <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+    >
+      <!-- Filter icon -->
+      <line x1="4" y1="21" x2="4" y2="14" />
+      <line x1="4" y1="10" x2="4" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12" y2="3" />
+      <line x1="20" y1="21" x2="20" y2="16" />
+      <line x1="20" y1="12" x2="20" y2="3" />
+      <line x1="1" y1="14" x2="7" y2="14" />
+      <line x1="9" y1="8" x2="15" y2="8" />
+      <line x1="17" y1="16" x2="23" y2="16" />
+    </svg>
+  </span>
         </button>
+
+
 
       </div>
 
@@ -132,9 +165,35 @@
 
 
         <div class="flex space-x-4">
-          <button class="text-black px-4 py-2 rounded" type="submit" id="applyFilters">
-            Apply Filters
+          <button
+                  id="applyFilters"
+                  type="submit"
+                  class="text-grey-50 px-4 py-2 rounded group relative w-56 h-10 flex items-center justify-center overflow-hidden"
+          >
+            <!-- Text -->
+            <span class=" text-grey-50 absolute left-0 w-full text-center  font-semibold transform transition-all duration-300 group-hover:translate-x-full">
+    Apply Filters
+  </span>
+
+            <!-- Icon -->
+            <span class="absolute -left-full w-full flex items-center justify-center text-grey-50 transform transition-all duration-300 group-hover:translate-x-full">
+    <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+    >
+      <!-- Check Circle Icon -->
+      <path d="M9 12l2 2 4-4" />
+      <circle cx="12" cy="12" r="10" />
+    </svg>
+  </span>
           </button>
+
           <button class="border border-gray-300 text-gray-700 px-4 py-2 rounded" type="reset">
             Reset
           </button>
@@ -144,30 +203,24 @@
       </form>
 
 
-      <div class="mt-3 animate-fade-in-slow" th:if="${userTransactions != null}">
-        <div class="space-y-4" th:each="transaction : ${userTransactions}">
+      <div class="mt-5 animate-fade-in-slow" th:if="${userTransactions != null}">
+        <div th:each="transaction : ${userTransactions}" class="bg-white p-4 rounded-2xl shadow-md hover:shadow-lg transition mb-3 border-1 border-[#1f2937] flex justify-between items-center">
 
-          <!-- Each transaction box -->
-          <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center mt-2">
+          <!-- Left: Title and Date -->
+          <div>
+            <p class="text-xl font-semibold text-gray-800" th:text="${transaction.name}">Expense Title</p>
+            <p class="text-sm text-gray-500" th:text="${#temporals.format(transaction.localDateTime, 'MMMM dd, yyyy')}">Expense Date</p>
+          </div>
 
-            <!-- Left: Title and Date -->
-            <div class="flex items-center space-x-4">
-              <div>
-                <p class="text-gray-800 font-bold" th:text="${transaction.name}">Expense Title</p>
-                <p class="text-gray-500" th:text="${#temporals.format(transaction.localDateTime, 'MMMM dd, yyyy')}">Expense Date</p>
-              </div>
-            </div>
-
-            <!-- Right: Category and Amount -->
-            <div class="flex items-center space-x-4">
-              <p class="text-gray-500" th:text="${transaction.category.categoryName}">Category Name</p>
-              <p class="font-semibold text-red-600" th:text="${transaction.amount}">-$0.00</p>
-            </div>
-
+          <!-- Right: Category and Amount -->
+          <div class="text-right">
+            <p class="text-sm text-gray-500" th:text="${transaction.category.categoryName}">Category</p>
+            <p class="text-lg font-bold text-red-600" th:text="'₹' + ${transaction.amount}">-₹0.00</p>
           </div>
 
         </div>
       </div>
+
 
 
       <nav class="mt-6 flex justify-center animate-fade-in-slow" th:if="${totalPages > 0}">

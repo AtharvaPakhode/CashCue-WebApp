@@ -326,7 +326,7 @@ public class UserAccessUrlController {
         User user = userRepository.getUserByName(name);
 
         model.addAttribute("user", user);
-        model.addAttribute("page", "expenseHistory");
+        model.addAttribute("page", "incomeHistory");
 
         Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "dateTime"));
 
