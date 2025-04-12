@@ -8,10 +8,9 @@ import com.codelab.expensetracker.repositories.IncomeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ReportService {
@@ -138,5 +137,51 @@ public class ReportService {
     }
 
     return paddedSums;
+    }
+
+
+    public Map<String,Double> getCategoryAndAmountOfCurrentMonth(User user){
+        List<Object[]> currentMonthCategorySums = expenseRepository.getCurrentMonthCategorySums(user);
+        Map<java.lang.String, java.lang.Double> categorySums = new HashMap<>();
+
+        for (Object[] row : currentMonthCategorySums) {
+            java.lang.String category = (java.lang.String) row[0];
+            java.lang.Double amount = ((Number) row[1]).doubleValue();
+            categorySums.put(category, amount);
+        }
+        return categorySums;
+    }
+
+    public Map<String,Double> getCategoryAndAmountOfCurrentQuarter(User user){
+        List<Object[]> quarterlyCategoryExpenseSums = expenseRepository.getQuarterlyCategoryExpenseSums(user);
+        Map<String,Double> categorySums = new HashMap<>();
+
+        // Get current quarter in Java
+        int currentMonth = LocalDate.now().getMonthValue();
+        int currentQuarter = (currentMonth - 1) / 3 + 1;
+
+        for (Object[] row : quarterlyCategoryExpenseSums) {
+            int quarter = ((Number) row[0]).intValue();
+            String category = (String) row[1];
+            Double amount = ((Number) row[2]).doubleValue();
+
+            if (quarter == currentQuarter) {
+                categorySums.put(category, amount);
+            }
+        }
+        return categorySums;
+    }
+
+    public Map<String, Double> getCategoryAndAmountOfCurrentYear(User user) {
+        List<Object[]> currentYearCategorySums = expenseRepository.getCurrentYearCategorySums(user);
+        Map<String, Double> categorySums = new HashMap<>();
+
+        for (Object[] row : currentYearCategorySums) {
+            String category = (String) row[0];
+            Double amount = ((Number) row[1]).doubleValue();
+            categorySums.put(category, amount);
+        }
+
+        return categorySums;
     }
 }

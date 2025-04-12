@@ -213,17 +213,17 @@
                                 </i>
                                 <span class="text-gray-600 font-bold"> Spending by Category  </span>
                             </div>
-                            <div class="text-gray-500">
+                            <div class="text-gray-500" th:text="${periodLabel3Description}">
                                 Pie chart showing distribution of expenses across categories
                             </div>
 
-                            <button
+                            <button  id="toggleChartBtnCategory"
                                     type="submit"
                                     class="flex justify-center gap-2 mt-2 items-center shadow-lg text-base bg-gray-200 backdrop-blur-md font-semibold isolation-auto border-gray-50 relative z-10 px-3.5 py-1.5 overflow-hidden border-2 rounded-full group
     before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0
     before:rounded-full before:bg-[linear-gradient(to_right,_#c2edda,_#a0d6d2)] before:-z-10 before:aspect-square before:hover:scale-150"
                             >
-                                Click to view
+                                <span id="togglePieChartText">Click to view</span>
                                 <svg
                                         class="w-6 h-6 justify-end group-hover:rotate-90 group-hover:bg-gray-50 text-gray-50 ease-linear duration-300 rounded-full border border-gray-700 group-hover:border-none p-1.5 rotate-45"
                                         viewBox="0 0 16 19"
@@ -235,6 +235,21 @@
                                     ></path>
                                 </svg>
                             </button>
+
+                            <div id="CategoryChartContainer" class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6 mt-5 hidden">
+                                <h2 class="text-2xl font-bold mb-4 text-center" >Distribution of Expenses</h2>
+                                <canvas id="categoryExpenseChart" class="w-full h-60"></canvas>
+                            </div>
+
+                            <script th:inline="javascript">
+                                const chartDataCategory = {
+                                    category: /*[[${categories}]]*/,
+                                    expense: /*[[${expenses}]]*/
+                                };
+
+                                console.log(chartDataCategory);
+                            </script>
+
 
 
 

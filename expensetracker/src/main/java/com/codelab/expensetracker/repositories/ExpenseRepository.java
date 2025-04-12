@@ -77,4 +77,51 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
     List<Object[]> getYearlyExpenseSumsWithYear(@Param("user") User user);
 
 
+
+
+    @Query(value = "SELECT c.categoryName, SUM(e.amount) " +
+            "FROM Expense e " +
+            "JOIN Category c ON e.category.categoryName = c.categoryName " +
+            "WHERE e.user = :user " +
+            "AND c.user = :user " +
+            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+            "AND EXTRACT(MONTH FROM e.dateTime) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+            "GROUP BY c.categoryName", nativeQuery = false)
+    List<Object[]> getCurrentMonthCategorySums(@Param("user") User user);
+
+
+
+    @Query("SELECT " +
+            "  CASE " +
+            "    WHEN EXTRACT(MONTH FROM e.dateTime) BETWEEN 1 AND 3 THEN 1 " +
+            "    WHEN EXTRACT(MONTH FROM e.dateTime) BETWEEN 4 AND 6 THEN 2 " +
+            "    WHEN EXTRACT(MONTH FROM e.dateTime) BETWEEN 7 AND 9 THEN 3 " +
+            "    ELSE 4 " +
+            "  END AS quarter, " +
+            "  e.category.categoryName, " +  // Reference the categoryName field
+            "  SUM(e.amount) " +
+            "FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+            "GROUP BY quarter, e.category.categoryName " +
+            "ORDER BY quarter ASC")
+    List<Object[]> getQuarterlyCategoryExpenseSums(@Param("user") User user);
+
+
+
+
+    @Query("SELECT e.category.categoryName, SUM(e.amount) " +
+            "FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+            "GROUP BY e.category.categoryName")
+    List<Object[]> getCurrentYearCategorySums(@Param("user") User user);
+
+
+
+
+
+
+
+
 }

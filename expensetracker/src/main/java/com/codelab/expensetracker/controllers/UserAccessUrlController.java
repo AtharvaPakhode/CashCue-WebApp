@@ -40,14 +40,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.Year;
+import java.util.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 
+import java.text.NumberFormat;
 
 @Controller
 @RequestMapping("/user")
@@ -113,12 +115,7 @@ public class UserAccessUrlController {
             // Calculate balance and savings
             totalBalance = sumOfIncomeByUser - sumOfExpenseByUser;
             monthlySavings = monthlyIncome - monthlyExpense;
-
-            // Print debug info
-            System.out.println("Total Balance    : ₹" + String.format("%.2f", totalBalance));
-            System.out.println("Monthly Income   : ₹" + String.format("%.2f", monthlyIncome));
-            System.out.println("Monthly Expense  : ₹" + String.format("%.2f", monthlyExpense));
-            System.out.println("Monthly Savings  : ₹" + String.format("%.2f", monthlySavings));
+           
 
             // Add to model
             model.addAttribute("totalBalance", totalBalance);
@@ -716,9 +713,19 @@ public String expenseHistory(
         String periodLabel2Description = periodLabel2 + " Expense Trend";
         String periodTrendDescription = "Line chart showing " + periodLabel2.toLowerCase() + " expense trends";
 
+
+        //for dynamic trends
+        String periodLabel3 = switch (period.toLowerCase()) {
+            case "monthly" -> "for current month";
+            case "quarterly" -> "for current quarter";
+            case "yearly" -> "for current year";
+            default -> "Selected Period";
+        };
+        String periodLabel3Description = "Pie chart showing distribution of expenses across categories "+periodLabel3;
+        
         model.addAttribute("periodTrendDescription", periodTrendDescription);
         model.addAttribute("periodLabel2Description", periodLabel2Description);
-
+        model.addAttribute("periodLabel3Description",periodLabel3Description);
 
         List<Double>income;
         List<Double>expense;
@@ -734,6 +741,11 @@ public String expenseHistory(
                 model.addAttribute("income", income);
                 model.addAttribute("expense", expense);
                 model.addAttribute("month", months);
+
+                Map<String,Double>expensesByCategory = reportService.getCategoryAndAmountOfCurrentMonth(user);
+                model.addAttribute("categories", new ArrayList<>(expensesByCategory.keySet()));
+                model.addAttribute("expenses", new ArrayList<>(expensesByCategory.values()));
+                
                 break;
             }
             case "quarterly"->{
@@ -743,6 +755,11 @@ public String expenseHistory(
                 model.addAttribute("income", income);
                 model.addAttribute("expense", expense);
                 model.addAttribute("quarter", quarters);
+
+                Map<String,Double>expensesByCategory = reportService.getCategoryAndAmountOfCurrentQuarter(user);
+                model.addAttribute("categories", new ArrayList<>(expensesByCategory.keySet()));
+                model.addAttribute("expenses", new ArrayList<>(expensesByCategory.values()));
+                
                 break;
             }
             case "yearly"->{
@@ -750,7 +767,7 @@ public String expenseHistory(
                 expense = this.reportService.getYearlyExpenseSums(user);
 
                 // Get the current year
-                int currentYear = java.time.Year.now().getValue();
+                int currentYear = Year.now().getValue();
 
                 // Generate the year list as [current year - 4, current year - 3, current year - 2, current year - 1, current year]
                 years = new ArrayList<>();
@@ -761,12 +778,27 @@ public String expenseHistory(
                 model.addAttribute("income", income);
                 model.addAttribute("expense", expense);
                 model.addAttribute("year", years);
+
+                Map<String,Double>expensesByCategory = reportService.getCategoryAndAmountOfCurrentYear(user);
+                model.addAttribute("categories", new ArrayList<>(expensesByCategory.keySet()));
+                model.addAttribute("expenses", new ArrayList<>(expensesByCategory.values()));
+                
                 break;
             }
             default->{
                 System.out.println("invalid");
             }
-        };
+            
+          };
+
+
+
+
+        
+        
+        
+
+
         
         
         

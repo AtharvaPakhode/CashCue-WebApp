@@ -92,3 +92,52 @@ const toggleBtn = document.getElementById('toggleChartBtn');
         chartContainer.classList.toggle('hidden');
         toggleText.textContent = isHidden ? 'Click to hide' : 'Click to view';
     });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById("categoryExpenseChart").getContext("2d");
+
+    new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: chartDataCategory.category,
+            datasets: [{
+                label: "Expenses by Category",
+                data: chartDataCategory.expense,
+                backgroundColor: [
+                    "#FF6B6B", // Vibrant Red
+                    "#4ECDC4", // Teal
+                    "#FFD93D", // Bright Yellow
+                    "#1A535C", // Deep Blue
+                    "#FF9F1C", // Orange
+                    "#6A4C93"  // Rich Purple
+                ],
+                borderColor: "#ffffff",
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "bottom"
+                },
+                title: {
+                    display: true,
+                    text: "Expenses by Category"
+                }
+            }
+        }
+    });
+});
+
+
+const PieToggleBtn = document.getElementById('toggleChartBtnCategory');
+    const PiechartContainer = document.getElementById('CategoryChartContainer');
+    const PieToggleText = document.getElementById('togglePieChartText');
+
+    PieToggleBtn.addEventListener('click', () => {
+        const isHidden = PiechartContainer.classList.contains('hidden');
+        PiechartContainer.classList.toggle('hidden');
+        PieToggleText.textContent = isHidden ? 'Click to hide' : 'Click to view';
+    });

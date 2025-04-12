@@ -114,23 +114,39 @@
                 <!-- Category List -->
                 <div class="space-y-4  animate-fade-in-slow">
                     <div th:if="${categories != null}">
-                        <div th:each="category : ${categories}" style="border: 3px solid #c2edda" class="flex items-center justify-between p-2 bg-white rounded-lg shadow mb-2">
+                        <div th:each="category : ${categories}" class="flex items-center justify-between p-4 bg-white rounded-2xl shadow-md hover:shadow-lg transition mb-3 border-2 border-[#c2edda]">
                             <div class="flex items-center">
                                 <div>
-                                    <div class="ml-2 font-bold" th:text="${category.categoryName}"></div>
-                                    <div class="ml-2 text-gray-500">
-                                        Budget: <span th:text="${category.categoryMonthlyBudget}"></span> Rs/month
+                                    <div class="ml-2 text-xl font-semibold text-gray-800" th:text="${category.categoryName}"></div>
+                                    <div class="ml-2 text-sm text-gray-500">
+                                        Budget: <span class="text-green-600 font-medium" th:text="${category.categoryMonthlyBudget}"></span> Rs/month
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Edit and Delete Buttons -->
-                            <div class="flex">
-                                <i class="fas fa-edit text-black cursor-pointer mr-2 edit-btn" th:data-name="${category.categoryName}" th:data-budget="${category.categoryMonthlyBudget}" title="Edit Category"></i>
-                                <i class="fas fa-trash text-black cursor-pointer mr-5 delete-btn" th:data-name="${category.categoryName}" title="Delete Category"></i>
+                            <!-- Edit and Delete Buttons (SVGs) -->
+                            <div class="flex items-center gap-4 mr-3">
+                                <!-- Edit Button -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600 hover:text-blue-800 cursor-pointer edit-btn transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                     th:data-name="${category.categoryName}"
+                                     th:data-budget="${category.categoryMonthlyBudget}"
+                                     title="Edit Category">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+
+                                <!-- Delete Button -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600 hover:text-red-800 cursor-pointer delete-btn transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                     th:data-name="${category.categoryName}"
+                                     title="Delete Category">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m4 0H5"/>
+                                </svg>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
 
                 <!-- Pagination Section -->
