@@ -12,6 +12,7 @@ import com.codelab.expensetracker.repositories.ExpenseRepository;
 import com.codelab.expensetracker.repositories.IncomeRepository;
 import com.codelab.expensetracker.repositories.UserRepository;
 import com.codelab.expensetracker.services.CategoryService;
+import com.codelab.expensetracker.services.ReportService;
 import com.codelab.expensetracker.specification.ExpenseSpecification;
 import com.codelab.expensetracker.specification.IncomeSpecification;
 import jakarta.servlet.http.HttpSession;
@@ -40,6 +41,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import java.time.LocalDate;
@@ -68,6 +70,9 @@ public class UserAccessUrlController {
 
     @Autowired
     private ExpenseSpecification ExpenseSpecifications;
+    
+    @Autowired
+    private ReportService reportService;
 
 
 
@@ -713,6 +718,56 @@ public String expenseHistory(
 
         model.addAttribute("periodTrendDescription", periodTrendDescription);
         model.addAttribute("periodLabel2Description", periodLabel2Description);
+
+
+        List<Double>income;
+        List<Double>expense;
+        List<String> months;
+        List<String>quarters;
+        List<String>years;
+        // for monthly trends
+          switch (period.toLowerCase()) {
+            case "monthly"->{
+                income= this.reportService.getMonthlyIncomeSums(user);
+                expense= this.reportService.getMonthlyExpenseSums(user);
+                months = Arrays.asList("January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December");
+                model.addAttribute("income", income);
+                model.addAttribute("expense", expense);
+                model.addAttribute("month", months);
+                break;
+            }
+            case "quarterly"->{
+                income= this.reportService.getQuarterlyIncomeSums(user);
+                expense= this.reportService.getQuarterlyExpenseSums(user);
+                quarters = Arrays.asList("Q1", "Q2", "Q3", "Q4");
+                model.addAttribute("income", income);
+                model.addAttribute("expense", expense);
+                model.addAttribute("quarter", quarters);
+                break;
+            }
+            case "yearly"->{
+                income = this.reportService.getYearlyIncomeSums(user);
+                expense = this.reportService.getYearlyExpenseSums(user);
+
+                // Get the current year
+                int currentYear = java.time.Year.now().getValue();
+
+                // Generate the year list as [current year - 4, current year - 3, current year - 2, current year - 1, current year]
+                years = new ArrayList<>();
+                for (int i = -4; i <= 0; i++) {
+                    years.add(String.valueOf(currentYear + i));
+                }
+
+                model.addAttribute("income", income);
+                model.addAttribute("expense", expense);
+                model.addAttribute("year", years);
+                break;
+            }
+            default->{
+                System.out.println("invalid");
+            }
+        };
+        
         
         
         return "user-access-url/reports";

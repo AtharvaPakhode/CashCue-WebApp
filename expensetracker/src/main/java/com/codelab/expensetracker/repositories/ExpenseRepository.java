@@ -46,4 +46,35 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
 
 
 
+    @Query("SELECT EXTRACT(MONTH FROM e.dateTime) AS month, COALESCE(SUM(e.amount), 0) " +
+            "FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+            "GROUP BY EXTRACT(MONTH FROM e.dateTime) " +
+            "ORDER BY month ASC")
+    List<Object[]> getMonthlyExpenseSumsWithMonth(@Param("user") User user);
+
+    @Query("SELECT " +
+            "  CASE " +
+            "    WHEN EXTRACT(MONTH FROM e.dateTime) BETWEEN 1 AND 3 THEN 1 " +
+            "    WHEN EXTRACT(MONTH FROM e.dateTime) BETWEEN 4 AND 6 THEN 2 " +
+            "    WHEN EXTRACT(MONTH FROM e.dateTime) BETWEEN 7 AND 9 THEN 3 " +
+            "    ELSE 4 " +
+            "  END AS quarter, " +
+            "  COALESCE(SUM(e.amount), 0) " +
+            "FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+            "GROUP BY quarter " +
+            "ORDER BY quarter ASC")
+    List<Object[]> getQuarterlyExpenseSumsWithQuarter(@Param("user") User user);
+
+    @Query("SELECT EXTRACT(YEAR FROM e.dateTime) AS year, COALESCE(SUM(e.amount), 0) " +
+            "FROM Expense e " +
+            "WHERE e.user = :user " +
+            "GROUP BY EXTRACT(YEAR FROM e.dateTime) " +
+            "ORDER BY year ASC")
+    List<Object[]> getYearlyExpenseSumsWithYear(@Param("user") User user);
+
+
 }
