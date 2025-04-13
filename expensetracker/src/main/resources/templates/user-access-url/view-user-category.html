@@ -114,7 +114,7 @@
                 <!-- Category List -->
                 <div class="space-y-4  animate-fade-in-slow">
                     <div th:if="${categories != null}">
-                        <div th:each="category : ${categories}" class="flex items-center justify-between p-4 bg-white rounded-2xl shadow-md hover:shadow-lg transition mb-3 border-2 border-[#c2edda]">
+                        <div th:each="category : ${categories}" class="flex items-center justify-between p-4 bg-white rounded-2xl shadow-md hover:shadow-lg transition mb-3 border-1 border-[#1f2937]">
                             <div class="flex items-center">
                                 <div>
                                     <div class="ml-2 text-xl font-semibold text-gray-800" th:text="${category.categoryName}"></div>
@@ -150,33 +150,40 @@
                 </div>
 
                 <!-- Pagination Section -->
-                <nav aria-label="Page navigation example" style="margin-top: 20px;" th:if="${totalPages > 0}" class="animate-fade-in-slow">
-                    <ul class="pagination justify-content-center">
+                <nav class="mt-6 flex justify-center animate-fade-in-slow" th:if="${totalPages > 0}">
+                    <ul class="flex space-x-1">
+
                         <!-- Previous Page Button -->
-                        <li class="page-item" th:if="${currentPage > 0}">
-                            <a class="page-link" th:href="@{/user/category/{page}(page=${currentPage-1})}"
-                               style="background-color:#c2edda;color:black" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
+                        <li th:if="${currentPage > 0}">
+                            <a th:href="@{/user/category/{page}(page=${currentPage - 1})}"
+                               class="page-link px-3 py-1 rounded"
+                               style="background-color:#1f2937; color:white">
+                                &laquo;
                             </a>
                         </li>
 
                         <!-- Page Number Links -->
-                        <li th:classappend="${currentPage == i ? 'active' : ''}" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item">
-                            <a class="page-link" th:href="@{/user/category/{page}(page=${i})}"
-                               style="background-color: #c2edda; color:black">
-                                <span th:text="${i + 1}"></span> <!-- Display page number starting from 1 -->
+                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                            <a th:href="@{/user/category/{page}(page=${i})}"
+                               th:classappend="${i == currentPage} ? 'ring-2 ring-offset-1 ring-teal-400 font-semibold' : ''"
+                               class="page-link px-3 py-1 rounded"
+                               style="background-color:#1f2937; color:white">
+                                <span th:text="${i + 1}"></span>
                             </a>
                         </li>
 
                         <!-- Next Page Button -->
-                        <li class="page-item" th:if="${currentPage + 1 < totalPages}">
-                            <a class="page-link" th:href="@{/user/category/{page}(page=${currentPage+1})}"
-                               style="background-color: #c2edda;color:black" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
+                        <li th:if="${currentPage + 1 < totalPages}">
+                            <a th:href="@{/user/category/{page}(page=${currentPage + 1})}"
+                               class="page-link px-3 py-1 rounded"
+                               style="background-color:#1f2937; color:white">
+                                &raquo;
                             </a>
                         </li>
+
                     </ul>
                 </nav>
+
 
                 <!-- No Categories Found Message -->
                 <div th:if="${totalPages == 0}" class="text-center text-gray-500 animate-fade-in-slow">

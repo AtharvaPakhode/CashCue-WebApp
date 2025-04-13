@@ -75,7 +75,7 @@
           Category
         </label>
 
-        <div class="max-h-20 overflow-y-auto space-y-2 pr-1 custom-scroll">
+        <div class="max-h-40 overflow-y-auto space-y-2 pr-1 custom-scroll scroll-smooth">
           <div th:each="category : ${userCategories}" class="checkbox-wrapper-46">
             <input type="checkbox"
                    th:id="'cbx-46-' + ${category.categoryName}"
@@ -224,7 +224,7 @@
 
 
       <nav class="mt-6 flex justify-center animate-fade-in-slow" th:if="${totalPages > 0}">
-        <ul class="flex space-x-2">
+        <ul class="flex space-x-1">
 
           <!-- Previous Page -->
           <li th:if="${currentPage > 0}">
@@ -236,14 +236,13 @@
                 startDate=${startDate},
                 endDate=${endDate})}"
                class="page-link px-3 py-1 rounded"
-               style="background-color:#c2edda; color:black">
+               style="background-color:#1f2937; color:white">
               &laquo;
             </a>
           </li>
 
           <!-- Page Numbers -->
-          <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-              th:classappend="${i == currentPage} ? 'font-bold underline'">
+          <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
             <a th:href="@{/user/expense-history/{page}(page=${i},
                 categories=${filterCategories},
                 minAmount=${minAmount},
@@ -251,8 +250,9 @@
                 paymentMethod=${paymentMethod},
                 startDate=${startDate},
                 endDate=${endDate})}"
+               th:classappend="${i == currentPage} ? 'ring-2 ring-offset-1 ring-teal-400 font-semibold' : ''"
                class="page-link px-3 py-1 rounded"
-               style="background-color:#c2edda; color:black">
+               style="background-color:#1f2937; color:white">
               <span th:text="${i + 1}"></span>
             </a>
           </li>
@@ -267,7 +267,7 @@
                 startDate=${startDate},
                 endDate=${endDate})}"
                class="page-link px-3 py-1 rounded"
-               style="background-color:#c2edda; color:black">
+               style="background-color:#1f2937; color:white">
               &raquo;
             </a>
           </li>

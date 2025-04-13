@@ -346,9 +346,7 @@ public class UserAccessUrlController {
 
         Page<Income> filteredIncomes = incomeRepository.findAll(spec, pageable);
         
-        for(Income f : filteredIncomes){
-            System.out.println(f.toString());
-        }
+        
 
         model.addAttribute("userTransactions", filteredIncomes);
         model.addAttribute("totalPages", filteredIncomes.getTotalPages());

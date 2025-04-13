@@ -94,60 +94,97 @@
 
 /* page animation start------------------------------------------------------------------------------ */
 
-/* Slide and fade for heading */
-@keyframes slideFadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+ /* Slide and fade for heading */
+ @keyframes slideFadeIn {
+     0% {
+         opacity: 0;
+         transform: translateY(-20px);
+     }
+     100% {
+         opacity: 1;
+         transform: translateY(0);
+     }
+ }
 
-/* Fade for form */
-@keyframes fadeInSlow {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
+ /* Fade for form */
+ @keyframes fadeInSlow {
+     from {
+         opacity: 0;
+     }
+     to {
+         opacity: 1;
+     }
+ }
 
-.animate-slide-fade-in {
-    animation: slideFadeIn 0.8s ease-out forwards;
-    opacity: 0;
-}
+ .animate-slide-fade-in {
+     animation: slideFadeIn 0.8s ease-out forwards;
+     opacity: 1;
+ }
 
-.animate-fade-in-slow {
-    animation: fadeInSlow 1.2s ease-in forwards;
-    opacity: 0;
-}
+ .animate-fade-in-slow {
+     animation: fadeInSlow 1.2s ease-in forwards;
+     opacity: 0;
+ }
 
-/* page animation end------------------------------------------------------------------------------ */
+ /* page animation end------------------------------------------------------------------------------ */
 
-#filterTransactions {
-  background-color: #1f2937;      /* Tailwind's bg-gray-800 */
-  color: #ffffff;                 /* white text */
-  border-radius: 0.5rem;          /* same as rounded-lg */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* similar to shadow-md */
-  }
+ /* Ensure initial visibility is hidden */
+ #applyFilters {
+     background-color: #1f2937;
+     color: #ffffff;
+     border-radius: 0.5rem;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+     visibility: hidden; /* Hide initially */
+     opacity: 0;         /* Hide initially */
+     transition: opacity 0.6s ease-out, transform 0.1s ease;
+ }
+
+ #applyFilters.visible {
+     visibility: visible; /* Make it visible when the class is added */
+     opacity: 1;          /* Fade in when visible */
+ }
+
+ #applyFilters:active {
+     transform: scale(0.96);
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+ }
+
+ #applyFilters.clicked {
+     transform: scale(0.95); /* or 0.96 for consistency with :active */
+ }
+
+ /* Same for the filter button */
+ #filterTransactions {
+     background-color: #1f2937;
+     color: #ffffff;
+     border-radius: 0.5rem;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+     visibility: hidden; /* Hide initially */
+     opacity: 0;         /* Hide initially */
+     transition: opacity 0.6s ease-out, transform 0.1s ease;
+ }
+
+ #filterTransactions.visible {
+     visibility: visible; /* Make it visible when the class is added */
+     opacity: 1;          /* Fade in when visible */
+ }
 
  #filterTransactions:active {
-    transform: scale(0.96);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+     transform: scale(0.96);
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+ }
 
-  #applyFilters {
-    background-color: #1f2937;      /* Tailwind's bg-gray-800 */
-    color: #ffffff;                 /* white text */
-    border-radius: 0.5rem;          /* same as rounded-lg */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* similar to shadow-md */
-    }
+ #filterTransactions.clicked {
+     transform: scale(0.95); /* or 0.96 for consistency with :active */
+     transition: transform 0.1s ease;
+ }
 
-   #applyFilters:active {
-      transform: scale(0.96);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
+ /* Form visibility handling */
+ #filterForm {
+     display: none; /* Initially hidden */
+     animation: fadeInSlow 1.2s ease-in forwards; /* Add slow fade-in animation */
+ }
+
+
+
+

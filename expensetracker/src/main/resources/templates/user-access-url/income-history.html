@@ -132,7 +132,7 @@
                 </form>
 
                 <div class="mt-5 animate-fade-in-slow" th:if="${userTransactions != null}">
-                    <div th:each="income : ${userTransactions}" class="bg-white p-4 rounded-2xl shadow-md hover:shadow-lg transition mb-3 border-2 border-[#1f2937] flex justify-between items-center">
+                    <div th:each="income : ${userTransactions}" class="bg-white p-4 rounded-2xl shadow-md hover:shadow-lg transition mb-3 border-1 border-[#1f2937] flex justify-between items-center">
 
                         <!-- Left: Source and Date -->
                         <div>
@@ -151,7 +151,7 @@
 
                 <!-- Pagination -->
                 <nav class="mt-6 flex justify-center animate-fade-in-slow" th:if="${totalPages > 0}">
-                    <ul class="flex space-x-2">
+                    <ul class="flex space-x-1">
 
                         <!-- Previous Page -->
                         <li th:if="${currentPage > 0}">
@@ -162,22 +162,22 @@
                 startDate=${startDate},
                 endDate=${endDate})}"
                                class="page-link px-3 py-1 rounded"
-                               style="background-color:#c2edda; color:black">
+                               style="background-color:#1f2937; color:white">
                                 &laquo;
                             </a>
                         </li>
 
                         <!-- Page Numbers -->
-                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                            th:classappend="${i == currentPage} ? 'font-bold underline'">
+                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
                             <a th:href="@{/user/income-history/{page}(page=${i},
                 minAmount=${minAmount},
                 maxAmount=${maxAmount},
                 paymentMethod=${paymentMethod},
                 startDate=${startDate},
                 endDate=${endDate})}"
+                               th:classappend="${i == currentPage} ? 'ring-2 ring-offset-1 ring-teal-400 font-semibold' : ''"
                                class="page-link px-3 py-1 rounded"
-                               style="background-color:#c2edda; color:black">
+                               style="background-color:#1f2937; color:white">
                                 <span th:text="${i + 1}"></span>
                             </a>
                         </li>
@@ -191,7 +191,7 @@
                 startDate=${startDate},
                 endDate=${endDate})}"
                                class="page-link px-3 py-1 rounded"
-                               style="background-color:#c2edda; color:black">
+                               style="background-color:#1f2937; color:white">
                                 &raquo;
                             </a>
                         </li>
