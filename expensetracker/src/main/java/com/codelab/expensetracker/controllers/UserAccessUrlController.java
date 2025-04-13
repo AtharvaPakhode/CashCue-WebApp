@@ -12,9 +12,12 @@ import com.codelab.expensetracker.repositories.ExpenseRepository;
 import com.codelab.expensetracker.repositories.IncomeRepository;
 import com.codelab.expensetracker.repositories.UserRepository;
 import com.codelab.expensetracker.services.CategoryService;
+import com.codelab.expensetracker.services.PDFservice;
 import com.codelab.expensetracker.services.ReportService;
 import com.codelab.expensetracker.specification.ExpenseSpecification;
 import com.codelab.expensetracker.specification.IncomeSpecification;
+import com.itextpdf.text.DocumentException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,6 +79,9 @@ public class UserAccessUrlController {
     
     @Autowired
     private ReportService reportService;
+    
+    @Autowired
+    private PDFservice pdfService;
 
 
 
@@ -857,6 +864,20 @@ public String expenseHistory(
         
         return "user-access-url/reports";
     }
+
+
+
+    @GetMapping("/export-pdf")
+    public void generateReport(@RequestParam("period") String period,Model model,Principal pricipal,
+                                 HttpServletResponse response) throws IOException, DocumentException {
+        
+        String name  = pricipal.getName();
+        User user = this.userRepository.getUserByName(name);
+        
+        this.pdfService.generatePdf(response,period,user);  // Generates the PDF
+        
+    }
+
 
 
 }
