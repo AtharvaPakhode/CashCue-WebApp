@@ -138,10 +138,14 @@ public class ReportService {
 
     return paddedSums;
     }
+    
+    
+    
+    
 
-
+    // Pie Chart
     public Map<String,Double> getCategoryAndAmountOfCurrentMonth(User user){
-        List<Object[]> currentMonthCategorySums = expenseRepository.getCurrentMonthCategorySums(user);
+        List<Object[]> currentMonthCategorySums = expenseRepository.getMonthlyCategoryExpenseSums(user);
         Map<java.lang.String, java.lang.Double> categorySums = new HashMap<>();
 
         for (Object[] row : currentMonthCategorySums) {

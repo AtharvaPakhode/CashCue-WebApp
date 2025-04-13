@@ -23,7 +23,7 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> , JpaSp
     Page<Income> findTransactionsByUser(@Param("user") User user, Pageable pageable);
     
     @Query("SELECT SUM(i.amount)  From Income i WHERE i.user = :user ")
-    double findSumOfExpensesOfUserByUserId(@Param("user") User user);
+    double findSumOfIncomeOfUserByUser(@Param("user") User user);
 
     @Query("SELECT SUM(i.amount) FROM Income i WHERE i.user = :user AND i.dateTime BETWEEN :startOfMonth AND :endOfMonth")
     Double findSumOfIncomeForCurrentMonth(@Param("user") User user,
@@ -43,6 +43,9 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> , JpaSp
 
 
 
+    
+    
+    //LineChart-->
     @Query("SELECT EXTRACT(MONTH FROM i.dateTime) AS month, COALESCE(SUM(i.amount), 0) " +
             "FROM Income i " +
             "WHERE i.user = :user " +
@@ -72,7 +75,7 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> , JpaSp
             "GROUP BY EXTRACT(YEAR FROM i.dateTime) " +
             "ORDER BY year ASC")
     List<Object[]> getYearlyIncomeSumsWithYear(@Param("user") User user);
-
+    //LineChart-->
 
 
 

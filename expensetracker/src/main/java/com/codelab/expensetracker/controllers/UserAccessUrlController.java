@@ -101,8 +101,8 @@ public class UserAccessUrlController {
 
         try {
             // Fetch values from database (may return null)
-            sumOfIncomeByUser = incomeRepository.findSumOfExpensesOfUserByUserId(user);
-            sumOfExpenseByUser = expenseRepository.findSumOfExpensesOfUserByUserId(user);
+            sumOfIncomeByUser = incomeRepository.findSumOfIncomeOfUserByUser(user);
+            sumOfExpenseByUser = expenseRepository.findSumOfExpensesOfUserByUser(user);
             Double monthlyIncomeRaw = incomeRepository.findSumOfIncomeForCurrentMonth(user, startOfMonth, endOfMonth);
             Double monthlyExpenseRaw = expenseRepository.findSumOfExpensesForCurrentMonth(user, startOfMonth, endOfMonth);
 
@@ -623,7 +623,7 @@ public String expenseHistory(
         
          
               
-        
+        // for expenses in numbers------------------------------------------------------>
         switch (duration) {
             case "monthly":
                 totalExpense = this.expenseRepository.findSumOfExpensesForCurrentMonth(user, startOfMonth, endOfMonth);
@@ -681,6 +681,13 @@ public String expenseHistory(
                 break;
         }
 
+        //for dynamic trends (expense , savings and income cards)
+        String periodLabel = switch (period.toLowerCase()) {
+            case "monthly" -> "current month";
+            case "quarterly" -> "current quarter";
+            case "yearly" -> "current year";
+            default -> "Selected Period";
+        };
 
         
 
@@ -690,18 +697,12 @@ public String expenseHistory(
         model.addAttribute("totalExpense", totalExpense);
         model.addAttribute("totalIncome", totalIncome);
         model.addAttribute("netSavings", netSavings);
-
-        
-        //for dynamic trends
-        String periodLabel = switch (period.toLowerCase()) {
-            case "monthly" -> "current month";
-            case "quarterly" -> "current quarter";
-            case "yearly" -> "current year";
-            default -> "Selected Period";
-        };
         model.addAttribute("periodLabel", periodLabel);
+        
+        
+        
 
-        //for dynamic trends
+        //for dynamic trends (Line chart)
         String periodLabel2 = switch (period.toLowerCase()) {
             case "monthly" -> "Monthly";
             case "quarterly" -> "Quarterly";
@@ -712,7 +713,7 @@ public String expenseHistory(
         String periodTrendDescription = "Line chart showing " + periodLabel2.toLowerCase() + " expense trends";
 
 
-        //for dynamic trends
+        //for dynamic trends (Pie chart)
         String periodLabel3 = switch (period.toLowerCase()) {
             case "monthly" -> "for current month";
             case "quarterly" -> "for current quarter";
@@ -724,13 +725,17 @@ public String expenseHistory(
         model.addAttribute("periodTrendDescription", periodTrendDescription);
         model.addAttribute("periodLabel2Description", periodLabel2Description);
         model.addAttribute("periodLabel3Description",periodLabel3Description);
-
+        
+        
+        
+        
+        //for line chart and pie chart values
         List<Double>income;
         List<Double>expense;
         List<String> months;
         List<String>quarters;
         List<String>years;
-        // for monthly trends
+        
           switch (period.toLowerCase()) {
             case "monthly"->{
                 income= this.reportService.getMonthlyIncomeSums(user);
@@ -788,6 +793,56 @@ public String expenseHistory(
             }
             
           };
+          
+          
+          
+          // for Top spending categories 
+
+        switch (period.toLowerCase()) {
+            case "monthly" -> {
+                Map<String, Double> currentCategorySums = this.categoryService.getCurrentMonthCategorySums(user);
+                Map<String, Double> pastCategorySums = this.categoryService.getPastMonthCategorySums(user);
+                Double totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentMonth(user);
+                model.addAttribute("currentCategorySums",currentCategorySums);
+                model.addAttribute("pastCategorySums",pastCategorySums);
+                model.addAttribute("totalExpenseByUser",totalExpenseByUser);
+
+                System.out.println(currentCategorySums);
+                System.out.println(pastCategorySums);
+                
+
+            }
+ 
+            
+
+                    
+            case "quarterly" -> {
+                Map<String, Double> currentCategorySums = this.categoryService.getCurrentQuarterCategorySums(user);
+                Map<String, Double> pastCategorySums = this.categoryService.getPastQuarterCategorySums(user);
+                Double totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentQuarter(user);
+                model.addAttribute("currentCategorySums",currentCategorySums);
+                model.addAttribute("pastCategorySums",pastCategorySums);
+                model.addAttribute("totalExpenseByUser",totalExpenseByUser);
+            }
+
+
+                    
+            case "yearly" -> {
+                Map<String, Double> currentCategorySums = this.categoryService.getCurrentYearCategorySums(user);
+                Map<String, Double> pastCategorySums = this.categoryService.getPastYearCategorySums(user);
+                Double totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentYear(user);
+                model.addAttribute("currentCategorySums",currentCategorySums);
+                model.addAttribute("pastCategorySums",pastCategorySums);
+                model.addAttribute("totalExpenseByUser",totalExpenseByUser);
+            }
+
+                    
+            default -> {
+                System.out.println("Invalid");
+            }
+
+                    
+        };
 
 
 

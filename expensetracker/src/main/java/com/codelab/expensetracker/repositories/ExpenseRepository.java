@@ -26,7 +26,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
     Page<Expense> findTransactionsByUser(@Param("user") User user, Pageable pageable);
     
     @Query("SELECT SUM(e.amount)  From Expense e WHERE e.user = :user ")
-    double findSumOfExpensesOfUserByUserId(@Param("user") User user);
+    double findSumOfExpensesOfUserByUser(@Param("user") User user);
 
     @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfMonth AND :endOfMonth")
     Double findSumOfExpensesForCurrentMonth(@Param("user") User user,
@@ -43,9 +43,13 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
     Double findSumOfExpenseForYear(@Param("user") User user,
                                   @Param("startOfYear") LocalDateTime startOfYear,
                                   @Param("endOfYear") LocalDateTime endOfYear);
+    
+    
+    
+    
 
 
-
+    //LineChart--->
     @Query("SELECT EXTRACT(MONTH FROM e.dateTime) AS month, COALESCE(SUM(e.amount), 0) " +
             "FROM Expense e " +
             "WHERE e.user = :user " +
@@ -75,10 +79,12 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
             "GROUP BY EXTRACT(YEAR FROM e.dateTime) " +
             "ORDER BY year ASC")
     List<Object[]> getYearlyExpenseSumsWithYear(@Param("user") User user);
+    //LineChart--->
 
 
 
 
+    //PieChart-->
     @Query(value = "SELECT c.categoryName, SUM(e.amount) " +
             "FROM Expense e " +
             "JOIN Category c ON e.category.categoryName = c.categoryName " +
@@ -87,7 +93,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
             "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
             "AND EXTRACT(MONTH FROM e.dateTime) = EXTRACT(MONTH FROM CURRENT_DATE) " +
             "GROUP BY c.categoryName", nativeQuery = false)
-    List<Object[]> getCurrentMonthCategorySums(@Param("user") User user);
+    List<Object[]> getMonthlyCategoryExpenseSums(@Param("user") User user);
 
 
 
@@ -108,7 +114,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
     List<Object[]> getQuarterlyCategoryExpenseSums(@Param("user") User user);
 
 
-
+    
 
     @Query("SELECT e.category.categoryName, SUM(e.amount) " +
             "FROM Expense e " +
@@ -116,12 +122,34 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
             "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
             "GROUP BY e.category.categoryName")
     List<Object[]> getCurrentYearCategorySums(@Param("user") User user);
+    //PieChart-->
+
+
+    
+    // top 3 categories
+    @Query("SELECT SUM(e.amount) " +
+            "FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+            "AND EXTRACT(MONTH FROM e.dateTime) = EXTRACT(MONTH FROM CURRENT_DATE)")
+    double findSumOfExpensesCurrentMonth(@Param("user") User user);
 
 
 
+    @Query("SELECT SUM(e.amount) " +
+            "FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+            "AND CEIL(EXTRACT(MONTH FROM e.dateTime) / 3.0) = CEIL(EXTRACT(MONTH FROM CURRENT_DATE) / 3.0)")
+    double findSumOfExpensesCurrentQuarter(@Param("user") User user);
 
 
 
+    @Query("SELECT SUM(e.amount) " +
+            "FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE)")
+    double findSumOfExpensesCurrentYear(@Param("user") User user);
 
 
 }
