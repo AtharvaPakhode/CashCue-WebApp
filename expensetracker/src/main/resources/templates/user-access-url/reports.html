@@ -7,6 +7,19 @@
 <body>
 <section>
     <div class="bg-gray-100 font-sans antialiased dynamic-content">
+
+        <div class="loader mt-5 ml-auto mr-auto" id="wifi-loader">
+            <p class="heading font-bold text-2xl">Loading Charts</p>
+            <div class="loading">
+                <div class="load"></div>
+                <div class="load"></div>
+                <div class="load"></div>
+                <div class="load"></div>
+            </div>
+        </div>
+
+
+
         <div class="flex">
 
             <!-- Main Content -->
@@ -159,7 +172,7 @@
         before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0
         before:rounded-full before:bg-[linear-gradient(to_right,_#c2edda,_#a0d6d2)] before:-z-10 before:aspect-square before:hover:scale-150"
                         >
-                            <span id="toggleChartText">Click to view</span>
+                            <span id="toggleChartText">Click to hide</span>
                             <svg
                                     class="w-6 h-6 justify-end group-hover:rotate-90 group-hover:bg-gray-50 text-gray-50 ease-linear duration-300 rounded-full border border-gray-700 group-hover:border-none p-1.5 rotate-45"
                                     viewBox="0 0 16 19"
@@ -173,28 +186,57 @@
                         </button>
 
                         <!-- Chart container -->
-                        <div id="chartContainer" class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 mt-5 hidden">
+                        <div id="chartContainer" class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 mt-5 ">
                             <h2 class="text-2xl font-bold mb-4 text-center" th:text="${periodLabel2Description}">Expense Trend</h2>
-                            <canvas id="expenseChart" class="w-full h-80 animate-fade-in-slow"></canvas>
+                            <canvas id="expenseChart" class="w-full h-80 animate-fade-in-slow">
+
+                            </canvas>
+
+
                         </div>
+                        <div class="mt-5 mr-5 ml-5 " id="expenseTable-lineChart"  >
+                            <table class="min-w-full h-auto bg-white border border-gray-200 shadow-md rounded-xl text-sm text-center">
+                            <thead class="bg-gray-100 text-gray-700">
+                            <tr>
+                                <th class="py-2 px-4 border-b"
+                                    th:text="${period} == 'monthly' ? 'Month' : (${period} == 'quarterly' ? 'Quarter' : (${period} == 'yearly' ? 'Year' : 'Month'))">
+                                    Month
+                                </th>
+                                <th class="py-2 px-4 border-b text-green-600">Income</th>
+                                <th class="py-2 px-4 border-b text-red-600">Expense</th>
+                            </tr>
+                            </thead>
+                            <tbody class="text-gray-700" >
+                            <!-- Rows will be added by JavaScript -->
+                            </tbody>
+                        </table>
+                        </div>
+
+
 
                         <script th:inline="javascript">
                             const chartData = {
+
                                 income: /*[[${income}]]*/ [],
                                 expense: /*[[${expense}]]*/ []
                             };
 
                             if ([[${period}]] === 'monthly') {
-                                chartData.months = /*[[${month}]]*/ [];
+
+                                chartData.xValue = /*[[${month}]]*/ [];
                             } else if ([[${period}]] === 'quarterly') {
-                                chartData.months = /*[[${quarter}]]*/ [];
+
+                                chartData.xValue = /*[[${quarter}]]*/ [];
                             } else if ([[${period}]] === 'yearly') {
-                                chartData.months = /*[[${year}]]*/ [];
+
+                               chartData.xValue = /*[[${year}]]*/ [];
                             }
 
-                            console.log(chartData);
+                            console.log(chartData.xValue);
 
                         </script>
+
+
 
 
 
@@ -238,8 +280,15 @@
 
                             <div id="CategoryChartContainer" class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6 mt-5 hidden">
                                 <h2 class="text-2xl font-bold mb-4 text-center" >Distribution of Expenses</h2>
-                                <canvas id="categoryExpenseChart" class="w-full h-60 animate-fade-in-slow"></canvas>
+                                <canvas id="categoryExpenseChart" class="w-full h-600 animate-fade-in-slow">
+
+                                </canvas>
+
                             </div>
+
+
+
+
 
                             <script th:inline="javascript">
                                 const chartDataCategory = {
@@ -385,6 +434,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" th:src="@{/javascript/reports-page-script.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </div>
 
 

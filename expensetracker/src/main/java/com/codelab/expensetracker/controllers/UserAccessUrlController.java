@@ -12,6 +12,7 @@ import com.codelab.expensetracker.repositories.ExpenseRepository;
 import com.codelab.expensetracker.repositories.IncomeRepository;
 import com.codelab.expensetracker.repositories.UserRepository;
 import com.codelab.expensetracker.services.CategoryService;
+import com.codelab.expensetracker.services.ChartImageService;
 import com.codelab.expensetracker.services.PDFservice;
 import com.codelab.expensetracker.services.ReportService;
 import com.codelab.expensetracker.specification.ExpenseSpecification;
@@ -39,10 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.security.Principal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -82,6 +80,8 @@ public class UserAccessUrlController {
     
     @Autowired
     private PDFservice pdfService;
+    
+
 
 
 
@@ -814,8 +814,7 @@ public String expenseHistory(
                 model.addAttribute("pastCategorySums",pastCategorySums);
                 model.addAttribute("totalExpenseByUser",totalExpenseByUser);
 
-                System.out.println(currentCategorySums);
-                System.out.println(pastCategorySums);
+                
                 
 
             }
@@ -863,6 +862,51 @@ public String expenseHistory(
         
         
         return "user-access-url/reports";
+    }
+
+    @PostMapping("/save-chart-image")
+    public String saveChartImage(@RequestBody ChartImageService chartImageServicerequest) {
+        
+        String chartType = chartImageServicerequest.getChartType();
+        String imgData = chartImageServicerequest.getChartImgData();
+        String tableData= chartImageServicerequest.getTableImgData();
+        
+        
+
+        // Decode the base64 image data
+        String base64Image = imgData.split(",")[1];
+        String base64Table = tableData.split(",")[1];
+        
+        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+        byte[]tableBytes=Base64.getDecoder().decode(base64Table);
+
+        // Define the folder path where the new image will be stored
+        String folderChart =  chartType.equals("line-chart-image") ? "static/line-chart-image" : "static/pie-chart-image"; 
+        String folderTable =  chartType.equals("line-chart-image") ? "static/line-chart-table-image" : "static/pie-chart-table-image";
+        File directory1 = new File(folderChart);
+        File directory2= new File(folderTable);
+
+        // Create the folder if it does not exist
+        if (!directory1.exists()) {
+            directory1.mkdir();
+        }
+
+        if (!directory2.exists()) {
+            directory2.mkdir();
+        }
+
+        Path targetLocation1 = Paths.get(directory1.getAbsolutePath() + File.separator + "chart.png");
+        Path targetLocation2 = Paths.get(directory2.getAbsolutePath() + File.separator + "table.png");
+        
+              
+        try {
+            // Save the image
+            Files.write( targetLocation1,imageBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING );
+            Files.write( targetLocation2,tableBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING );
+            return "redirect:/user/reports";
+        } catch (IOException e) {
+            return "redirect:/user/reports";
+        }
     }
 
 

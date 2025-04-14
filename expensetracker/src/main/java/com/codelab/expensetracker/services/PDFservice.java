@@ -8,12 +8,17 @@ import com.codelab.expensetracker.repositories.UserRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -311,6 +316,46 @@ public class PDFservice {
         }
 
         document.add(categoryTable);
+
+
+        try {
+
+            // Start a new page for visual content
+            document.newPage();
+            
+            // Load chart image
+            Path chartPath = Paths.get("static/line-chart-image/chart.png");
+            if (Files.exists(chartPath)) {
+                byte[] chartBytes = Files.readAllBytes(chartPath);
+                System.out.println(chartBytes);
+                Image chartImage = Image.getInstance(chartBytes);
+                chartImage.scaleToFit(500, 300);
+                chartImage.setAlignment(Image.ALIGN_CENTER);
+                Paragraph chartHeading = new Paragraph("Line Chart Visualization", infoFont);
+                chartHeading.setAlignment(Element.ALIGN_CENTER);
+                document.add(chartHeading);
+                document.add(chartImage);
+                document.add(Chunk.NEWLINE);
+            }
+
+            // Load table image
+            Path tablePath = Paths.get("static/line-chart-table-image/table.png");
+            if (Files.exists(tablePath)) {
+                byte[] tableBytes = Files.readAllBytes(tablePath);
+                System.out.println(tableBytes);
+                Image tableImage = Image.getInstance(tableBytes);
+                tableImage.scaleToFit(500, 300);
+                tableImage.setAlignment(Image.ALIGN_CENTER);
+                Paragraph tableHeading = new Paragraph("Table Snapshot", infoFont);
+                tableHeading.setAlignment(Element.ALIGN_CENTER);
+                document.add(tableHeading);
+                
+                document.add(tableImage);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Log error in case images are missing
+        }
 
         // Closing the document
         document.close();
