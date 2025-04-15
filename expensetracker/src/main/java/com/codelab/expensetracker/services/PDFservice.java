@@ -357,6 +357,46 @@ public class PDFservice {
             e.printStackTrace(); // Log error in case images are missing
         }
 
+
+        try {
+
+            // Start a new page for visual content
+            document.newPage();
+
+            // Load chart image
+            Path chartPath = Paths.get("static/pie-chart-image/chart.png");
+            if (Files.exists(chartPath)) {
+                byte[] chartBytes = Files.readAllBytes(chartPath);
+                System.out.println(chartBytes);
+                Image chartImage = Image.getInstance(chartBytes);
+                chartImage.scaleToFit(500, 300);
+                chartImage.setAlignment(Image.ALIGN_CENTER);
+                Paragraph chartHeading = new Paragraph("Pie Chart Visualization", infoFont);
+                chartHeading.setAlignment(Element.ALIGN_CENTER);
+                document.add(chartHeading);
+                document.add(chartImage);
+                document.add(Chunk.NEWLINE);
+            }
+
+            // Load table image
+            Path tablePath = Paths.get("static/pie-chart-table-image/table.png");
+            if (Files.exists(tablePath)) {
+                byte[] tableBytes = Files.readAllBytes(tablePath);
+                System.out.println(tableBytes);
+                Image tableImage = Image.getInstance(tableBytes);
+                tableImage.scaleToFit(500, 300);
+                tableImage.setAlignment(Image.ALIGN_CENTER);
+                Paragraph tableHeading = new Paragraph("Table Snapshot", infoFont);
+                tableHeading.setAlignment(Element.ALIGN_CENTER);
+                document.add(tableHeading);
+
+                document.add(tableImage);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Log error in case images are missing
+        }
+
         // Closing the document
         document.close();
     }

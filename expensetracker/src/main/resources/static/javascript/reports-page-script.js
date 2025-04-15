@@ -5,10 +5,15 @@ document.getElementById('wifi-loader').style.display = 'flex';
 const buttons = document.querySelectorAll('#buttonGroup button');
 buttons.forEach(button => {
     button.addEventListener('click', (e) => {
-        e.preventDefault();
+
         button.closest('form').submit();
     });
 });
+
+const exportPDFbtn =document.getElementById('exportPdf');
+exportPDFbtn.disabled = true;
+exportPDFbtn.classList.add('opacity-50', 'cursor-not-allowed');
+
 
 // Wait for DOM to load
 document.addEventListener("DOMContentLoaded", function () {
@@ -60,20 +65,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 animation: {
                     onComplete: function () {
-                        populateExpenseTable();
-                        console.log("Chart rendering complete.");
+                        // Wait for table to render too before capturing
+                        requestAnimationFrame(() => {
+                            populateExpenseTable();
+                            console.log("Chart rendering complete.");
 
-                        // Capture chart image
-                        const chartImgData = ctx.canvas.toDataURL("image/png");
+                            // Wait another animation frame to be extra safe
+                            requestAnimationFrame(() => {
+                                // Capture chart image
+                                const chartImgData = ctx.canvas.toDataURL("image/png");
 
-                        // Capture table image
-                        html2canvas(document.querySelector("#expenseTable-lineChart"), {
-                            useCORS: true,
-                            allowTaint: false,
-                            backgroundColor: null
-                        }).then(function (canvas) {
-                            const tableImgData = canvas.toDataURL("image/png");
-                            saveChartImage(chartImgData, "line-chart-image", tableImgData);
+                                // Capture table image using html2canvas
+                                html2canvas(document.querySelector("#expenseTable-lineChart"), {
+                                    useCORS: true,
+                                    backgroundColor: "#ffffff", // helps ensure good PDF rendering
+                                    scale: 2 // higher resolution
+                                }).then(function (canvas) {
+                                    const tableImgData = canvas.toDataURL("image/png");
+                                    saveChartImage(chartImgData, "line-chart-image", tableImgData);
+                                });
+                            });
                         });
                     }
                 },
@@ -96,35 +107,60 @@ document.addEventListener("DOMContentLoaded", function () {
         // Pie Chart Rendering
         const categoryCtx = document.getElementById("categoryExpenseChart").getContext("2d");
 
-        new Chart(categoryCtx, {
-            type: "pie",
-            data: {
-                labels: chartDataCategory.category,
-                datasets: [{
-                    label: "Expenses by Category",
-                    data: chartDataCategory.expense,
-                    backgroundColor: [
-                        "#FF6B6B", "#4ECDC4", "#FFD93D",
-                        "#1A535C", "#FF9F1C", "#6A4C93"
-                    ],
-                    borderColor: "#ffffff",
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: "bottom" },
-                    title: {
-                        display: true,
-                        text: "Expenses by Category"
-                    }
-                }
-            }
-        });
+       new Chart(categoryCtx, {
+           type: "pie",
+           data: {
+               labels: chartDataCategory.category,
+               datasets: [{
+                   label: "Expenses by Category",
+                   data: chartDataCategory.expense,
+                   backgroundColor: ["#FF6B6B", "#4ECDC4", "#FFD93D", "#1A535C", "#FF9F1C", "#6A4C93"],
+                   borderColor: "#ffffff",
+                   borderWidth: 2
+               }]
+           },
+           options: {
+               responsive: true,
+               plugins: {
+                   legend: { position: "bottom" },
+                   title: {
+                       display: true,
+                       text: "Expenses by Category"
+                   }
+               },
+               animation: {
+                   onComplete: function () {
+                       requestAnimationFrame(() => {
+                                                   populatePieExpenseTable();
+                                                   console.log("Chart rendering complete.");
+
+                                                   // Wait another animation frame to be extra safe
+                                                   requestAnimationFrame(() => {
+                                                       // Capture chart image
+                                                       const PieImgData = categoryCtx.canvas.toDataURL("image/png");
+
+                                                       // Capture table image using html2canvas
+                                                       html2canvas(document.querySelector("#expenseTable-pieChart"), {
+                                                           useCORS: true,
+                                                           backgroundColor: "#ffffff", // helps ensure good PDF rendering
+                                                           scale: 2 // higher resolution
+                                                       }).then(function (canvas) {
+                                                           const pieTableImgData = canvas.toDataURL("image/png");
+                                                           savePieChartImage(PieImgData, "pie-chart-image", pieTableImgData);
+                                                       });
+                                                   });
+                                               });
+                   }
+               }
+           }
+       });
+
 
         // Hide loader after everything is rendered
         document.getElementById('wifi-loader').style.display = 'none';
+        exportPDFbtn.disabled = false;
+        exportPDFbtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
     }, 3000); // 3-second delay
 });
 
@@ -133,6 +169,8 @@ function populateExpenseTable() {
     const tableBody = document.querySelector("#expenseTable-lineChart tbody");
     tableBody.innerHTML = "";
 
+
+
     chartData.xValue.forEach((label, index) => {
         const income = chartData.income[index];
         const expense = chartData.expense[index];
@@ -140,13 +178,49 @@ function populateExpenseTable() {
         const row = document.createElement("tr");
         row.className = "mb-2";
         row.innerHTML = `
-            <td class="py-2 px-4">${label}</td>
-            <td class="py-2 px-4">${income}</td>
-            <td class="py-2 px-4">${expense}</td>
+            <td class="py-2 px-4 font-bold text-base ">${label}</td>
+            <td class="py-2 px-4 font-bold text-base">${income}</td>
+            <td class="py-2 px-4 font-bold text-base">${expense}</td>
         `;
         tableBody.appendChild(row);
     });
 }
+
+function populatePieExpenseTable() {
+    const tableBodyPie = document.querySelector("#expenseTable-pieChart tbody");
+    tableBodyPie.innerHTML = "";
+
+    const dummyData = [
+                { category: "Food", expense: 1200 },
+                { category: "Rent", expense: 8000 },
+                { category: "Utilities", expense: 1500 }
+            ];
+
+            dummyData.forEach(data => {
+                const row = document.createElement("tr");
+                row.className = "mb-2";
+                row.innerHTML = `
+                    <td class="py-2 px-4 font-bold text-base">${data.category}</td>
+                    <td class="py-2 px-4 font-bold text-base">${data.expense}</td>
+                `;
+                tableBodyPie.appendChild(row);
+            });
+
+//    chartDataCategory.category.forEach((categories, index) => {
+//        const category = chartDataCategory.category[index];
+//        const expense = chartDataCategory.expense[index];
+//
+//        const row = document.createElement("tr");
+//        row.className = "mb-2";
+//        row.innerHTML = `
+//
+//            <td class="py-2 px-4 font-bold text-base">${category}</td>
+//            <td class="py-2 px-4 font-bold text-base">${expense}</td>
+//        `;
+//        tableBody.appendChild(row);
+//    });
+}
+
 
 // Save chart and table images to the server
 function saveChartImage(imgData, chartType, tableImgData) {
@@ -160,6 +234,20 @@ function saveChartImage(imgData, chartType, tableImgData) {
         body: JSON.stringify({ chartImgData: imgData, chartType, tableImgData })
     });
 }
+
+function savePieChartImage(imgData, chartType, tableImgData) {
+    console.log("Sending chart and table image data to server");
+
+    fetch('/user/save-chart-image', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ chartImgData: imgData, chartType, tableImgData })
+    });
+}
+
+
 
 // Toggle line chart and table visibility
 const toggleBtn = document.getElementById('toggleChartBtn');
@@ -184,3 +272,25 @@ PieToggleBtn.addEventListener('click', () => {
     PiechartContainer.classList.toggle('hidden');
     PieToggleText.textContent = isHidden ? 'Click to hide' : 'Click to view';
 });
+
+
+exportPDFbtn.addEventListener('click', function () {
+// Store original content
+    const originalContent = exportPDFbtn.innerHTML;
+
+    // Change button content to "Exporting..."
+    exportPDFbtn.innerHTML = 'Exporting...';
+    exportPDFbtn.disabled = true;
+    exportPDFbtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+    exportPDFbtn.closest('form').submit();
+
+    // Wait 2 seconds, then restore
+    setTimeout(() => {
+        exportPDFbtn.innerHTML = originalContent;
+        exportPDFbtn.disabled = false;
+        exportPDFbtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }, 2000);
+
+});
+
