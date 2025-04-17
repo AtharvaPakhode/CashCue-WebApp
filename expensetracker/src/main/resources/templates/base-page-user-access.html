@@ -56,10 +56,12 @@
 
 
 
-</head>
-<body>
 
-<div class="sidebar">
+
+</head>
+<body >
+
+<div class="sidebar zoom-fix">
     <!-- Navbar Items -->
     <a th:href="@{/user/dashboard}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
 
@@ -76,7 +78,7 @@
 
 
     <!-- Profile Section at the bottom -->
-    <div class="profile">
+    <div class="profile zoom-fix">
         <img th:src="${user.userImageURL == 'userDefault.png' ? '/images/userDefault.png' : '/userprofileimages/' + user.userImageURL}"
              alt="User Profile">
         <div class="username" th:text="${user.userName.toUpperCase()}"></div>
@@ -97,7 +99,7 @@
 </div>
 
 
-<div  th:replace="${content}"></div>
+<div   th:replace="${content}"></div>
 
 <div th:replace="~{::scripts}"></div>
 

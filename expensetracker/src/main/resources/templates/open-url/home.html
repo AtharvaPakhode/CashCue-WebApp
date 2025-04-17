@@ -1,10 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base-page::layout(~{::section})}">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>Set New Password</title>
 </head>
 <body>
+
+<section class="bg-[#f0faf6] min-h-screen flex items-center">
+    <div class="max-w-7xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20">
+        <div class="max-w-l text-center md:text-left">
+            <h1 class="font-extrabold text-[28px] md:text-[32px] leading-tight text-[#0f172a]">
+                Track Your Money,
+                <br/>
+                <span class="text-[#10b981]">
+                    Simplify Your Life
+                </span>
+            </h1>
+            <p class="mt-4 text-[#475569] text-[15px] leading-relaxed max-w-md">
+                Effortlessly track your expenses, understand your spending patterns, and make better financial decisions
+            </p>
+            <button class="mt-6 bg-[#10b981] text-white text-[15px] font-medium rounded px-5 py-2.5 hover:bg-[#0f9d68] transition-colors" type="button">
+                Start Tracking Free
+            </button>
+        </div>
+
+        <div class="flex-shrink-0">
+            <img alt="Mobile phone showing daily expense tracker app " class="w-[400px] h-[600px]" src="/images/mobileHomePage.png" />
+        </div>
+    </div>
+</section>
+
+
+<!-- Optional JS Scripts -->
+<div th:fragment="scripts">
+
+</div>
 
 </body>
 </html>

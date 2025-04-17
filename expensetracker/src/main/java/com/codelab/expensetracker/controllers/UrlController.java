@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
+import java.security.Principal;
+
 import static java.lang.Thread.*;
 
 /**
@@ -52,6 +54,7 @@ public class UrlController {
     public String register(Model model) {
         model.addAttribute("title", "Register Page");
         model.addAttribute("user", new User());  // Initialize a new user object for the form
+        model.addAttribute("page","register");
         return "open-url/register";
     }
 
@@ -120,6 +123,8 @@ public class UrlController {
             session.setAttribute("customMessage", new CustomDisplayMessage("Something went wrong", "alert-danger"));
             return "open-url/register";
         }
+        
+        model.addAttribute("page","login");
 
         // Redirect to login page after successful registration
         return "open-url/login";
@@ -135,6 +140,7 @@ public class UrlController {
     public String login(Model model) {
         model.addAttribute("title", "Login Page");
         model.addAttribute("user", new User());  // Initialize a new user object for the form
+        model.addAttribute("page","login");
         return "open-url/login";
     }
 
@@ -148,6 +154,7 @@ public class UrlController {
     public String termsAndConditions(Model model) {
         model.addAttribute("title", "Terms And Conditions");
         model.addAttribute("user", new User());  // Initialize a new user object for the form
+        model.addAttribute("page","terms");
         return "open-url/terms-and-conditions";
     }
 
@@ -159,6 +166,7 @@ public class UrlController {
      */
     @GetMapping("/forgot-password")
     public String forgotPassword(Model model) {
+        model.addAttribute("page","forgotPassword");
         return "open-url/forgot-password";
     }
 
@@ -198,6 +206,8 @@ public class UrlController {
 
             // Add email to model for OTP verification page
             model.addAttribute("userEmail", userEmailTo);
+            model.addAttribute("page","verifyOTP");
+            
         }
 
         return "open-url/verify-OTP-FP";
@@ -225,11 +235,13 @@ public class UrlController {
         if (otpEntered == generatedOtp) {
             // OTP matched, proceed to password reset page
             model.addAttribute("userEmail", userEmail);
+            model.addAttribute("page","createNewPassword");
             return "open-url/create-new-password";
         } else {
             // OTP mismatch
             session.setAttribute("customMessage", new CustomDisplayMessage("Invalid OTP. Please try again.", "alert-danger"));
             model.addAttribute("userEmail", userEmail);  // Pre-fill email in the form
+            
             return "open-url/verify-OTP-FP";
         }
     }
@@ -290,6 +302,7 @@ public class UrlController {
         if (!newPassword.equals(confirmPassword)) {
             session.setAttribute("customMessage", new CustomDisplayMessage("Password do not matched", "alert-danger"));
             model.addAttribute("userEmail", userEmail);
+            model.addAttribute("page","createNewPassword");
             return "open-url/create-new-password"; // Show error and stay on the same page
         }
 
@@ -298,6 +311,7 @@ public class UrlController {
             User existingUser = userRepository.getUserByName(userEmail);
             if (existingUser == null) {
                 session.setAttribute("customMessage", new CustomDisplayMessage("No user found with this email address", "alert-danger"));
+                model.addAttribute("page","createNewPassword");
                 return "open-url/create-new-password"; // Show error and stay on the same page
             }
 
@@ -318,7 +332,26 @@ public class UrlController {
 
         } catch (Exception e) {
             session.setAttribute("customMessage", new CustomDisplayMessage("Something Went wrong", "alert-danger"));
+            model.addAttribute("page","createNewPassword");
             return "open-url/create-new-password"; // Show error and stay on the same page
         }
     }
+
+
+    @GetMapping("/home")
+    public String homePage(Model model){
+
+        model.addAttribute("page","home");
+        return "open-url/home";
+    }
+    
+    
+    
+    
+    
+
 }
+
+
+
+    
