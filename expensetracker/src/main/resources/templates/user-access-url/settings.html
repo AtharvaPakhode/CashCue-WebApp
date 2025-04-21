@@ -76,58 +76,72 @@
             <div class="bg-white rounded-2xl shadow p-6">
                 <h2 class="text-xl font-semibold mb-6 border-b pb-2">Password</h2>
                 <div class="text-center">
-                    <button type="submit"
-                            class="group flex items-center justify-start w-11 h-11  rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-52 hover:rounded-lg active:translate-x-1 active:translate-y-1"
-                            style="background-color:#1f2937; color:white"
-                    >
-                        <div
-                                class="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-start group-hover:px-3"
+                    <form id="changePasswordForm" method="get" th:action="@{/forgot-password}">
+
+                        <button type="submit"
+                                class="group flex items-center justify-start w-11 h-11  rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-52 hover:rounded-lg active:translate-x-1 active:translate-y-1"
+                                style="background-color:#1f2937; color:white"
                         >
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02
+                            <div
+                                    class="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-start group-hover:px-3"
+                            >
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02
             0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83
             3.75 3.75 1.83-1.83z"/>
-                            </svg>
-                        </div>
-                        <div
-                                class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
-                        >
-                            Change Password
-                        </div>
-                    </button>
+                                </svg>
+                            </div>
+                            <div
+                                    class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                            >
+                                Change Password
+                            </div>
+                        </button>
+
+                    </form>
+
                 </div>
             </div>
 
             <!-- Security -->
             <div class="bg-white rounded-2xl shadow p-6">
                 <h2 class="text-xl font-semibold mb-6 border-b pb-2">Security</h2>
-                <div class="flex items-center justify-start gap-5 mb-4">
-                    <label for="twoFactor" class="text-sm font-medium">Two-Factor Authentication</label>
-                    <input type="checkbox" id="twoFactor" class="form-check-input toggle toggle-success">
-                </div>
+
                 <div class="text-right">
-                    <button type="submit"
-                            class="group flex items-center justify-start w-11 h-11  rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-48 hover:rounded-lg active:translate-x-1 active:translate-y-1"
-                            style="background-color:#1f2937; color:white"
-                    >
-                        <div
-                                class="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-start group-hover:px-3"
-                        >
-                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M6.75 6L7.5 5.25H16.5L17.25 6V19.3162L12 16.2051L6.75 19.3162V6ZM8.25 6.75V16.6838L12 14.4615L15.75 16.6838V6.75H8.25Z" fill="#ffffff"></path> </g>
-                            </svg>
+                    <form id=" TFA-form" method="post" th:action="@{/user/2fa-form}">
+
+                        <div class="flex items-center justify-start gap-5 mb-4">
+                            <label for="twoFactor" class="text-sm font-medium">Two-Factor Authentication</label>
+                            <input type="checkbox" id="twoFactor" name=checkboxValue class="form-check-input toggle toggle-success"
+                                   th:checked="${tfaValue == 'true'}" >
+
                         </div>
-                        <div
-                                class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+
+                        <button type="submit"
+                                class="group flex items-center justify-start w-11 h-11  rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-48 hover:rounded-lg active:translate-x-1 active:translate-y-1"
+                                style="background-color:#1f2937; color:white"
                         >
-                           Save changes
-                        </div>
-                    </button>
+                            <div
+                                    class="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-start group-hover:px-3"
+                            >
+                                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                    <g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M6.75 6L7.5 5.25H16.5L17.25 6V19.3162L12 16.2051L6.75 19.3162V6ZM8.25 6.75V16.6838L12 14.4615L15.75 16.6838V6.75H8.25Z" fill="#ffffff"></path> </g>
+                                </svg>
+                            </div>
+                            <div
+                                    class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                            >
+                                Save changes
+                            </div>
+                        </button>
+
+                    </form>
+
                 </div>
             </div>
 
             <!-- Danger Zone -->
-            <div class="bg-white rounded-2xl shadow p-6 border border-red-300">
+            <div class="bg-white rounded-2xl shadow p-6 border border-red-300 mb-5">
                 <div class="border-b pb-2 mb-4">
                     <h2 class="text-xl font-semibold text-red-600">Danger Zone</h2>
                 </div>

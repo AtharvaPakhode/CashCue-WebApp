@@ -38,6 +38,8 @@ public class User {
     private boolean userStatus;
 
     private String userRole;
+    
+    private boolean twoFactorAuthentication ;
 
     @Column(length=500)
     private String userDescription;
@@ -49,7 +51,7 @@ public class User {
     private List<Category>categoryList;
 
 
-    //
+    
 
 
     public int getUserId() {
@@ -96,8 +98,6 @@ public class User {
         return userImageURL;
     }
 
-
-
     public void setUserImageURL(String userImageURL) {
         this.userImageURL = userImageURL;
     }
@@ -142,7 +142,13 @@ public class User {
         this.categoryList = categoryList;
     }
 
-    //
+    public boolean isTwoFactorAuthentication() {
+        return twoFactorAuthentication;
+    }
+
+    public void setTwoFactorAuthentication(boolean twoFactorAuthentication) {
+        this.twoFactorAuthentication = twoFactorAuthentication;
+    }
 
     public User() {
 
@@ -159,21 +165,25 @@ public class User {
 
     //
 
-    public User(int userId, String userName, String userEmail, String userPassword, boolean userStatus, String userRole, String userDescription, List<Expense> expenseList, List<Category> categoryList, String userImageURL) {
+    public User(int userId, String userName, String userEmail, String userPassword, String confirmPassword, String userImageURL, boolean userStatus, String userRole, boolean twoFactorAuthentication, String userDescription, List<Expense> expenseList, List<Category> categoryList) {
         this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
         this.userPassword = userPassword;
+        this.confirmPassword = confirmPassword;
+        this.userImageURL = userImageURL;
         this.userStatus = userStatus;
         this.userRole = userRole;
+        this.twoFactorAuthentication = twoFactorAuthentication;
         this.userDescription = userDescription;
         this.expenseList = expenseList;
         this.categoryList = categoryList;
-        this.userImageURL = userImageURL;
     }
 
 
     //
+
+    
 
     @Override
     public String toString() {
@@ -182,10 +192,14 @@ public class User {
                 ", userName='" + userName + '\'' +
                 ", userEmail='" + userEmail + '\'' +
                 ", userPassword='" + userPassword + '\'' +
+                ", confirmPassword='" + confirmPassword + '\'' +
                 ", userImageURL='" + userImageURL + '\'' +
-                ", userStatus='" + userStatus + '\'' +
+                ", userStatus=" + userStatus +
                 ", userRole='" + userRole + '\'' +
+                ", twoFactorAuthentication=" + twoFactorAuthentication +
                 ", userDescription='" + userDescription + '\'' +
+                ", expenseList=" + expenseList +
+                ", categoryList=" + categoryList +
                 '}';
     }
 }

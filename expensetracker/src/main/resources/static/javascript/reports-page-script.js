@@ -265,11 +265,13 @@ toggleBtn.addEventListener('click', () => {
 // Toggle pie chart visibility
 const PieToggleBtn = document.getElementById('toggleChartBtnCategory');
 const PiechartContainer = document.getElementById('CategoryChartContainer');
+expenseTablePieChart=document.getElementById('expenseTable-pieChart');
 const PieToggleText = document.getElementById('togglePieChartText');
 
 PieToggleBtn.addEventListener('click', () => {
     const isHidden = PiechartContainer.classList.contains('hidden');
     PiechartContainer.classList.toggle('hidden');
+    expenseTablePieChart.classList.toggle('hidden');
     PieToggleText.textContent = isHidden ? 'Click to hide' : 'Click to view';
 });
 

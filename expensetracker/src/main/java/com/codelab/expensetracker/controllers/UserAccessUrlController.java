@@ -154,15 +154,19 @@ public class UserAccessUrlController {
 
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
-
         
+        boolean tfaValue =user.isTwoFactorAuthentication();
+        
+        if (tfaValue){
+            model.addAttribute("tfaValue","true");
+            
+        }
+        else{
+            model.addAttribute("tfaValue","false");
+        }
 
         model.addAttribute("user", user);
         model.addAttribute("page","settings"); // for page specific CSS
-
-
-
-
 
         return "user-access-url/settings";
     }
@@ -260,6 +264,41 @@ public class UserAccessUrlController {
         // Redirect to the user settings page after the update process is complete
         return "redirect:/user/settings";
     }
+    
+    
+    
+    @PostMapping("/2fa-form")
+    public String twoFactorAuthentication(Model model, Principal principal,@RequestParam(name="checkboxValue", defaultValue = "false") boolean twoFactorAuthenticationValue,
+                                          HttpSession session){
+        
+        String name = principal.getName();
+        User user = userRepository.getUserByName(name);
+        
+        
+        try{
+            
+            if(twoFactorAuthenticationValue){
+                user.setTwoFactorAuthentication(true);
+                
+            }
+            else{
+                user.setTwoFactorAuthentication(false);
+                
+            }
+            
+            userRepository.save(user);
+            
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return "redirect:/user/settings";
+        }
+
+        return "redirect:/user/settings";
+        
+    }
+    
+    
 
     //----------------------------------------------------------------------------------------------------------------
 
