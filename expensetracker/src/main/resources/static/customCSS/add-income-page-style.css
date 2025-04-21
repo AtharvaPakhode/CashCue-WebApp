@@ -1,59 +1,94 @@
-/* Slide and fade for heading */
+/* Animations */
 @keyframes slideFadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Fade for form */
 @keyframes fadeInSlow {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-slide-fade-in {
-    animation: slideFadeIn 0.8s ease-out forwards;
-    opacity: 0;
+  animation: slideFadeIn 0.8s ease-out forwards;
+  opacity: 0;
 }
 
 .animate-fade-in-slow {
-    animation: fadeInSlow 1.2s ease-in forwards;
-    opacity: 0;
+  animation: fadeInSlow 1.2s ease-in forwards;
+  opacity: 0;
 }
 
-
-
-
-#save-income {
-  background-color: #1f2937;      /* Tailwind's bg-gray-800 */
-  color: #ffffff;                 /* white text */
-  border-radius: 0.5rem;          /* same as rounded-lg */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* similar to shadow-md */
-  }
-
- #save-income:active {
-    transform: scale(0.96);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-
+/* Buttons */
+#save-income,
 #cancel-income {
-  background-color: #1f2937;      /* Tailwind's bg-gray-800 */
-  color: #ffffff;                 /* white text */
-  border-radius: 0.5rem;          /* same as rounded-lg */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* similar to shadow-md */
-  }
+  background-color: #1f2937;
+  color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
+#save-income:active,
 #cancel-income:active {
   transform: scale(0.96);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .text-4xl {
+    font-size: 1.75rem;
+    text-align: center;
+  }
+
+  .p-8 {
+    padding: 1.5rem !important;
+  }
+
+  form.space-y-6 {
+    gap: 1.5rem;
+  }
+
+  .flex.items-center.space-x-4 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .flex.justify-center.items-center.mt-6.gap-x-10 {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .w-36,
+  .w-44 {
+    width: 100% !important;
+    justify-content: center;
+  }
+
+  #save-income span,
+  #cancel-income span {
+    margin-left: 0 !important;
+    text-align: center;
+    transform: none !important;
+  }
+
+  #save-income .group-hover\:translate-x-40,
+  #cancel-income .group-hover\:translate-x-40 {
+    transform: none !important;
+  }
+
+  .absolute.right-0.h-full.w-10 {
+    display: none; /* hide the icon for compact layout */
+  }
 }

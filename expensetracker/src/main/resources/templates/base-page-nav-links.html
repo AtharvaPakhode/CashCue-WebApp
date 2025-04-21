@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+
+
+    <!-- Google Fonts Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"/>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+
+
+
+
+
+
+
+    <div th:switch="${page}">
+
+        <div th:case="'home'">
+            <script src="https://cdn.tailwindcss.com"></script>
+            <link rel="stylesheet" type="text/css" th:href="@{/css/base-page-style.css}">
+        </div>
+        <div th:case="'about'">
+
+        </div>
+        <div th:case="'contact'">
+
+        </div>
+
+        <!-- Default case (if no page is matched) -->
+        <div th:case="*">
+            <!-- Optionally load a default or common style if needed -->
+        </div>
+    </div>
+
+
+
+
+</head>
+<body >
+
+<!-- Horizontal Navbar -->
+<div class="navbar" id="navbar">
+    <div class="app-name" >CashCue</div>
+    <div class="nav-links">
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/about-us}">About Us</a>
+        <a href="#"th:href="@{/contact-us}">Contact Us</a>
+        <a th:href="@{/login}">Login</a>
+        <a th:href="@{/register}">Register</a>
+    </div>
+</div>
+
+
+<div   th:replace="${content}"></div>
+
+<div th:replace="~{::scripts}"></div>
+
+
+
+
+</body>
+</html>

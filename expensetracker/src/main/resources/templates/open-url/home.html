@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base-page::layout(~{::section})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base-page-nav-links::layout(~{::section})}">
 <head>
   <meta charset="UTF-8">
   <title>Set New Password</title>
@@ -20,7 +20,7 @@
                 Effortlessly track your expenses, understand your spending patterns, and make better financial decisions
             </p>
             <button class="mt-6 bg-[#10b981] text-white text-[15px] font-medium rounded px-5 py-2.5 hover:bg-[#0f9d68] transition-colors" type="button">
-                Start Tracking Free
+                <a th:href="@{/register}"> Start Tracking Free </a>
             </button>
         </div>
 

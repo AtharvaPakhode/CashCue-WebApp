@@ -342,13 +342,39 @@ public class UrlController {
     public String homePage(Model model){
 
         model.addAttribute("page","home");
+        
         return "open-url/home";
     }
-    
-    
-    
-    
-    
+
+    @GetMapping("/contact-us")
+    public String ContactUs(Model model){
+
+        model.addAttribute("page","contact");
+
+        return "open-url/contactUs";
+    }
+
+    @PostMapping("/contact-us")
+    public String ContactUsForm(Model model){
+
+        model.addAttribute("page","contact");
+
+        return "open-url/contactUs";
+    }
+
+
+    @GetMapping("/about-us")
+    public String AboutUs(Model model){
+
+        model.addAttribute("page","contact");
+
+        return "open-url/aboutUs";
+    }
+
+
+
+
+
 
 }
 

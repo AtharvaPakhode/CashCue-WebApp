@@ -1,179 +1,45 @@
-
-
-/* Mobile Responsiveness */
+/* ---------- Mobile Tweaks (still needed for image override) ---------- */
 @media (max-width: 768px) {
-    .container {
-        padding: 20px;
-    }
-
-    .card-header h4 {
-        font-size: 1.1em;
-    }
-
-    .form-control {
-        font-size: 0.9em;
-    }
-
-    .btn {
-        font-size: 0.9em;
-    }
-
-    .text-center img {
-        width: 80px;
-        height: 80px;
+    .profile-image-setting-page {
+        width: 100px;
+        height: 100px;
     }
 }
 
-
-/* Gradient Background for Danger Zone */
-.card-delete-header {
-    background: linear-gradient(135deg, #dc3545, #ff6f61); /* Red to Light Red gradient */
-    color: white;
-}
-
-.btn-danger {
-    background: red; /* Red to White gradient */
-    border: none; /* Remove the border */
-}
-
-.btn-danger:hover {
-    background: linear-gradient(135deg, #8b0000, #dc3545); /* Reverse gradient on hover */
-}
-
-
-/* Custom Switch Color (Unchecked state) */
-.form-check-input {
-    background-color: #ccc; /* Light gray background when unchecked */
-    border-radius: 50px; /* Round border for the switch */
-    transition: background-color 0.3s ease;
-}
-
-/* Custom color for checked state */
-.form-check-input:checked {
-    background-color: green; /* Green color when checked */
-}
-
-/* Thumb color when checked */
-.form-check-input:checked[type="checkbox"] {
-    background-color: green; /* White thumb when checked */
-}
-
-/* Thumb color when unchecked */
-.form-check-input[type="checkbox"] {
-    background-color: #fff; /* White thumb when unchecked */
-    transition: transform 0.3s ease;
-}
-
-
-/* Gradient Background for Password */
-.card-password-header {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
-    color: black;
-}
-
-.password-change {
-    background: none; /* No background */
-    border: 3px solid #c2edda; /* Border color */
-    border-radius: 20px; /* Rounded corners */
-    color: black; /* Text color */
-    padding: 10px 20px; /* Padding to make the button look good */
-    font-size: 16px; /* Font size for better readability */
-    cursor: pointer; /* Cursor on hover */
-}
-
-.password-change:hover {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Background on hover */
-    color: black; /* Text color */
-    outline: none; /* Remove any outline on hover */
-    box-shadow: none; /* Remove any box-shadow on hover */
-    border: 3px solid #c2edda; /* Ensure border stays the same */
-}
-
-.password-change:focus {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Background on focus */
-    outline: none; /* Remove default outline */
-    box-shadow: none; /* Remove any box-shadow */
-    border: 3px solid #c2edda; /* Keep the same border color when focused */
-    color: black; /* Keep text color the same */
-}
-
-
-
-/* Gradient Background for Password */
-.card-security-header {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
-    color: black;
-}
-
-.save-changes {
-    background: none; /* No background */
-    border: 3px solid #c2edda; /* Border color */
-    border-radius: 20px; /* Rounded corners */
-    color: black; /* Text color */
-    padding: 10px 20px; /* Padding to make the button look good */
-    font-size: 16px; /* Font size for better readability */
-    cursor: pointer; /* Cursor on hover */
-}
-
-.save-changes:hover {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Background on hover */
-    color: black; /* Text color */
-    outline: none; /* Remove any outline on hover */
-    box-shadow: none; /* Remove any box-shadow on hover */
-    border: 3px solid #c2edda; /* Ensure border stays the same */
-}
-
-.save-changes:focus {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Background on focus */
-    outline: none; /* Remove default outline */
-    box-shadow: none; /* Remove any box-shadow */
-    border: 3px solid #c2edda; /* Keep the same border color when focused */
-    color: black; /* Keep text color the same */
-}
-
-
-.card-info-header {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
-    color: black;
-}
-
-.change-photo {
-        background: white;
-        color: black;
-        border: 3px solid #c2edda;
-        border-radius: 20px;
-        padding: 8px;
-    }
-
-    .change-photo:hover {
-        background: linear-gradient(to right, #c2edda, #a0d6d2);
-        color: black;
-        border: 3px solid #c2edda;
-    }
-
-    /* Prevent the button from turning grey when clicked */
-    .change-photo:focus, .change-photo:active {
-        background: white; /* Keeps the background as white */
-        color: black; /* Ensures the text remains black */
-        border: 3px solid #c2edda; /* Keeps the border the same */
-    }
-
-
+/* ---------- Profile Image Positioning (can’t use Tailwind only for this context) ---------- */
 .profile-image-setting-page {
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
 
-@media (max-width: 768px) {
-    .profile-image-setting-page {
-        width: 100px; /* Adjust image size for mobile */
-        height: 100px;
-    }
+/* ---------- Card Headers with Gradient Backgrounds ---------- */
+.card-info-header,
+.card-password-header,
+.card-security-header {
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
+    color: black;
 }
 
+.card-delete-header {
+    background: linear-gradient(135deg, #dc3545, #ff6f61);
+    color: white;
+}
 
+/
 
+/* ---------- Danger Button Styling ---------- */
+.btn-danger {
+    background: red;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
 
+.btn-danger:hover {
+    background: linear-gradient(135deg, #8b0000, #dc3545);
+}
 
 

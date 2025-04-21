@@ -24,6 +24,8 @@
 
     <!-- Conditionally load specific page CSS -->
     <div th:switch="${page}">
+
+
         <div th:case="'dashboard'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/dashboard-page-style.css}">
         </div>
