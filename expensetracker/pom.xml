@@ -10,10 +10,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>com.yourcontacts</groupId>
+	<groupId>com.codelab.expensetracker</groupId>
 	<artifactId>ExpenseTracker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SmartContactManager</name>
+	<name>ExpenseTracker</name>
 	<description>Demo project</description>
 
 	<properties>
