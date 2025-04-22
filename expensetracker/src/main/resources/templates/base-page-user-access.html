@@ -2,90 +2,90 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
 
+    <title>Base Page User Access</title>
 
-
-
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
           rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
 
-    <!-- Font Awesome -->
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-    <!-- Custom CSS -->
-
+    <!-- Base custom CSS -->
     <link rel="stylesheet" type="text/css" th:href="@{/customCSS/base-page-user-access-style.css}">
 
-    <!-- Conditionally load specific page CSS -->
+    <!-- Conditional CSS & scripts based on the 'page' variable -->
     <div th:switch="${page}">
-
-
+        <!-- Dashboard page styles -->
         <div th:case="'dashboard'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/dashboard-page-style.css}">
-
         </div>
+
+        <!-- Settings page styles -->
         <div th:case="'settings'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/settings-page-style.css}">
             <script src="https://cdn.tailwindcss.com"></script>
         </div>
+
+        <!-- Add Income page styles -->
         <div th:case="'addIncome'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/add-income-page-style.css}">
             <script src="https://cdn.tailwindcss.com"></script>
         </div>
+
+        <!-- Income History page styles -->
         <div th:case="'incomeHistory'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/income-history-page-style.css}">
             <script src="https://cdn.tailwindcss.com"></script>
         </div>
+
+        <!-- Add Expense page styles -->
         <div th:case="'addExpense'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/add-expense-page-style.css}">
             <script src="https://cdn.tailwindcss.com"></script>
         </div>
+
+        <!-- Expense History page styles -->
         <div th:case="'expenseHistory'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/expense-history-page-style.css}">
             <script src="https://cdn.tailwindcss.com"></script>
         </div>
+
+        <!-- Category page styles -->
         <div th:case="'category'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/category-page-style.css}">
             <script src="https://cdn.tailwindcss.com"></script>
         </div>
+
+        <!-- Reports page styles -->
         <div th:case="'reports'">
             <link rel="stylesheet" type="text/css" th:href="@{/customCSS/reports-page-style.css}">
             <script src="https://cdn.tailwindcss.com"></script>
         </div>
-        <!-- Default case (if no page is matched) -->
+
+        <!-- Default case for unmatched page values -->
         <div th:case="*">
             <!-- Optionally load a default or common style if needed -->
         </div>
     </div>
-
-
-
-
-
 </head>
-<body >
 
+<body>
+
+<!-- Sidebar Start -->
 <div class="sidebar zoom-fix">
-    <!-- Navbar Items -->
+    <!-- Sidebar Links -->
     <a th:href="@{/user/dashboard}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-
     <a th:href="@{/user/add-income}"><i class="fas fa-plus-circle"></i> Add Income</a>
     <a th:href="@{/user/income-history/0}"><i class="fas fa-history"></i> Income History</a>
-
     <a th:href="@{/user/add-expense}"><i class="fas fa-plus-circle"></i> Add Expense</a>
     <a th:href="@{/user/expense-history/0}"><i class="fas fa-history"></i> Expense History</a>
-
     <a th:href="@{/user/category/0}"><i class="fas fa-tags"></i> Category</a>
     <a th:href="@{/user/reports}"><i class="fas fa-chart-line"></i> Financial Reports</a>
     <a th:href="@{/user/settings}"><i class="fas fa-cogs"></i> Settings</a>
-
-
 
     <!-- Profile Section at the bottom -->
     <div class="profile zoom-fix">
@@ -94,29 +94,29 @@
         <div class="username" th:text="${user.userName.toUpperCase()}"></div>
     </div>
 </div>
+<!-- Sidebar End -->
 
-
-<!-- Horizontal Navbar -->
+<!-- Top Navbar Start -->
 <div class="navbar" id="navbar">
-    <div class="app-name" >CashCue</div>
+    <div class="app-name">CashCue</div>
     <div class="nav-links">
         <a th:href="@{/home}">Home</a>
         <a th:href="@{/about-us}">About Us</a>
-        <a href="#"th:href="@{/contact-us}">Contact Us</a>
+        <a href="#" th:href="@{/contact-us}">Contact Us</a>
         <a th:href="@{/login}">Login</a>
         <a th:href="@{/register}">Register</a>
     </div>
 </div>
+<!-- Top Navbar End -->
 
+<!-- Dynamic content injection point -->
+<div th:replace="${content}"></div>
 
-<div   th:replace="${content}"></div>
-
+<!-- Script section placeholder for fragment use -->
 <div th:replace="~{::scripts}"></div>
 
-
+<!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-
 
 </body>
 </html>

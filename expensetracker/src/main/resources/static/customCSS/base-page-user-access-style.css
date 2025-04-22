@@ -1,170 +1,128 @@
-/*---------------sidebar style start---------------*/
-
+/*--------------- sidebar style start ---------------*/
 .sidebar {
-    height: 100vh;            /* Full height of the viewport */
-    width: 250px;             /* Sidebar width */
-    position: fixed;          /* Fix it to the left */
-    top: 0;                   /* Align it to the top of the page */
-    left: 0;                  /* Align it to the left */
-    background-color:white ; /*  background color */
-    padding-top: 60px;        /* Space at the top */
+    height: 100vh;                /* Full height of the viewport */
+    width: 250px;                 /* Sidebar width */
+    position: fixed;             /* Fixed position */
+    top: 0;                      /* Align to top */
+    left: 0;                     /* Align to left */
+    background-color: white;     /* Background color */
+    padding-top: 60px;           /* Space at the top */
 }
 
 .sidebar a {
-    color: black;             /* Link text color */
-    padding: 10px 20px;       /* Padding around the text */
-    text-decoration: none;    /* Remove underline from links */
-    font-size: 16px;          /* Font size */
-    display: block;           /* Make the links block-level elements */
-    font-family: 'Roboto', sans-serif;
-    font-weight: 10;         /* Lighter font weight */
+    color: black;                /* Link text color */
+    padding: 10px 20px;          /* Padding around the text */
+    text-decoration: none;       /* Remove underline */
+    font-size: 16px;             /* Font size */
+    display: block;              /* Block-level links */
+    font-family: 'Roboto', sans-serif; /* Font family */
+    font-weight: 10;             /* Font weight */
 }
 
 .sidebar a:hover {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;;
-    color: black;; /* Hover background color */
+    background: linear-gradient(to right, #c2edda, #a0d6d2); /* Hover background */
+    color: black;                /* Hover text color */
 }
 
 .sidebar a i {
-
-    margin-right: 5px;           /* Add margin to the right of the icons */
+    margin-right: 5px;           /* Space between icon and text */
 }
 
 .sidebar .profile {
-    position: absolute;       /* Position profile at the bottom */
-    bottom: 0;                /* Align it to the bottom */
-    width: 100%;              /* Make it full-width */
-    height:20vh;
-    padding: 10px;            /* Padding around profile section */
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;  /*  background for profile */
-    text-align: center;       /* Center the profile content */
+    position: absolute;          /* Position at the bottom */
+    bottom: 0;                   /* Align bottom */
+    width: 100%;                 /* Full width */
+    height: 180px;                /* Height of profile section */
+    padding: 10px;               /* Inner padding */
+    background: linear-gradient(to right, #c2edda, #a0d6d2); /* Profile background */
+    text-align: center;          /* Centered content */
+    display: flex;               /* Use flexbox */
+    flex-direction: column;      /* Stack items vertically */
+    align-items: center;         /* Center align items */
+    animation: fadeSlideIn 0.8s ease-out; /* Animation */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover transition */
+    padding: 20px;               /* Padding override */
+    border-radius: 16px;         /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Shadow */
 }
 
 .profile img {
-    border-radius: 50%;       /* Make the profile picture round */
-    width: 70px;              /* Profile picture size */
-    height: 70px;             /* Profile picture size */
-    margin-top: 15px;
-
+    border-radius: 50%;          /* Circular image */
+    width: 70px;                 /* Width */
+    height: 70px;                /* Height */
+    margin-top: 10px;            /* Margin top */
 }
 
 .profile .username {
-    color: black;             /* White text for the username */
-    font-size: 16px;          /* Font size for the username */
-    margin-top: 15px;          /* Space between profile image and username */
-    font-family: 'Roboto', sans-serif;
-}
-
-/* Keep the existing enhancements */
-.profile {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeSlideIn 0.8s ease-out;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background: linear-gradient(to bottom right, #ffffff, #f0f0f5);
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: black;                /* Text color */
+    font-size: 16px;             /* Font size */
+    margin-top: 10px;            /* Space from image */
+    font-family: 'Roboto', sans-serif; /* Font family */
 }
 
 .profile:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px); /* Hover lift effect */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
 }
+/*--------------- sidebar style end ---------------*/
 
-@keyframes fadeSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-
-
-
-
-/*---------------sidebar style end---------------*/
-
-
-/*---------------navbar style start---------------*/
+/*--------------- navbar style start ---------------*/
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color:white;   /* Background color of the navbar */
-    padding: 10px 20px;        /* Padding around the navbar */
-    margin-left: 250px;        /* To prevent navbar from overlapping with sidebar */
-    position: absolute;           /* Fix the navbar at the top */
-    width: calc(100% - 250px); /* Ensure it takes the remaining width */
-    top: 0;                    /* Align it to the top */
-    z-index: 1000;             /* Keep navbar above content */
-    height: 60px;              /* Set a fixed height for the navbar */
+    display: flex;                   /* Flex layout */
+    justify-content: space-between; /* Space between items */
+    align-items: center;            /* Align items center */
+    background-color: white;        /* Background color */
+    padding: 10px 20px;             /* Padding */
+    margin-left: 250px;             /* Offset due to sidebar */
+    position: absolute;             /* Absolute positioning */
+    width: calc(100% - 250px);      /* Adjust width */
+    top: 0;                         /* Align to top */
+    z-index: 1000;                  /* High z-index */
+    height: 60px;                   /* Fixed height */
 }
 
 .navbar .app-name {
-    color: black;              /* Text color for the app name */
-    font-size: 24px;           /* Font size for the app name */
-    font-family: 'Roboto', sans-serif;
-    font-weight: Bolder;          /* Slightly bold for the app name */
-     background: linear-gradient(to right, #9faeaa, #2f3d3b);  /* Gradient background */
-        -webkit-background-clip: text;  /* Clip background to the text */
-        color: transparent;             /* Make text color transparent so gradient shows */
-
+    color: black;                   /* Fallback color */
+    font-size: 24px;                /* Font size */
+    font-family: 'Roboto', sans-serif; /* Font family */
+    font-weight: bolder;            /* Bold text */
+    background: linear-gradient(to right, #9faeaa, #2f3d3b); /* Gradient */
+    -webkit-background-clip: text;  /* Clip text to background */
+    color: transparent;             /* Make text transparent */
 }
 
 .navbar .nav-links a {
-    color: black;              /* Text color for navbar links */
-    text-decoration: none;     /* Remove underline from links */
-    padding: 8px 16px;         /* Padding around the navbar links */
-    font-size: 14px;           /* Font size for the navbar links */
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;          /* Lighter font weight */
-    transition: background-color 0.3s ease;  /* Smooth transition for hover */
+    color: black;                   /* Text color */
+    text-decoration: none;          /* No underline */
+    padding: 8px 16px;              /* Link padding */
+    font-size: 14px;                /* Font size */
+    font-family: 'Roboto', sans-serif; /* Font */
+    font-weight: 300;               /* Light font weight */
+    transition: background-color 0.3s ease; /* Hover transition */
 }
 
 .navbar .nav-links a:hover {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
-    color: black;              /* White text on hover */
+    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Hover background */
+    color: black;                   /* Hover text color */
 }
+/*--------------- navbar style end ---------------*/
 
-/* Make navbar and sidebar responsive on smaller screens */
-@media (max-width: 768px) {
-    .navbar {
-        margin-left: 0;         /* Navbar takes the full width on smaller screens */
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
+/*--------------- main content style start ---------------*/
+.dynamic-content {
+    margin-left: 250px;             /* Space for sidebar */
+    margin-top: 100px;              /* Space for navbar */
+}
+/*--------------- main content style end ---------------*/
+
+/*--------------- animations start ---------------*/
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;                 /* Start invisible */
+        transform: translateY(20px); /* Slide from bottom */
     }
-
-    .navbar .nav-links a {
-        padding: 10px 20px;      /* More padding for mobile links */
-        font-size: 18px;         /* Adjust font size for mobile */
-    }
-
-    .sidebar {
-        width: 200px;           /* Reduce sidebar width on small screens */
-    }
-
-    .profile img {
-        width: 30px;            /* Smaller profile image on mobile */
-        height: 30px;           /* Smaller profile image on mobile */
+    to {
+        opacity: 1;                 /* Fade in */
+        transform: translateY(0);   /* Settle in place */
     }
 }
-
-/*---------------navbar style end---------------*/
-
-
-/*---------------main content style start---------------*/
-
-.dynamic-content{
-    margin-left: 250px;
-    margin-top:100px;
-}
-
-/*---------------main content style end---------------*/
+/*--------------- animations end ---------------*/

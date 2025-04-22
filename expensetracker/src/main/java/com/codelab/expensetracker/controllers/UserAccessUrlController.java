@@ -62,30 +62,34 @@ public class UserAccessUrlController {
 
     @Autowired
     private ExpenseRepository expenseRepository;
-    
+
     @Autowired
     private IncomeRepository incomeRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
-    
+
     @Autowired
     private CategoryService categoryService;
 
     @Autowired
     private ExpenseSpecification ExpenseSpecifications;
-    
+
     @Autowired
     private ReportService reportService;
-    
+
     @Autowired
     private PDFservice pdfService;
-    
 
-
-
-
-
+    /**
+     * Handles the user dashboard page.
+     * Displays total balance, monthly income, monthly expenses, and savings
+     * based on the currently logged-in user.
+     *
+     * @param model     the Spring model to pass data to the view
+     * @param principal contains the name of the currently authenticated user
+     * @return the Thymeleaf view name for the dashboard page
+     */
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal) {
         model.addAttribute("title", "Dashboard");
@@ -104,27 +108,31 @@ public class UserAccessUrlController {
 
         // Define start and end of the current month
         LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
-        LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(LocalTime.MAX);
+        LocalDateTime endOfMonth = LocalDate.now()
+                .withDayOfMonth(LocalDate.now().lengthOfMonth())
+                .atTime(LocalTime.MAX);
 
         try {
-            // Fetch values from database (may return null)
+            /**
+             * Fetch values from database for income and expenses.
+             * These may return null if no records exist.
+             */
             sumOfIncomeByUser = incomeRepository.findSumOfIncomeOfUserByUser(user);
             sumOfExpenseByUser = expenseRepository.findSumOfExpensesOfUserByUser(user);
             Double monthlyIncomeRaw = incomeRepository.findSumOfIncomeForCurrentMonth(user, startOfMonth, endOfMonth);
             Double monthlyExpenseRaw = expenseRepository.findSumOfExpensesForCurrentMonth(user, startOfMonth, endOfMonth);
 
-            // Handle nulls safely
+            // Handle nulls safely to avoid NullPointerExceptions
             sumOfIncomeByUser = (sumOfIncomeByUser != null) ? sumOfIncomeByUser : 0.0;
             sumOfExpenseByUser = (sumOfExpenseByUser != null) ? sumOfExpenseByUser : 0.0;
             monthlyIncome = (monthlyIncomeRaw != null) ? monthlyIncomeRaw : 0.0;
             monthlyExpense = (monthlyExpenseRaw != null) ? monthlyExpenseRaw : 0.0;
 
-            // Calculate balance and savings
+            // Calculate balance and monthly savings
             totalBalance = sumOfIncomeByUser - sumOfExpenseByUser;
             monthlySavings = monthlyIncome - monthlyExpense;
-           
 
-            // Add to model
+            // Add calculated values to the model
             model.addAttribute("totalBalance", totalBalance);
             model.addAttribute("monthlyIncome", monthlyIncome);
             model.addAttribute("monthlyExpense", monthlyExpense);
@@ -132,47 +140,69 @@ public class UserAccessUrlController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Fallback values in case of error
+
+            /**
+             * If any exception occurs during data fetching,
+             * populate the model with default zero values.
+             */
             model.addAttribute("totalBalance", 0.0);
             model.addAttribute("monthlyIncome", 0.0);
             model.addAttribute("monthlyExpense", 0.0);
             model.addAttribute("monthlySavings", 0.0);
         }
 
-        // Add user info and page class for styling
+        // Add user information and a CSS class for page-specific styling
         model.addAttribute("user", user);
-        model.addAttribute("page", "dashboard"); // for page-specific CSS if needed
+        model.addAttribute("page", "dashboard"); // for page specific CSS (Active page on UI)
 
-        return "user-access-url/dashboard"; // Thymeleaf template
+        // Return the Thymeleaf template for the dashboard view
+        return "user-access-url/dashboard";
     }
 
 
+//----------------------------------------------------------------------------------------------------------------
+
+
+    
+    /**
+     * Handles the settings page view for the user.
+     * Displays user info and the current state of two-factor authentication (2FA).
+     *
+     * @param model     the Spring model to pass data to the view
+     * @param principal contains the name of the currently authenticated user
+     * @return the Thymeleaf view name for the settings page
+     */
     @GetMapping("/settings")
     public String settings(Model model, Principal principal) {
         model.addAttribute("title", "Dashboard");
 
-
+        // Get the currently authenticated user's name and details
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
-        
-        boolean tfaValue =user.isTwoFactorAuthentication();
-        
-        if (tfaValue){
-            model.addAttribute("tfaValue","true");
-            
-        }
-        else{
-            model.addAttribute("tfaValue","false");
+
+        // Check if two-factor authentication is enabled for the user
+        boolean tfaValue = user.isTwoFactorAuthentication();
+
+        /**
+         * Add the 2FA status to the model.
+         * This value is used on the frontend to reflect the current toggle state.
+         */
+        if (tfaValue) {
+            model.addAttribute("tfaValue", "true");
+        } else {
+            model.addAttribute("tfaValue", "false");
         }
 
+        // Add user info and page identifier for CSS styling or highlighting in the UI
         model.addAttribute("user", user);
-        model.addAttribute("page","settings"); // for page specific CSS
+        model.addAttribute("page", "settings"); // for page specific CSS (Active page on UI)
 
+        // Return the Thymeleaf template for the settings page
         return "user-access-url/settings";
     }
 
-    
-    
+
+
     /**
      * Handles the request to change the profile image of the user.
      * It deletes the old image if it exists, and uploads a new image or sets the default image if the uploaded file is empty.
@@ -220,6 +250,7 @@ public class UserAccessUrlController {
             // If the uploaded image file is empty, set the default profile image
             if (profileImage.isEmpty()) {
                 user.setUserImageURL("userDefault.png");
+                session.setAttribute("customMessage", new CustomDisplayMessage("Please select the valid image file", "alert-danger"));
             } else {
                 // If a new image is uploaded, process it
                 String originalFileName = profileImage.getOriginalFilename();
@@ -258,109 +289,179 @@ public class UserAccessUrlController {
 
         } catch (Exception e) {
             // Log the exception if an error occurs during the file upload process
-            e.printStackTrace();
+            session.setAttribute("customMessage", new CustomDisplayMessage("Something went wrong", "alert-danger"));
         }
 
         // Redirect to the user settings page after the update process is complete
         return "redirect:/user/settings";
     }
-    
-    
-    
+
+
+
+    /**
+     * Handles the form submission for enabling or disabling
+     * two-factor authentication (2FA) for the user.
+     *
+     * @param model                       the Spring model
+     * @param principal                   contains the name of the currently authenticated user
+     * @param twoFactorAuthenticationValue the boolean value of the 2FA checkbox
+     * @param session                     the current HTTP session used to store feedback messages
+     * @return redirect to the settings page after saving the preference
+     */
     @PostMapping("/2fa-form")
-    public String twoFactorAuthentication(Model model, Principal principal,@RequestParam(name="checkboxValue", defaultValue = "false") boolean twoFactorAuthenticationValue,
-                                          HttpSession session){
-        
+    public String twoFactorAuthentication(
+            Model model,
+            Principal principal,
+            @RequestParam(name = "checkboxValue", defaultValue = "false") boolean twoFactorAuthenticationValue,
+            HttpSession session) {
+
+        // Get the currently authenticated user
         String name = principal.getName();
         User user = userRepository.getUserByName(name);
-        
-        
-        try{
-            
-            if(twoFactorAuthenticationValue){
+
+        try {
+            /**
+             * Update the user's 2FA preference based on the checkbox input.
+             * Add a session message indicating success or recommendation.
+             */
+            if (twoFactorAuthenticationValue) {
                 user.setTwoFactorAuthentication(true);
-                // Set a success message in the session to be displayed on the frontend
-                session.setAttribute("customMessage", new CustomDisplayMessage("Two factor authentication is enabled", "alert-success"));
-                
-            }
-            else{
+
+                // Success message if 2FA is enabled
+                session.setAttribute("customMessage", new CustomDisplayMessage(
+                        "Two factor authentication is enabled",
+                        "alert-success"
+                ));
+            } else {
                 user.setTwoFactorAuthentication(false);
-                // Set a success message in the session to be displayed on the frontend
-                session.setAttribute("customMessage", new CustomDisplayMessage("Two-Factor Authentication is currently disabled. For enhanced security, we recommend enabling it.", "alert-danger"));
-                
+
+                // Recommendation message if 2FA is disabled
+                session.setAttribute("customMessage", new CustomDisplayMessage(
+                        "Two-Factor Authentication is currently disabled. For enhanced security, we recommend enabling it.",
+                        "alert-danger"
+                ));
             }
-            
+
+            // Save the updated user object to the database
             userRepository.save(user);
-            
-            
-        }
-        catch(Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
+
+            // On error, redirect back to the settings page
             return "redirect:/user/settings";
         }
 
+        // On success, redirect to the settings page
         return "redirect:/user/settings";
-        
     }
-    
-    
 
-    //----------------------------------------------------------------------------------------------------------------
 
+
+
+//----------------------------------------------------------------------------------------------------------------
+
+
+
+    /**
+     * Displays the form for adding a new income entry.
+     * Initializes a blank Income object and passes user and page context to the view.
+     *
+     * @param model     the Spring model to pass data to the view
+     * @param principal contains the name of the currently authenticated user
+     * @return the Thymeleaf view name for the add-income form page
+     */
     @GetMapping("/add-income")
-    public String addIncome(Model model, Principal principal){
+    public String addIncome(Model model, Principal principal) {
+
+        // Get the currently authenticated user's name and details
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
 
-        model.addAttribute("user",user);
-        model.addAttribute("page","addIncome"); // for page specific CSS
+        // Add user and page-specific information to the model
+        model.addAttribute("user", user);
+        model.addAttribute("page", "addIncome"); // for page specific CSS (Active page on UI)
+
+        // Add a new empty Income object to bind form data
         model.addAttribute("income", new Income());
-        
+
+        // Return the Thymeleaf template for the add-income form
         return "user-access-url/add-income";
     }
 
 
+
+    /**
+     * Handles the submission of the income form.
+     * Validates input, attaches user details, and saves the income entry.
+     *
+     * @param income         the submitted income form, validated
+     * @param bindingResult  holds validation results
+     * @param model          the Spring model to pass data to the view
+     * @param principal      contains the name of the currently authenticated user
+     * @param session        current HTTP session for displaying feedback messages
+     * @return the Thymeleaf view for the add-income page (same page, with feedback)
+     */
     @PostMapping("/add-income-process")
-    public String addIncomeForm(@Valid @ModelAttribute("income") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Income income,
-                                 BindingResult bindingResult,
-                                 Model model,
-                                 Principal principal){
-        
+    public String addIncomeForm(
+            @Valid @ModelAttribute("income") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Income income,
+            BindingResult bindingResult,
+            Model model,
+            Principal principal,
+            HttpSession session) {
+
+        // Get the currently authenticated user's name and details
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
-        model.addAttribute("user", user);
-        
 
         try {
-            if (bindingResult.hasErrors()) {                
-                System.out.println("failed");
-                System.out.println(bindingResult.getAllErrors());
-                return "user-access-url/add-expense";
+            /**
+             * If validation errors exist in the form,
+             * return to the same page with an error message.
+             */
+            if (bindingResult.hasErrors()) {
+                session.setAttribute("customMessage", new CustomDisplayMessage(
+                        "Something went wrong",
+                        "alert-danger"
+                ));
+                model.addAttribute("page", "addIncome"); // for page specific CSS (Active page on UI)
+                return "user-access-url/add-income";
             }
 
+            /**
+             * If a date was entered, convert it to a LocalDateTime using the current time.
+             * This is useful for saving precise timestamps even if only a date is selected.
+             */
+            if (income.getDate() != null) {
+                LocalTime currentTime = LocalTime.now();
+                income.setLocalDateTime(LocalDateTime.of(income.getDate(), currentTime));
+            }
+
+            // Attach the user and save the income entry
+            income.setUser(user);
+            this.incomeRepository.save(income);
+
+            // Success message after saving
+            session.setAttribute("customMessage", new CustomDisplayMessage(
+                    "Income entry added successfully.",
+                    "alert-success"
+            ));
+
             
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Convert the bound LocalDate to LocalDateTime
-        if (income.getDate() != null) {
-            LocalTime currentTime = LocalTime.now();
-            income.setLocalDateTime(LocalDateTime.of(income.getDate(), currentTime));
-        }
+        // Add user info back to model for consistency
+        model.addAttribute("user", user);
 
+        model.addAttribute("page", "addIncome"); // for page specific CSS (Active page on UI)
 
-
-        System.out.println(income.toString());  //DEBUG
-
-        
-        System.out.println(income.getLocalDateTime());
-
-        income.setUser(user);
-        this.incomeRepository.save(income);
-
+        // Return to the same form page (can be improved to redirect for PRG pattern)
         return "user-access-url/add-income";
     }
+
 
 
     @GetMapping("/income-history/{page}")

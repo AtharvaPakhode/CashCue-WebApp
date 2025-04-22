@@ -98,6 +98,7 @@ public class UrlController {
 
             // If validation errors exist, return to the registration form
             if (result.hasErrors()) {
+                model.addAttribute("page","register");
                 return "open-url/register";
             }
 
@@ -119,6 +120,7 @@ public class UrlController {
         } catch (DataIntegrityViolationException e) {
             // Handle email already taken error
             session.setAttribute("customMessage", new CustomDisplayMessage("This user email is already registered", "alert-danger"));
+            model.addAttribute("page","register");
             return "open-url/register";
         } catch (Exception e) {
             // Handle generic error
@@ -286,6 +288,7 @@ public class UrlController {
             // Send OTP via email
             try {
                 emailService.sendEmail("noreply.cswiz@gmail.com", userEmailTo, "WELCOME", "Your one-time OTP is: " + otpGenerator.getOtp());
+                session.setAttribute("customMessage", new CustomDisplayMessage("OTP has been sent to your email.", "alert-success"));
             } catch (Exception e) {
                 session.setAttribute("customMessage", new CustomDisplayMessage("Failed to send OTP. Please try again.", "alert-danger"));
                 return "open-url/forgot-password";

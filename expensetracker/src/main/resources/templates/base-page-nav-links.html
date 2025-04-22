@@ -4,64 +4,58 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
+    <!-- Google Fonts: Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
 
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-    <!-- Google Fonts Roboto -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"/>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
-
-
-
-
-
-
-
+    <!-- Conditionally load styles/scripts based on the 'page' variable -->
     <div th:switch="${page}">
 
+        <!-- Home Page: Tailwind + Base CSS -->
         <div th:case="'home'">
             <script src="https://cdn.tailwindcss.com"></script>
             <link rel="stylesheet" type="text/css" th:href="@{/css/base-page-style.css}">
         </div>
+
+        <!-- About Page: Placeholder for future additions -->
         <div th:case="'about'">
 
         </div>
+
+        <!-- Contact Page: Placeholder for future additions -->
         <div th:case="'contact'">
 
         </div>
 
-        <!-- Default case (if no page is matched) -->
+        <!-- Default case: Applies when no matching case is found -->
         <div th:case="*">
-            <!-- Optionally load a default or common style if needed -->
+
         </div>
+
     </div>
-
-
-
-
 </head>
-<body >
 
-<!-- Horizontal Navbar -->
+<body>
+
+<!-- Top Navigation Bar -->
 <div class="navbar" id="navbar">
-    <div class="app-name" >CashCue</div>
+    <div class="app-name">CashCue</div>
     <div class="nav-links">
         <a th:href="@{/home}">Home</a>
         <a th:href="@{/about-us}">About Us</a>
-        <a href="#"th:href="@{/contact-us}">Contact Us</a>
+        <a href="#" th:href="@{/contact-us}">Contact Us</a>
         <a th:href="@{/login}">Login</a>
         <a th:href="@{/register}">Register</a>
     </div>
 </div>
 
+<!-- Dynamic page content will be injected here -->
+<div th:replace="${content}"></div>
 
-<div   th:replace="${content}"></div>
-
+<!-- Script placeholder (fragment) -->
 <div th:replace="~{::scripts}"></div>
-
-
-
 
 </body>
 </html>
