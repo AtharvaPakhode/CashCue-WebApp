@@ -4,10 +4,14 @@ import com.codelab.expensetracker.helper.CustomDisplayMessage;
 import com.codelab.expensetracker.helper.OTPgenerator;
 import com.codelab.expensetracker.models.User;
 import com.codelab.expensetracker.repositories.UserRepository;
+import com.codelab.expensetracker.securityconfiguration.CustomUserDetailsService;
 import com.codelab.expensetracker.services.EmailService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +20,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
-import java.security.Principal;
 
-import static java.lang.Thread.*;
 
 /**
  * UrlController handles all the user-related actions like registration, login, password reset,
@@ -43,6 +43,9 @@ public class UrlController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
     /**
      * Displays the registration form to the user.
@@ -144,6 +147,90 @@ public class UrlController {
         return "open-url/login";
     }
 
+    @GetMapping("/2fa-verification")
+    public String show2faPage(Model model, HttpSession session) {
+
+        String username = (String) session.getAttribute("2fa_username");
+
+        if (username == null) {
+            // Handle the case where username is not in session
+            model.addAttribute("customMessage", new CustomDisplayMessage("Session expired. Please log in again.", "alert-danger"));
+            return "redirect:/login";
+        }
+
+        // Load user from database
+        User user = userRepository.getUserByName(username);
+
+        if (user == null) {
+            model.addAttribute("customMessage", new CustomDisplayMessage("User not found.", "alert-danger"));
+            return "redirect:/login";
+        }
+
+        model.addAttribute("page", "2faVerification");
+        model.addAttribute("userEmail", username);
+
+        return "open-url/2fa-verification"; 
+    }
+
+    @PostMapping("/verify-2fa-otp")
+    public String verifyOtp(@RequestParam("otp") String otpInput, HttpSession session, Model model) {
+        String otpSession = String.valueOf(session.getAttribute("otp"));
+        String username = (String) session.getAttribute("2fa_username");
+
+        if (otpSession != null && otpSession.equals(otpInput)) {
+            // OTP verified: authenticate user manually
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+
+            // Clear session data
+            session.removeAttribute("otp");
+            
+
+            return "redirect:/user/dashboard";
+        } else {
+            
+            session.setAttribute("customMessage", new CustomDisplayMessage("Invalid OTP", "alert-danger"));
+            model.addAttribute("page","verifyOTP");
+            model.addAttribute("userEmail", username);
+            return "/open-url/2fa-verification";
+        }
+    }
+
+    @PostMapping("/resend-2fa-otp")
+    public String resend2FAOtp(Model model,
+                            @RequestParam("userEmail") String userEmail,
+                            HttpSession session) {
+
+        User userexisted = userRepository.getUserByName(userEmail);
+
+        if (userexisted == null) {
+            session.setAttribute("customMessage", new CustomDisplayMessage("No user found with this email address", "alert-danger"));
+        } else {
+            // Generate and send new OTP
+            int otp = otpGenerator.generateOTP();
+            otpGenerator.setOtp(otp);
+            try {
+                emailService.sendEmail("noreply.cswiz@gmail.com", userEmail, "WELCOME", "Your new OTP is: " + otpGenerator.getOtp());
+            } catch (Exception e) {
+                session.setAttribute("customMessage", new CustomDisplayMessage("Failed to send OTP. Please try again.", "alert-danger"));
+                model.addAttribute("page", "verifyOTP");
+                return "open-url/2fa-verification";
+            }
+
+            session.setAttribute("otp", otp);
+            session.setAttribute("2fa_username", userEmail);
+
+            // Add email to the model for OTP verification
+            model.addAttribute("userEmail", userEmail);
+            session.setAttribute("customMessage", new CustomDisplayMessage("A new OTP has been sent to your email.", "alert-success"));
+        }
+       
+        model.addAttribute("page", "verifyOTP");
+        return "open-url/2fa-verification";
+    }
+
     /**
      * Displays the terms and conditions page to the user.
      *
@@ -241,7 +328,9 @@ public class UrlController {
             // OTP mismatch
             session.setAttribute("customMessage", new CustomDisplayMessage("Invalid OTP. Please try again.", "alert-danger"));
             model.addAttribute("userEmail", userEmail);  // Pre-fill email in the form
-            
+
+            model.addAttribute("page", "verifyOTP");
+
             return "open-url/verify-OTP-FP";
         }
     }
@@ -271,6 +360,7 @@ public class UrlController {
                 emailService.sendEmail("noreply.cswiz@gmail.com", userEmail, "WELCOME", "Your new OTP is: " + otpGenerator.getOtp());
             } catch (Exception e) {
                 session.setAttribute("customMessage", new CustomDisplayMessage("Failed to send OTP. Please try again.", "alert-danger"));
+                model.addAttribute("page", "verifyOTP");
                 return "open-url/verify-OTP-FP";
             }
 
@@ -278,7 +368,7 @@ public class UrlController {
             model.addAttribute("userEmail", userEmail);
             session.setAttribute("customMessage", new CustomDisplayMessage("A new OTP has been sent to your email.", "alert-success"));
         }
-
+        model.addAttribute("page", "verifyOTP");
         return "open-url/verify-OTP-FP";
     }
 

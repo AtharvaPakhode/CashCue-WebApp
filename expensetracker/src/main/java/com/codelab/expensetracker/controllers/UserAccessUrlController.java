@@ -279,14 +279,19 @@ public class UserAccessUrlController {
             
             if(twoFactorAuthenticationValue){
                 user.setTwoFactorAuthentication(true);
+                // Set a success message in the session to be displayed on the frontend
+                session.setAttribute("customMessage", new CustomDisplayMessage("Two factor authentication is enabled", "alert-success"));
                 
             }
             else{
                 user.setTwoFactorAuthentication(false);
+                // Set a success message in the session to be displayed on the frontend
+                session.setAttribute("customMessage", new CustomDisplayMessage("Two-Factor Authentication is currently disabled. For enhanced security, we recommend enabling it.", "alert-danger"));
                 
             }
             
             userRepository.save(user);
+            
             
         }
         catch(Exception e){

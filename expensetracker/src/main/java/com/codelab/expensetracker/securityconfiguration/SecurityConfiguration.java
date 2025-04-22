@@ -1,5 +1,6 @@
 package com.codelab.expensetracker.securityconfiguration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -10,6 +11,9 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfiguration {
+
+    @Autowired
+    private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -31,7 +35,7 @@ public class SecurityConfiguration {
                 .formLogin(form -> form
                         .loginPage("/login")  // Custom login page
                         .loginProcessingUrl("/dologin")  // URL for handling the form submission--> will be same as the parameter used in th:action in login form
-                        .defaultSuccessUrl("/user/dashboard", true)  // Redirect to dashboard after successful login
+                        .successHandler(customAuthenticationSuccessHandler)
                 )
 
                 // Logout configuration (no deprecated methods)
