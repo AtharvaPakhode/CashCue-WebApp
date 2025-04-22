@@ -196,7 +196,7 @@ public class UrlController {
             session.setAttribute("customMessage", new CustomDisplayMessage("Invalid OTP", "alert-danger"));
             model.addAttribute("page","verifyOTP");
             model.addAttribute("userEmail", username);
-            return "/open-url/2fa-verification";
+            return "open-url/2fa-verification";
         }
     }
 

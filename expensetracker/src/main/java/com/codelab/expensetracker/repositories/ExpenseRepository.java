@@ -28,8 +28,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
     @Query("SELECT SUM(e.amount)  From Expense e WHERE e.user = :user ")
     double findSumOfExpensesOfUserByUser(@Param("user") User user);
 
-    @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfMonth AND :endOfMonth")
-    Double findSumOfExpensesForCurrentMonth(@Param("user") User user,
+    @Query("SELECT COALESCE(SUM(e.amount), 0.0) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfMonth AND :endOfMonth")
+     Double findSumOfExpensesForCurrentMonth(@Param("user") User user,
                                             @Param("startOfMonth") LocalDateTime startOfMonth,
                                             @Param("endOfMonth") LocalDateTime endOfMonth);
 
@@ -132,7 +132,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
             "WHERE e.user = :user " +
             "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
             "AND EXTRACT(MONTH FROM e.dateTime) = EXTRACT(MONTH FROM CURRENT_DATE)")
-    double findSumOfExpensesCurrentMonth(@Param("user") User user);
+    Double findSumOfExpensesCurrentMonth(@Param("user") User user);
 
 
 
@@ -141,7 +141,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
             "WHERE e.user = :user " +
             "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
             "AND CEIL(EXTRACT(MONTH FROM e.dateTime) / 3.0) = CEIL(EXTRACT(MONTH FROM CURRENT_DATE) / 3.0)")
-    double findSumOfExpensesCurrentQuarter(@Param("user") User user);
+    Double findSumOfExpensesCurrentQuarter(@Param("user") User user);
 
 
 
@@ -149,7 +149,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
             "FROM Expense e " +
             "WHERE e.user = :user " +
             "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE)")
-    double findSumOfExpensesCurrentYear(@Param("user") User user);
+    Double findSumOfExpensesCurrentYear(@Param("user") User user);
 
 
 }

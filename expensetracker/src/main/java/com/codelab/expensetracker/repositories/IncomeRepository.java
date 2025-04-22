@@ -25,7 +25,7 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> , JpaSp
     @Query("SELECT SUM(i.amount)  From Income i WHERE i.user = :user ")
     double findSumOfIncomeOfUserByUser(@Param("user") User user);
 
-    @Query("SELECT SUM(i.amount) FROM Income i WHERE i.user = :user AND i.dateTime BETWEEN :startOfMonth AND :endOfMonth")
+    @Query("SELECT COALESCE (SUM(i.amount), 0.0) FROM Income i WHERE i.user = :user AND i.dateTime BETWEEN :startOfMonth AND :endOfMonth")
     Double findSumOfIncomeForCurrentMonth(@Param("user") User user,
                                           @Param("startOfMonth") LocalDateTime startOfMonth,
                                           @Param("endOfMonth") LocalDateTime endOfMonth);
