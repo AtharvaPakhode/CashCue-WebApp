@@ -1,39 +1,57 @@
+/* Card container */
 .card {
-    background-color: #fff;
-    border-radius: 10px;
+    background: linear-gradient(to right, #1e1e1e, #2c2c2c); /* dark background to match flip card */
     border: none;
-    position: relative;
-    margin-bottom: 30px;
-    box-shadow: 0 0.46875rem 2.1875rem rgba(90,97,105,0.1),
-                0 0.9375rem 1.40625rem rgba(90,97,105,0.1),
-                0 0.25rem 0.53125rem rgba(90,97,105,0.12),
-                0 0.125rem 0.1875rem rgba(90,97,105,0.1);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+     margin-bottom: 30px;
 }
 
-/* Background gradients with consistent look */
+/* Card icon */
+.card-icon {
+    background-color: #3b3b3b; /* dark grey tone */
+    color: #ff9800; /* matches flip card color */
+    border-radius: 50%;
+    padding: 15px;
+    font-size: 1.5rem;
+}
+
+/* Card title */
+.card-title {
+    color: #f5f5f5;
+    font-weight: 600;
+}
+
+/* Card number */
+.card h2 {
+    color: #c2edda
+}
+
+/* Progress bar */
+.progress {
+    background-color: #555555; /* subtle dark base */
+    border-radius: 50px;
+}
+
+.progress-bar {
+    background: linear-gradient(to right, #c2edda, #a0d6d2)
+}
+
+/* Specific background colors if you still want different tones */
 .l-bg-cherry,
 .l-bg-blue-dark,
 .l-bg-green-dark,
 .l-bg-orange-dark {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important;
-    color: black;
+    background: linear-gradient(to right, #2c2c2c, #1c1c1c);
 }
 
-/* Progress bar styles */
-.l-bg-cyan {
-    background: linear-gradient(135deg, #289cf5, #84c0ec) !important;
-    color: #fff;
+/* Optional: Smooth animation on hover */
+.card:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s ease-in-out;
 }
 
-.l-bg-green {
-    background: linear-gradient(135deg, #23bdb8 0%, #43e794 100%) !important;
-    color: #fff;
-}
-
-.l-bg-orange {
-    background: linear-gradient(to right, #f9900e, #ffba56) !important;
-    color: #fff;
-}
 
 /* Card icon style */
 .card .card-statistic-3 .card-icon-large .fas,
@@ -47,38 +65,291 @@
     text-align: center;
     line-height: 50px;
     margin-left: 15px;
-    color: #000;
+    color: #fff;
     position: absolute;
     right: -5px;
     top: 20px;
-    opacity: 0.1;
+    opacity: 0.2;
 }
 
 /* Welcome message animation */
-.welcome-message {
-    text-align: center;
-    margin-bottom: 30px;
-    animation: fadeSlideIn 1s ease forwards;
-    opacity: 0;
+
+.flip-card {
+  background-color: transparent;
+  width: 300px;
+  height: 192px;
+  perspective: 1000px;
+  color: white;
 }
 
-.welmsg1 {
-    display: block;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: Black;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
-    animation: popIn 1s ease-out forwards;
+.heading_8264 {
+  position: absolute;
+  letter-spacing: .2em;
+  font-size: 0.7em;
+  top: 2em;
+  left: 18.6em;
 }
 
-.welmsg2 {
-    display: block;
-    font-size: 1.2rem;
-    color: black;
-    margin-top: 5px;
-    opacity: 0;
-    animation: fadeIn 1.5s ease-out 0.5s forwards;
+.logo {
+  position: absolute;
+  top: 8.3em;
+  left: 14em;
 }
+
+.chip {
+  position: absolute;
+  top: 3.3em;
+  left: 1.5em;
+}
+
+.contactless {
+  position: absolute;
+  top: 3.5em;
+  left: 14em;
+}
+
+.number {
+  position: absolute;
+  font-weight: bold;
+  font-size: .8em;
+  top: 8.3em;
+  left: 2em;
+}
+
+.email {
+  position: absolute;
+  font-weight: bold;
+  top: 635.8em;
+  font-size: .01em;
+  left: 140.3em;
+}
+
+
+
+.name {
+  position: absolute;
+  font-weight: bold;
+  font-size: 0.8em;
+  top: 11.1em;
+  left: 2em;
+}
+
+.strip {
+  position: absolute;
+  background-color: black;
+  width: 15em;
+  height: 1.5em;
+  top: 2.4em;
+  background: repeating-linear-gradient(
+    45deg,
+    #303030,
+    #303030 10px,
+    #202020 10px,
+    #202020 20px
+  );
+}
+
+.mstrip {
+  position: absolute;
+  background-color: rgb(255, 255, 255);
+  width: 8em;
+  height: 0.8em;
+  top: 5em;
+  left: .8em;
+  border-radius: 2.5px;
+}
+
+.sstrip {
+  position: absolute;
+  background-color: rgb(255, 255, 255);
+  width: 4.1em;
+  height: 0.8em;
+  top: 5em;
+  left: 10em;
+  border-radius: 2.5px;
+}
+
+.code {
+  font-weight: bold;
+  text-align: center;
+  margin: .2em;
+  color: black;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  box-shadow: 0 8px 14px 0 rgba(0,0,0,0.2);
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 1rem;
+}
+
+.flip-card-front {
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 2px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -1px 0px inset;
+  background-color: #171717;
+}
+
+.flip-card-back {
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 2px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -1px 0px inset;
+  background-color: #171717;
+  transform: rotateY(180deg);
+}
+
+
+
+/* From Uiverse.io by ilkhoeri */
+.card-welcome{
+  padding: 1rem;
+  overflow: hidden;
+  border: 1px solid #c5c5c5;
+  border-radius: 12px;
+  background-color: #d9d9d92f;
+  backdrop-filter: blur(8px);
+  width: 70%;
+
+  margin-bottom:30px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  z-index: 10;
+  border: 0.5px solid #525252;
+  border-radius: 8px;
+
+}
+.terminal {
+  display: flex;
+  flex-direction: column;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  overflow-x: auto;
+  padding: 1rem;
+  line-height: 19px;
+  color: white;
+  background-color: black;
+  white-space: nowrap;
+}
+.pre {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-wrap: nowrap;
+  white-space: pre;
+  background-color: transparent;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+.pre code:nth-child(1) {
+  color: #575757;
+}
+.pre code:nth-child(2) {
+  color: #e34ba9;
+}
+.cmd {
+  height: 19px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.cmd::before {
+  content: attr(data-cmd);
+  position: relative;
+  display: block;
+  white-space: nowrap;
+  overflow:hidden;
+  background-color: transparent;
+  animation: inputs 8s steps(22) infinite;
+}
+.cmd::after {
+  content: "";
+  position: relative;
+  display: block;
+  height: 100%;
+
+  background-color: transparent;
+  border-right: 0.15em solid #e34ba9;
+  animation: cursor 0.5s step-end infinite alternate, blinking 0.5s infinite;
+}
+
+@keyframes blinking {
+  20%, 80% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes cursor {
+  50% {
+    border-right-color: transparent;
+  }
+}
+
+@keyframes inputs {
+  0%, 100% {
+    width: 0;
+  }
+  10%, 90% {
+    width: 70px; /* Adjusted for starting space */
+  }
+  30%, 70% {
+    width: 300px; /* Adjusted width for full text */
+    max-width: max-content;
+  }
+}
+
+@keyframes clipboard-check {
+  100% {
+    color: #fff;
+    d: path(
+      "M 9 5 H 7 a 2 2 0 0 0 -2 2 v 12 a 2 2 0 0 0 2 2 h 10 a 2 2 0 0 0 2 -2 V 7 a 2 2 0 0 0 -2 -2 h -2 M 9 5 a 2 2 0 0 0 2 2 h 2 a 2 2 0 0 0 2 -2 M 9 5 a 2 2 0 0 1 2 -2 h 2 a 2 2 0 0 1 2 2 m -6 9 l 2 2 l 4 -4"
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 .animate-fade-in-slow {
     animation: fadeInSlow 1.2s ease-in forwards;
@@ -127,17 +398,6 @@
 /* Responsive Styling */
 /* --------------------- */
 @media (max-width: 768px) {
-    .welcome-message {
-        padding: 0 10px;
-    }
-
-    .welmsg1 {
-        font-size: 2rem;
-    }
-
-    .welmsg2 {
-        font-size: 1rem;
-    }
 
     .card .card-statistic-3 .card-icon-large .fas {
         font-size: 70px;
@@ -166,8 +426,8 @@
         flex-wrap: wrap;
     }
 
-    .col-xl-6,
-    .col-lg-6 {
+    .col-xl-5,
+    .col-lg-5 {
         flex: 0 0 100%;
         max-width: 100%;
     }

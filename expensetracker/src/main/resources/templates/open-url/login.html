@@ -62,13 +62,58 @@
                     So when these parameters are added to the URL,
                     hymeleaf can render the appropriate message.-->
 
-                    <div th:if="${param.error}" class="alert alert-danger">
-                        Invalid username or password
+                    <!-- Error Alert -->
+                    <div th:if="${param.error}" class="mt-4 mb-2 flex flex-col gap-2 w-100 sm:w-72 text-[12px] sm:text-s z-50">
+                        <div class="bg-[#232531] succsess-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg px-[10px]">
+                            <div class="bg-white/5 backdrop-blur-xl p-1 rounded-lg text-red-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                     class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-base mt-2 text-white">Invalid username or password</p>
+                            </div>
+                            <button class="text-white hover:bg-white/5 p-1 rounded-md transition-colors ease-linear"
+                                    onclick="this.closest('div[class*=alert]').remove()">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                     class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
-                    <div th:if="${param.Logout}" class="alert alert-danger">
-                        You have been logged out
+                    <!-- Logout Alert -->
+                    <div th:if="${param.logout}" class="mt-4 mb-2 flex flex-col gap-2 w-100 sm:w-72 text-[12px] sm:text-s z-50">
+                        <div class="bg-[#232531] succsess-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg px-[10px]">
+                            <div class="bg-white/5 backdrop-blur-xl p-1 rounded-lg text-[#2b9875]">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                     class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-lg mt-2 text-white">You have been logged out</p>
+                            </div>
+                            <button class="text-white hover:bg-white/5 p-1 rounded-md transition-colors ease-linear"
+                                    onclick="this.closest('div[class*=alert]').remove()">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                     class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
+
 
 
 
@@ -174,7 +219,7 @@
 
 <div th:fragment="scripts">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+
 </div>
 
 
