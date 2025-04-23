@@ -28,12 +28,5 @@ COPY --from=build /app/target/ExpenseTracker-0.0.1-SNAPSHOT.jar ExpenseTracker.j
 EXPOSE 8080
 
 # Pass all image/chart paths to the application
-ENTRYPOINT [
-  "java",
-  "-Duser.images.path=/uploads/userimages",
-  "-Dchart.line.image.path=/uploads/line-chart-image",
-  "-Dchart.pie.image.path=/uploads/pie-chart-image",
-  "-Dchart.line.table.path=/uploads/line-chart-table-image",
-  "-Dchart.pie.table.path=/uploads/pie-chart-table-image",
-  "-jar", "ExpenseTracker.jar"
-]
+ENTRYPOINT ["java", "-Duser.images.path=/uploads/userimages", "-Dchart.line.image.path=/uploads/line-chart-image", "-Dchart.pie.image.path=/uploads/pie-chart-image", "-Dchart.line.table.path=/uploads/line-chart-table-image", "-Dchart.pie.table.path=/uploads/pie-chart-table-image", "-jar", "ExpenseTracker.jar"]
+
