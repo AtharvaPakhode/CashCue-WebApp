@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -80,6 +81,10 @@ public class UserAccessUrlController {
 
     @Autowired
     private PDFservice pdfService;
+
+
+    @Value("${user.images.path}")
+    private String imageStoragePath;
 
     /**
      * Handles the user dashboard page.
@@ -213,88 +218,144 @@ public class UserAccessUrlController {
      * @param session The HttpSession object that holds session attributes, such as success messages.
      * @return A redirect to the user settings page after the profile image has been updated.
      */
+//    @PostMapping("/change-profile-image")
+//    public String changeProfileImage(Model model, Principal principal,
+//                                     @RequestParam("profileImage") MultipartFile profileImage,
+//                                     HttpSession session){
+//        try {
+//            // Retrieve the username of the currently authenticated user
+//            String name = principal.getName();
+//            // Fetch the user details from the database based on the username
+//            User user = this.userRepository.getUserByName(name);
+//
+//            // Get the current user's profile image URL
+//            String oldImage = user.getUserImageURL();
+//            
+//
+//            // Prepare the file name for the image to be deleted (if any)
+//            String fileNameToDelete = oldImage;
+//
+//            // Define the folder path where the profile images are stored
+//            String folderPath = "static/userprofileimages";
+//            File directory = new File(folderPath);
+//
+//            // Construct the full path to the old profile image that needs to be deleted
+//            Path targetLocation = Paths.get(directory.getAbsolutePath() + File.separator + fileNameToDelete);
+//            
+//
+//            // Create a File object for the image to be deleted
+//            File fileToDelete = targetLocation.toFile();
+//
+//            // Check if the file exists and is a valid file, then delete it
+//            if (fileToDelete.exists() && fileToDelete.isFile()) {
+//                fileToDelete.delete();
+//               
+//            } 
+//
+//            // If the uploaded image file is empty, set the default profile image
+//            if (profileImage.isEmpty()) {
+//                user.setUserImageURL("userDefault.png");
+//                session.setAttribute("customMessage", new CustomDisplayMessage("Please select the valid image file", "alert-danger"));
+//            } else {
+//                // If a new image is uploaded, process it
+//                String originalFileName = profileImage.getOriginalFilename();
+//
+//                // Generate a unique image name based on the user's ID
+//                String userID = String.valueOf(user.getUserId());
+//                String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+//                String imageName = userID + "_PROFILE_IMAGE" + fileExtension;
+//
+//                // Set the new profile image URL for the user
+//                user.setUserImageURL(imageName);
+//
+//                // Define the folder path where the new image will be stored
+//                String folder = "static/userprofileimages";
+//                directory = new File(folder);
+//
+//                // Create the folder if it does not exist
+//                if (!directory.exists()) {
+//                    directory.mkdir();
+//                }
+//
+//                // Construct the target path for the new image file
+//                targetLocation = Paths.get(directory.getAbsolutePath() + File.separator + imageName);
+//
+//                // Copy the uploaded file to the target location, replacing any existing file with the same name
+//                Files.copy(profileImage.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+//                
+//
+//                // Save the updated user data in the repository
+//                this.userRepository.save(user);
+//                model.addAttribute("user", user);
+//
+//                // Set a success message in the session to be displayed on the frontend
+//                session.setAttribute("customMessage", new CustomDisplayMessage("Profile image updated successfully", "alert-success"));
+//            }
+//
+//        } catch (Exception e) {
+//            // Log the exception if an error occurs during the file upload process
+//            session.setAttribute("customMessage", new CustomDisplayMessage("Something went wrong", "alert-danger"));
+//        }
+//
+//        // Redirect to the user settings page after the update process is complete
+//        return "redirect:/user/settings";
+//    }
+
+
+    
+
     @PostMapping("/change-profile-image")
     public String changeProfileImage(Model model, Principal principal,
                                      @RequestParam("profileImage") MultipartFile profileImage,
-                                     HttpSession session){
+                                     HttpSession session) {
         try {
-            // Retrieve the username of the currently authenticated user
-            String name = principal.getName();
-            // Fetch the user details from the database based on the username
-            User user = this.userRepository.getUserByName(name);
+            // Retrieve current user
+            String username = principal.getName();
+            User user = this.userRepository.getUserByName(username);
 
-            // Get the current user's profile image URL
+            // Prepare image storage directory
+            File directory = new File(imageStoragePath);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // Delete old profile image if it's not the default
             String oldImage = user.getUserImageURL();
-            
+            if (oldImage != null && !oldImage.equals("userDefault.png")) {
+                File oldFile = new File(directory, oldImage);
+                if (oldFile.exists() && oldFile.isFile()) {
+                    oldFile.delete();
+                }
+            }
 
-            // Prepare the file name for the image to be deleted (if any)
-            String fileNameToDelete = oldImage;
-
-            // Define the folder path where the profile images are stored
-            String folderPath = "static/userprofileimages";
-            File directory = new File(folderPath);
-
-            // Construct the full path to the old profile image that needs to be deleted
-            Path targetLocation = Paths.get(directory.getAbsolutePath() + File.separator + fileNameToDelete);
-            
-
-            // Create a File object for the image to be deleted
-            File fileToDelete = targetLocation.toFile();
-
-            // Check if the file exists and is a valid file, then delete it
-            if (fileToDelete.exists() && fileToDelete.isFile()) {
-                fileToDelete.delete();
-               
-            } 
-
-            // If the uploaded image file is empty, set the default profile image
             if (profileImage.isEmpty()) {
                 user.setUserImageURL("userDefault.png");
-                session.setAttribute("customMessage", new CustomDisplayMessage("Please select the valid image file", "alert-danger"));
+                session.setAttribute("customMessage", new CustomDisplayMessage("Please select a valid image file", "alert-danger"));
             } else {
-                // If a new image is uploaded, process it
+                // Create a new unique image name
                 String originalFileName = profileImage.getOriginalFilename();
+                String fileExtension = originalFileName.substring(originalFileName.lastIndexOf('.'));
+                String imageName = user.getUserId() + "_PROFILE_IMAGE" + fileExtension;
 
-                // Generate a unique image name based on the user's ID
-                String userID = String.valueOf(user.getUserId());
-                String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                String imageName = userID + "_PROFILE_IMAGE" + fileExtension;
+                // Save file to target directory
+                Path targetPath = Paths.get(directory.getAbsolutePath(), imageName);
+                Files.copy(profileImage.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-                // Set the new profile image URL for the user
+                // Update user profile image URL and save
                 user.setUserImageURL(imageName);
-
-                // Define the folder path where the new image will be stored
-                String folder = "static/userprofileimages";
-                directory = new File(folder);
-
-                // Create the folder if it does not exist
-                if (!directory.exists()) {
-                    directory.mkdir();
-                }
-
-                // Construct the target path for the new image file
-                targetLocation = Paths.get(directory.getAbsolutePath() + File.separator + imageName);
-
-                // Copy the uploaded file to the target location, replacing any existing file with the same name
-                Files.copy(profileImage.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-                
-
-                // Save the updated user data in the repository
                 this.userRepository.save(user);
-                model.addAttribute("user", user);
 
-                // Set a success message in the session to be displayed on the frontend
+                model.addAttribute("user", user);
                 session.setAttribute("customMessage", new CustomDisplayMessage("Profile image updated successfully", "alert-success"));
             }
 
         } catch (Exception e) {
-            // Log the exception if an error occurs during the file upload process
             session.setAttribute("customMessage", new CustomDisplayMessage("Something went wrong", "alert-danger"));
         }
 
-        // Redirect to the user settings page after the update process is complete
         return "redirect:/user/settings";
     }
+
 
 
 

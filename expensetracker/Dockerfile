@@ -12,6 +12,9 @@ RUN mvn clean package -DskipTests
 # Runtime stage
 FROM openjdk:17-slim
 
+# Create a writable folder for profile images
+RUN mkdir -p /uploads/userimages
+
 # Copy the built JAR from the build stage
 COPY --from=build /target/ExpenseTracker-0.0.1-SNAPSHOT.jar /ExpenseTracker.jar
 
