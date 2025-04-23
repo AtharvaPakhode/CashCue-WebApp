@@ -317,6 +317,7 @@ public class UserAccessUrlController {
             File directory = new File(imageStoragePath);
             if (!directory.exists()) {
                 directory.mkdirs();
+                System.out.println("foldercreated");
             }
 
             // Delete old profile image if it's not the default
