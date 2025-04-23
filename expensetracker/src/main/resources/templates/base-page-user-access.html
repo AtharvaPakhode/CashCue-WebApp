@@ -89,8 +89,9 @@
 
     <!-- Profile Section at the bottom -->
     <div class="profile zoom-fix">
-        <img th:src="${user.userImageURL == 'userDefault.png' ? '/images/userDefault.png' : '/userprofileimages/' + user.userImageURL}"
-             alt="User Profile">
+        <img th:src="${user.userImageURL == 'userDefault.png' ? '/images/userDefault.png' : '/userimages/' + user.userImageURL}" />
+
+        alt="User Profile">
         <div class="username" th:text="${user.userName.toUpperCase()}"></div>
     </div>
 </div>

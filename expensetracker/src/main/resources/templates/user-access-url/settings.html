@@ -51,8 +51,9 @@
                 <h2 class="text-xl font-semibold mb-6 border-b pb-2">Personal Information</h2>
 
                 <div class="flex flex-col items-center mb-6">
-                    <img th:src="${user.userImageURL == 'userDefault.png' ? '/images/userDefault.png' : '/userprofileimages/' + user.userImageURL}"
-                         class="profile-image-setting-page"
+                    <img th:src="${user.userImageURL == 'userDefault.png' ? '/images/userDefault.png' : '/userimages/' + user.userImageURL}"
+
+                    class="profile-image-setting-page"
                          alt="Profile Image"
                          style="width: 175px; height: 175px; border-radius: 50%; border: 1px solid #c2edda;">
 
