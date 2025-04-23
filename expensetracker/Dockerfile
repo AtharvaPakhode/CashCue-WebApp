@@ -1,33 +1,39 @@
 # === Build Stage ===
 FROM maven:3.8.5-openjdk-17 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy only pom.xml to cache dependencies
 COPY pom.xml ./
 RUN mvn dependency:go-offline
 
-# Copy the rest of the project and build
 COPY . ./
 RUN mvn clean package -DskipTests
 
 # === Runtime Stage ===
 FROM openjdk:17-slim
 
-# Create a writable folder for uploaded profile images
-RUN mkdir -p /uploads/userimages && chmod -R 777 /uploads
+# Create writable folders for uploaded content
+RUN mkdir -p \
+    /uploads/userimages \
+    /uploads/line-chart-image \
+    /uploads/pie-chart-image \
+    /uploads/line-chart-table-image \
+    /uploads/pie-chart-table-image && \
+    chmod -R 777 /uploads
 
-# Set working directory
 WORKDIR /app
 
-# Copy the built JAR
 COPY --from=build /app/target/ExpenseTracker-0.0.1-SNAPSHOT.jar ExpenseTracker.jar
 
-# Expose the port your app runs on
 EXPOSE 8080
 
-# Run the application and pass the image upload path as a system property
-ENTRYPOINT ["java", "-Duser.images.path=/uploads/userimages", "-jar", "ExpenseTracker.jar"]
-
-
+# Pass all image/chart paths to the application
+ENTRYPOINT [
+  "java",
+  "-Duser.images.path=/uploads/userimages",
+  "-Dchart.line.image.path=/uploads/line-chart-image",
+  "-Dchart.pie.image.path=/uploads/pie-chart-image",
+  "-Dchart.line.table.path=/uploads/line-chart-table-image",
+  "-Dchart.pie.table.path=/uploads/pie-chart-table-image",
+  "-jar", "ExpenseTracker.jar"
+]

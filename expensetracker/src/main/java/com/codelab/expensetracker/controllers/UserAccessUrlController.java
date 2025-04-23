@@ -85,6 +85,18 @@ public class UserAccessUrlController {
 
     @Value("${user.images.path}")
     private String imageStoragePath;
+    
+    @Value("${chart.line.image.path}")
+    private String lineChartImagePath;
+
+    @Value("${chart.pie.image.path}")
+    private String pieChartImagePath;
+
+    @Value("${chart.line.table.path}")
+    private String lineTableImagePath;
+
+    @Value("${chart.pie.table.path}")
+    private String pieTableImagePath;
 
     /**
      * Handles the user dashboard page.
@@ -1070,8 +1082,8 @@ public String expenseHistory(
         byte[]tableBytes=Base64.getDecoder().decode(base64Table);
 
         // Define the folder path where the new image will be stored
-        String folderChart =  chartType.equals("line-chart-image") ? "static/line-chart-image" : "static/pie-chart-image"; 
-        String folderTable =  chartType.equals("line-chart-image") ? "static/line-chart-table-image" : "static/pie-chart-table-image";
+        String folderChart =  chartType.equals("line-chart-image") ? lineChartImagePath : pieChartImagePath;
+        String folderTable =  chartType.equals("line-chart-image") ? lineTableImagePath : pieTableImagePath;
         File directory1 = new File(folderChart);
         File directory2= new File(folderTable);
 
