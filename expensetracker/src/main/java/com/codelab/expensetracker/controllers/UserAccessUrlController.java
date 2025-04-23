@@ -619,7 +619,7 @@ public class UserAccessUrlController {
                                  BindingResult bindingResult,
                                  Model model,
                                  Principal principal,
-                                 @RequestParam("category") Category category){
+                                 @RequestParam("category") String category){
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
         model.addAttribute("user", user);

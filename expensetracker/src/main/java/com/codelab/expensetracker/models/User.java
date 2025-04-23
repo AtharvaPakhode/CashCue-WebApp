@@ -181,25 +181,4 @@ public class User {
     }
 
 
-    //
-
-    
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", userName='" + userName + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                ", userPassword='" + userPassword + '\'' +
-                ", confirmPassword='" + confirmPassword + '\'' +
-                ", userImageURL='" + userImageURL + '\'' +
-                ", userStatus=" + userStatus +
-                ", userRole='" + userRole + '\'' +
-                ", twoFactorAuthentication=" + twoFactorAuthentication +
-                ", userDescription='" + userDescription + '\'' +
-                ", expenseList=" + expenseList +
-                ", categoryList=" + categoryList +
-                '}';
-    }
 }

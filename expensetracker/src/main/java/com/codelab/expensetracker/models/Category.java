@@ -61,15 +61,7 @@ public class Category {
         this.user = user;
     }
 
-    // toString Method
-    @Override
-    public String toString() {
-        return "Category{" +
-                "categoryName='" + categoryName + '\'' +
-                ", categoryMonthlyBudget=" + categoryMonthlyBudget +
-                ", user=" + user +
-                '}';
-    }
+
     
     
 }
