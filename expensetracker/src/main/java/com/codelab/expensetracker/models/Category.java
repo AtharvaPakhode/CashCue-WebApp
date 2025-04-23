@@ -11,6 +11,9 @@ public class Category {
 
    
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int categoryID;
+
     @NotBlank(message = "Category name cannot be blank")
     @Size(min = 2, max = 50, message = "Category name must be between 2 and 50 characters")
     private String categoryName;
@@ -30,10 +33,11 @@ public class Category {
         this.categoryMonthlyBudget = categoryMonthlyBudget;
     }
 
-    public Category(String categoryName, double categoryMonthlyBudget, User user) {
-        this.categoryName = categoryName;
-        this.categoryMonthlyBudget = categoryMonthlyBudget;
+    public Category(int categoryID, User user, double categoryMonthlyBudget, String categoryName) {
+        this.categoryID = categoryID;
         this.user = user;
+        this.categoryMonthlyBudget = categoryMonthlyBudget;
+        this.categoryName = categoryName;
     }
 
     // Getters and Setters
@@ -61,7 +65,12 @@ public class Category {
         this.user = user;
     }
 
-    
-    
-    
+
+    public int getCategoryID() {
+        return categoryID;
+    }
+
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
+    }
 }

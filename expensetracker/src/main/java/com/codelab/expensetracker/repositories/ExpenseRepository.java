@@ -26,21 +26,27 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
     Page<Expense> findTransactionsByUser(@Param("user") User user, Pageable pageable);
     
     @Query("SELECT SUM(e.amount)  From Expense e WHERE e.user = :user ")
-    double findSumOfExpensesOfUserByUser(@Param("user") User user);
+    Double findSumOfExpensesOfUserByUser(@Param("user") User user);
+    
+    
+    
+    
+    
+    
 
-    @Query("SELECT COALESCE(SUM(e.amount), 0.0) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfMonth AND :endOfMonth")
+    @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfMonth AND :endOfMonth")
      Double findSumOfExpensesForCurrentMonth(@Param("user") User user,
                                             @Param("startOfMonth") LocalDateTime startOfMonth,
                                             @Param("endOfMonth") LocalDateTime endOfMonth);
 
 
     @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfQuarter AND :endOfQuarter")
-    Double findSumOfExpenseForQuarter(@Param("user") User user,
+    Double findSumOfExpenseForCurrentQuarter(@Param("user") User user,
                                      @Param("startOfQuarter") LocalDateTime startOfQuarter,
                                      @Param("endOfQuarter") LocalDateTime endOfQuarter);
 
     @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfYear AND :endOfYear")
-    Double findSumOfExpenseForYear(@Param("user") User user,
+    Double findSumOfExpenseForCurrentYear(@Param("user") User user,
                                   @Param("startOfYear") LocalDateTime startOfYear,
                                   @Param("endOfYear") LocalDateTime endOfYear);
     

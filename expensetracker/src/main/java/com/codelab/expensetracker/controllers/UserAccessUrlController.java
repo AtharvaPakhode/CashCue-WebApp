@@ -613,54 +613,39 @@ public class UserAccessUrlController {
         return "user-access-url/add-expense";
     }
 
-    
+
     @PostMapping("/add-expense-process")
-    public String addExpenseForm(@Valid @ModelAttribute("expense") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Expense expense,
+    public String addExpenseForm(@Valid @ModelAttribute("expense") Expense expense,
                                  BindingResult bindingResult,
                                  Model model,
-                                 Principal principal,
-                                 @RequestParam("category") String category){
+                                 Principal principal) {
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
         model.addAttribute("user", user);
 
-        try {
-            if (bindingResult.hasErrors()) {
-                List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
-                model.addAttribute("categories", categoryList);
-                System.out.println("failed");
-                System.out.println(bindingResult.getAllErrors());
-                return "user-access-url/add-expense";
-            }
-
-            if (category == null) {
-                bindingResult.rejectValue("category", "error.category", "Please select category");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (bindingResult.hasErrors()) {
+            List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
+            model.addAttribute("categories", categoryList);
+            model.addAttribute("page", "addExpense");
+            return "user-access-url/add-expense";
         }
 
-        // Convert the bound LocalDate to LocalDateTime 
+        // Set user and datetime
+        expense.setUser(user);
         if (expense.getDate() != null) {
-            LocalTime currentTime = LocalTime.now();
-            expense.setLocalDateTime(LocalDateTime.of(expense.getDate(), currentTime));
+            expense.setLocalDateTime(LocalDateTime.of(expense.getDate(), LocalTime.now()));
         }
 
-        
-
-        System.out.println(expense.toString());
+        this.expenseRepository.save(expense);
         List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
         model.addAttribute("categories", categoryList);
-        
-        System.out.println(expense.getLocalDateTime());
-        
-        expense.setUser(user);
-        this.expenseRepository.save(expense);
+        model.addAttribute("page", "addExpense");
 
         return "user-access-url/add-expense";
     }
 
-@GetMapping("/expense-history/{page}")
+
+    @GetMapping("/expense-history/{page}")
 public String expenseHistory(
         Model model,
         Principal principal,
@@ -836,8 +821,11 @@ public String expenseHistory(
         Double totalIncome = null;  
         Double netSavings = null;
 
-        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
-        LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(LocalTime.MAX);
+        LocalDateTime startOfMonth = LocalDate.of(2025, 4, 1).atStartOfDay();
+        LocalDateTime endOfMonth = LocalDate.of(2025, 4, 30).atTime(LocalTime.MAX);
+
+        //LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        //LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(LocalTime.MAX);
 
         int month = LocalDate.now().getMonthValue();
         int year = LocalDate.now().getYear();
@@ -848,13 +836,13 @@ public String expenseHistory(
         switch (duration) {
             case "monthly":
                 totalExpense = this.expenseRepository.findSumOfExpensesForCurrentMonth(user, startOfMonth, endOfMonth);
-                System.out.println(totalExpense);
+                System.out.println(startOfMonth);
+                System.out.println(endOfMonth);
                 totalIncome = this.incomeRepository.findSumOfIncomeForCurrentMonth(user, startOfMonth, endOfMonth);
+                System.out.println(totalIncome);
                 totalExpense = (totalExpense == null) ? 0.0 : totalExpense;
                 totalIncome = (totalIncome == null) ? 0.0 : totalIncome;
                 
-                
-
                 netSavings = totalIncome - totalExpense;
                 break;
 
@@ -875,8 +863,8 @@ public String expenseHistory(
                 LocalDateTime startOfQuarter = startDate.atStartOfDay();
                 LocalDateTime endOfQuarter = endDate.atTime(LocalTime.MAX);
 
-                totalExpense = this.expenseRepository.findSumOfExpenseForQuarter(user, startOfQuarter, endOfQuarter);
-                totalIncome = this.incomeRepository.findSumOfIncomeForQuarter(user, startOfQuarter, endOfQuarter);
+                totalExpense = this.expenseRepository.findSumOfExpenseForCurrentQuarter(user, startOfQuarter, endOfQuarter);
+                totalIncome = this.incomeRepository.findSumOfIncomeForCurrentQuarter(user, startOfQuarter, endOfQuarter);
                 totalExpense = (totalExpense != null) ? totalExpense : 0.0;
                 totalIncome = (totalIncome != null) ? totalIncome : 0.0;
 
@@ -891,8 +879,8 @@ public String expenseHistory(
                 LocalDateTime startOfYear = startDate.atStartOfDay();
                 LocalDateTime endOfYear = endDate.atTime(LocalTime.MAX);
 
-                totalIncome = this.incomeRepository.findSumOfIncomeForYear(user, startOfYear, endOfYear);
-                totalExpense = this.expenseRepository.findSumOfExpenseForYear(user, startOfYear, endOfYear);
+                totalIncome = this.incomeRepository.findSumOfIncomeForCurrentYear(user, startOfYear, endOfYear);
+                totalExpense = this.expenseRepository.findSumOfExpenseForCurrentYear(user, startOfYear, endOfYear);
                 totalExpense = (totalExpense != null) ? totalExpense : 0.0;
                 totalIncome = (totalIncome != null) ? totalIncome : 0.0;
 

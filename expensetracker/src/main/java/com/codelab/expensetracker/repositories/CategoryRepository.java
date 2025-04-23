@@ -17,6 +17,10 @@ public interface CategoryRepository  extends JpaRepository<Category, String> {
     @Query("from Category c where c.user.userId = :id")
     Page<Category> findCategoriesByUser (@Param("id") int id, Pageable pageable);
 
+    @Query("SELECT c.categoryID FROM Category c WHERE c.categoryName = :name AND c.user.userId = :id")
+    Integer findByCategoryIDByNameAndUser(@Param("name") String name, @Param("id") int id);
+
+
     // query will return a list of Category objects.
     @Query("from Category c where c.user.userId = :id")
     List<Category> ListOfCategoryByUser(@Param("id") int id);
@@ -32,7 +36,7 @@ public interface CategoryRepository  extends JpaRepository<Category, String> {
     // reports
 
     //for current month
-    @Query(value = "SELECT c.categoryName, SUM(e.amount) " +
+    @Query( "SELECT c.categoryName, SUM(e.amount) " +
             "FROM Expense e " +
             "JOIN Category c ON e.category.categoryName = c.categoryName " +
             "WHERE e.user = :user " +
@@ -40,7 +44,7 @@ public interface CategoryRepository  extends JpaRepository<Category, String> {
             "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
             "AND EXTRACT(MONTH FROM e.dateTime) = EXTRACT(MONTH FROM CURRENT_DATE) " +
             "GROUP BY c.categoryName "+
-            "ORDER BY SUM(e.amount) DESC", nativeQuery = false)
+            "ORDER BY SUM(e.amount) DESC")
     List<Object[]> getCurrentMonthCategorySums(@Param("user") User user);
 
     

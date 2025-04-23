@@ -37,6 +37,11 @@ public class CategoryService {
     }
     
     
+    
+    
+    
+    
+    
     //report
     public Map<String, Double> getCurrentMonthCategorySums(User user) {
         // Fetch the sorted monthly sums in descending order

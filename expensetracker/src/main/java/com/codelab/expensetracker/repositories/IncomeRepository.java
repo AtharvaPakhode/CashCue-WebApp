@@ -23,7 +23,7 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> , JpaSp
     Page<Income> findTransactionsByUser(@Param("user") User user, Pageable pageable);
     
     @Query("SELECT SUM(i.amount)  From Income i WHERE i.user = :user ")
-    double findSumOfIncomeOfUserByUser(@Param("user") User user);
+    Double findSumOfIncomeOfUserByUser(@Param("user") User user);
 
     @Query("SELECT COALESCE (SUM(i.amount), 0.0) FROM Income i WHERE i.user = :user AND i.dateTime BETWEEN :startOfMonth AND :endOfMonth")
     Double findSumOfIncomeForCurrentMonth(@Param("user") User user,
@@ -32,12 +32,12 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> , JpaSp
 
 
     @Query("SELECT SUM(i.amount) FROM Income i WHERE i.user = :user AND i.dateTime BETWEEN :startOfQuarter AND :endOfQuarter")
-    Double findSumOfIncomeForQuarter(@Param("user") User user,
+    Double findSumOfIncomeForCurrentQuarter(@Param("user") User user,
                                      @Param("startOfQuarter") LocalDateTime startOfQuarter,
                                      @Param("endOfQuarter") LocalDateTime endOfQuarter);
 
     @Query("SELECT SUM(i.amount) FROM Income i WHERE i.user = :user AND i.dateTime BETWEEN :startOfYear AND :endOfYear")
-    Double findSumOfIncomeForYear(@Param("user") User user,
+    Double findSumOfIncomeForCurrentYear(@Param("user") User user,
                                   @Param("startOfYear") LocalDateTime startOfYear,
                                   @Param("endOfYear") LocalDateTime endOfYear);
 

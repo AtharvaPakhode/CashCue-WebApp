@@ -27,6 +27,7 @@ public class Expense {
     private double amount;
 
     @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "categoryID")
     private Category category;
 
     @NotBlank(message = "Payment method cannot be blank")

@@ -148,8 +148,8 @@ public class PDFservice {
                 LocalDateTime startOfQuarter = startDate.atStartOfDay();
                 LocalDateTime endOfQuarter = endDate.atTime(LocalTime.MAX);
 
-                totalExpense=this.expenseRepository.findSumOfExpenseForQuarter(user, startOfQuarter, endOfQuarter);
-                totalIncome=this.incomeRepository.findSumOfIncomeForQuarter(user, startOfQuarter, endOfQuarter);
+                totalExpense=this.expenseRepository.findSumOfExpenseForCurrentQuarter(user, startOfQuarter, endOfQuarter);
+                totalIncome=this.incomeRepository.findSumOfIncomeForCurrentQuarter(user, startOfQuarter, endOfQuarter);
                 totalExpense = (totalExpense != null) ? totalExpense : 0.0;
                 totalIncome = (totalIncome != null) ? totalIncome : 0.0;
 
@@ -177,8 +177,8 @@ public class PDFservice {
                 LocalDateTime startOfYear = startDate.atStartOfDay();
                 LocalDateTime endOfYear = endDate.atTime(LocalTime.MAX);
 
-                totalIncome = this.incomeRepository.findSumOfIncomeForYear(user, startOfYear, endOfYear);
-                totalExpense = this.expenseRepository.findSumOfExpenseForYear(user, startOfYear, endOfYear);
+                totalIncome = this.incomeRepository.findSumOfIncomeForCurrentYear(user, startOfYear, endOfYear);
+                totalExpense = this.expenseRepository.findSumOfExpenseForCurrentYear(user, startOfYear, endOfYear);
                 totalExpense = (totalExpense != null) ? totalExpense : 0.0;
                 totalIncome = (totalIncome != null) ? totalIncome : 0.0;
 
