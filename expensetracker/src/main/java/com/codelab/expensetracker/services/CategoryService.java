@@ -87,6 +87,13 @@ public class CategoryService {
         // Fetch the sorted quarterly sums in descending order
         List<Object[]> quarterlySortedDescending = this.categoryRepository.getCurrentQuarterCategorySums(user);
 
+        // Iterate over the list and print each Object[]
+        for (Object[] entry : quarterlySortedDescending) {
+            // Assuming each Object[] contains 2 elements (e.g., category and sum),
+            // adjust indices as needed based on your data structure
+            System.out.println("quarter: " + entry[0] + ", category: " + entry[1]+ "Amount: "+entry[2]);
+        }
+
         // Map to hold the top 3 categories
         Map<String, Double> top3CategoriesCurrent = new LinkedHashMap<>();
 
@@ -103,10 +110,13 @@ public class CategoryService {
             if(currentQuarter == (Integer)quarterlySortedDescending.get(i)[0] && count<3){
                  categoryName = (String) quarterlySortedDescending.get(i)[1];
                  totalAmount = (Double) quarterlySortedDescending.get(i)[2];
+                 top3CategoriesCurrent.put(categoryName, totalAmount);
+                 System.out.println(top3CategoriesCurrent);
                  count++;
             }
 
-            top3CategoriesCurrent.put(categoryName, totalAmount);
+            
+            
         }
         return top3CategoriesCurrent;
     }

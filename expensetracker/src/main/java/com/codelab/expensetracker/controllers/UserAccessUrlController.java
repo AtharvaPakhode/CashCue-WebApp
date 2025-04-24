@@ -45,12 +45,8 @@ import java.nio.file.*;
 import java.security.Principal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.time.Year;
+import java.time.*;
 import java.util.*;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.LocalDateTime;
 
 import java.text.NumberFormat;
 
@@ -147,7 +143,9 @@ public class UserAccessUrlController {
 
             // Calculate balance and monthly savings
             totalBalance = sumOfIncomeByUser - sumOfExpenseByUser;
+            totalBalance =(totalBalance >0)? totalBalance : 0.0;
             monthlySavings = monthlyIncome - monthlyExpense;
+            monthlySavings =(monthlySavings >0)? monthlySavings : 0.0;
 
             // Add calculated values to the model
             model.addAttribute("totalBalance", totalBalance);
@@ -752,14 +750,27 @@ public String expenseHistory(
             String name = principal.getName();
             User user = this.userRepository.getUserByName(name);
             model.addAttribute("user", user);
+            
+            
+            boolean isCategoryAlreadyExisted = categoryRepository.isThisCategoryExisted(categoryName.toUpperCase(),user.getUserId());
+            System.out.println("existed");
+            
+            if(!isCategoryAlreadyExisted){
+                category.setUser(user);
+                category.setCategoryName(categoryName.toUpperCase());
+                category.setCategoryMonthlyBudget(categoryMonthlyBudget);
 
-            category.setUser(user);
-            category.setCategoryName(categoryName.toUpperCase());
-            category.setCategoryMonthlyBudget(categoryMonthlyBudget);
+                // Save the category to the database
+                this.categoryRepository.save(category);
+                this.userRepository.save(user);
+            }
+            else {
+                return "redirect:/user/category/0";  // Redirect back to category page after saving
+            }
 
-            // Save the category to the database
-            this.categoryRepository.save(category);
-            this.userRepository.save(user);
+
+
+            
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -821,11 +832,11 @@ public String expenseHistory(
         Double totalIncome = null;  
         Double netSavings = null;
 
-        LocalDateTime startOfMonth = LocalDate.of(2025, 4, 1).atStartOfDay();
-        LocalDateTime endOfMonth = LocalDate.of(2025, 4, 30).atTime(LocalTime.MAX);
 
-        //LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
-        //LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(LocalTime.MAX);
+
+        LocalDateTime startOfMonth = YearMonth.now().atDay(1).atStartOfDay();
+        LocalDateTime endOfMonth = YearMonth.now().atEndOfMonth().atTime(LocalTime.MAX);
+
 
         int month = LocalDate.now().getMonthValue();
         int year = LocalDate.now().getYear();
@@ -836,14 +847,12 @@ public String expenseHistory(
         switch (duration) {
             case "monthly":
                 totalExpense = this.expenseRepository.findSumOfExpensesForCurrentMonth(user, startOfMonth, endOfMonth);
-                System.out.println(startOfMonth);
-                System.out.println(endOfMonth);
                 totalIncome = this.incomeRepository.findSumOfIncomeForCurrentMonth(user, startOfMonth, endOfMonth);
-                System.out.println(totalIncome);
                 totalExpense = (totalExpense == null) ? 0.0 : totalExpense;
                 totalIncome = (totalIncome == null) ? 0.0 : totalIncome;
                 
                 netSavings = totalIncome - totalExpense;
+                netSavings = (netSavings <= 0.0) ? 0.0 : netSavings;
                 break;
 
             case "quarterly":
@@ -869,6 +878,7 @@ public String expenseHistory(
                 totalIncome = (totalIncome != null) ? totalIncome : 0.0;
 
                 netSavings = totalIncome - totalExpense;
+                netSavings = (netSavings <= 0.0) ? 0.0 : netSavings;
 
                 break;
 
@@ -885,6 +895,7 @@ public String expenseHistory(
                 totalIncome = (totalIncome != null) ? totalIncome : 0.0;
 
                 netSavings = totalIncome - totalExpense;
+                netSavings = (netSavings <= 0.0) ? 0.0 : netSavings;
 
                 break;
 
@@ -1015,8 +1026,10 @@ public String expenseHistory(
 
             case "quarterly" -> {
                  currentCategorySums = this.categoryService.getCurrentQuarterCategorySums(user);
+                System.out.println(currentCategorySums);
                  pastCategorySums = this.categoryService.getPastQuarterCategorySums(user);
                 totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentQuarter(user);
+                System.out.println(totalExpenseByUser);
 
                 // Handle null values for the totalExpenseByUser and category sums
                 totalExpenseByUser = (totalExpenseByUser != null) ? totalExpenseByUser : 0.0;
@@ -1026,6 +1039,8 @@ public String expenseHistory(
                 model.addAttribute("currentCategorySums", currentCategorySums);
                 model.addAttribute("pastCategorySums", pastCategorySums);
                 model.addAttribute("totalExpenseByUser", totalExpenseByUser);
+
+                
             }
 
             case "yearly" -> {
@@ -1047,7 +1062,8 @@ public String expenseHistory(
                 System.out.println("Invalid");
             }
         }
-
+        
+        
 
         return "user-access-url/reports";
     }

@@ -307,11 +307,11 @@
 
                             <script th:inline="javascript">
                                 const chartDataCategory = {
-                                    category: /*[[${categories}]]*/,
-                                    expense: /*[[${expenses}]]*/
+                                    category: [[${categories}]],
+                                    expense: [[${expenses}]]
                                 };
 
-                               console.log(chartDataCategory);
+                                console.log("Parsed Data:", chartDataCategory);
                             </script>
 
 
@@ -359,10 +359,11 @@
                             <!-- Column 3: % of Total -->
                             <div class="w-1/3 text-right">
                                 <p class="text-gray-800"
-                                   th:text="${#numbers.formatDecimal((entry.value / totalExpenseByUser) * 100, 1, 'POINT', 2, 'POINT')} + '%'">
+                                   th:text="${totalExpenseByUser == 0} ? 'NA' : (entry.value == 0 ? '0' : ${#numbers.formatDecimal((entry.value / totalExpenseByUser) * 100, 1, 'POINT', 2, 'POINT')} + '%')">
                                     0.00%
                                 </p>
                             </div>
+
 
                         </div>
                     </div>

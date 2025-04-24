@@ -21,6 +21,10 @@ public interface CategoryRepository  extends JpaRepository<Category, String> {
     Integer findByCategoryIDByNameAndUser(@Param("name") String name, @Param("id") int id);
 
 
+    @Query("SELECT COUNT(c) > 0 FROM Category c WHERE c.categoryName = :name AND c.user.userId = :id")
+    Boolean isThisCategoryExisted(@Param("name") String name, @Param("id") int id);
+
+
     // query will return a list of Category objects.
     @Query("from Category c where c.user.userId = :id")
     List<Category> ListOfCategoryByUser(@Param("id") int id);

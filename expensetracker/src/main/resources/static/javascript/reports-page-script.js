@@ -190,23 +190,9 @@ function populatePieExpenseTable() {
     const tableBodyPie = document.querySelector("#expenseTable-pieChart tbody");
     tableBodyPie.innerHTML = "";
 
-//    const dummyData = [
-//                { category: "Food", expense: 1200 },
-//                { category: "Rent", expense: 8000 },
-//                { category: "Utilities", expense: 1500 }
-//            ];
-//
-//            dummyData.forEach(data => {
-//                const row = document.createElement("tr");
-//                row.className = "mb-2";
-//                row.innerHTML = `
-//                    <td class="py-2 px-4 font-bold text-base">${data.category}</td>
-//                    <td class="py-2 px-4 font-bold text-base">${data.expense}</td>
-//                `;
-//                tableBodyPie.appendChild(row);
-//            });
 
-    chartDataCategory.category.forEach((categories, index) => {
+
+    chartDataCategory.category.forEach((label, index) => {
         const category = chartDataCategory.category[index];
         const expense = chartDataCategory.expense[index];
 
@@ -217,7 +203,7 @@ function populatePieExpenseTable() {
             <td class="py-2 px-4 font-bold text-base">${category}</td>
             <td class="py-2 px-4 font-bold text-base">${expense}</td>
         `;
-        tableBody.appendChild(row);
+        tableBodyPie.appendChild(row);
     });
 }
 

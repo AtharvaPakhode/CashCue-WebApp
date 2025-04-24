@@ -27,28 +27,38 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
     
     @Query("SELECT SUM(e.amount)  From Expense e WHERE e.user = :user ")
     Double findSumOfExpensesOfUserByUser(@Param("user") User user);
-    
-    
-    
-    
-    
-    
 
-    @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfMonth AND :endOfMonth")
-     Double findSumOfExpensesForCurrentMonth(@Param("user") User user,
+
+
+
+
+
+
+    @Query("SELECT SUM(e.amount) FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND e.dateTime >= :startOfMonth " +
+            "AND e.dateTime < :startOfNextMonth")
+    Double findSumOfExpensesForCurrentMonth(@Param("user") User user,
                                             @Param("startOfMonth") LocalDateTime startOfMonth,
-                                            @Param("endOfMonth") LocalDateTime endOfMonth);
+                                            @Param("startOfNextMonth") LocalDateTime startOfNextMonth);
 
 
-    @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfQuarter AND :endOfQuarter")
+
+    @Query("SELECT SUM(e.amount) FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND e.dateTime >= :startOfQuarter " +
+            "AND e.dateTime < :startOfNextQuarter")
     Double findSumOfExpenseForCurrentQuarter(@Param("user") User user,
-                                     @Param("startOfQuarter") LocalDateTime startOfQuarter,
-                                     @Param("endOfQuarter") LocalDateTime endOfQuarter);
+                                             @Param("startOfQuarter") LocalDateTime startOfQuarter,
+                                             @Param("startOfNextQuarter") LocalDateTime startOfNextQuarter);
 
-    @Query("SELECT SUM(e.amount) FROM Expense e WHERE e.user = :user AND e.dateTime BETWEEN :startOfYear AND :endOfYear")
+    @Query("SELECT SUM(e.amount) FROM Expense e " +
+            "WHERE e.user = :user " +
+            "AND e.dateTime >= :startOfYear " +
+            "AND e.dateTime < :startOfNextYear")
     Double findSumOfExpenseForCurrentYear(@Param("user") User user,
-                                  @Param("startOfYear") LocalDateTime startOfYear,
-                                  @Param("endOfYear") LocalDateTime endOfYear);
+                                          @Param("startOfYear") LocalDateTime startOfYear,
+                                          @Param("startOfNextYear") LocalDateTime startOfNextYear);
     
     
     
