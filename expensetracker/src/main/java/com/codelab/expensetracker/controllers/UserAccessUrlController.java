@@ -590,6 +590,72 @@ public class UserAccessUrlController {
 
 
 
+    @DeleteMapping("/deleteIncome/{id}")
+    public ResponseEntity<String> deleteIncome(@PathVariable("id") int id ) {
+        // Logic to delete the category from the database or any other source
+        boolean isDeleted = incomeRepository.deleteIncomeById(id);
+
+        if (isDeleted) {
+            // Success response with a custom message
+            return ResponseEntity.ok("Incomne entry deleted successfully.");
+        } else {
+            // Failure response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete income entry.");
+        }
+    }
+
+    @PostMapping("/updateIncome/{incomeId}")
+        public String updateIncome(@PathVariable("incomeId") int incomeId,
+                                 @RequestParam String sourceNameChange,
+                                 @RequestParam double amountChange,
+                                 Model model, Principal principal) {
+
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+        int id = user.getUserId();
+        model.addAttribute("user", user);
+        
+
+        System.out.println(amountChange);
+
+
+
+        // Find the existing income record
+        Income existingIncome = incomeRepository.searchIncomeByIncomeId(incomeId);
+
+        System.out.println("1");
+
+        try{
+            // If the income is found, update the necessary fields
+            if (existingIncome != null) {
+
+                LocalDateTime originalDateTime = existingIncome.getLocalDateTime();  // Original date (we'll keep it as is)
+                String originalDescription = existingIncome.getDescription(); // Original description
+                LocalDate originalDate =existingIncome.getDate();
+                System.out.println(originalDateTime);
+
+                // Keep other fields (date, description) as they were
+                existingIncome.setLocalDateTime(originalDateTime); // Retain the original date
+                existingIncome.setDescription(originalDescription); // Retain the original description
+                existingIncome.setDate(originalDate);
+                existingIncome.setSource(sourceNameChange);
+                existingIncome.setAmount(amountChange);
+                existingIncome.setUser(user);
+                
+                this.incomeRepository.save(existingIncome);
+                this.userRepository.save(user);
+
+                
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return "redirect:/user/income-history/0";  // Redirect back to category page after updating
+    }
+
+
 
 
 

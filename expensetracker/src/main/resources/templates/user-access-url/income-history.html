@@ -11,6 +11,88 @@
 <section class="bg-gray-50 text-gray-800">
     <div class="flex dynamic-content min-h-screen">
 
+        <!-- Modal Backdrop (hidden by default) -->
+        <div id="modal-backdrop" class="fixed inset-0 bg-gray-500 bg-opacity-50 hidden"></div>
+
+        <!-- Edit Modal -->
+        <div id="edit-modal" tabindex="-1" aria-hidden="true"
+             class="animate-slide-fade-in flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+             style="visibility: hidden;">
+            <div class="relative p-4 w-full max-w-md max-h-full">
+                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                        <h3 class="text-xl font-semibold ">
+                            Edit Income
+                        </h3>
+                        <button id="close-modal-btn" type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="authentication-modal">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body (Form for Editing Category) -->
+                    <div class="p-4 md:p-5">
+                        <form id="editIncomeForm" class="space-y-4" action="#" method="post" th:object="${income}">
+                            <!-- Category Name Field -->
+                            <div>
+                                <label for="incomeSourceChange" class="block mb-2 text-sm font-medium ">Source</label>
+                                <input type="text" name="sourceNameChange" id="incomeSourceChange"
+                                       pattern="^[A-Za-z]+$"
+                                       title="Only alphabets, underscores, and hyphens are allowed."
+                                       class="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                                       required />
+                            </div>
+
+                            <!-- Monthly Budget Field -->
+                            <div>
+                                <label for="incomeAmountChange" class="block mb-2 text-sm font-medium ">Amount</label>
+                                <input type="number" name="amountChange" id="incomeAmountChange"
+                                       class="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-black-500 focus:border-black-500 block w-full p-2.5 " required />
+                            </div>
+
+                            <!-- Save Changes Button -->
+                            <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Save changes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Modal -->
+        <div id="delete-modal" tabindex="-1" aria-hidden="true"
+             class="animate-slide-fade-in flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+             style="visibility: hidden;">
+            <div class="relative p-4 w-full max-w-md max-h-full">
+                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                    <!-- Close Button for Delete Modal -->
+                    <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" id="close-delete-modal">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+
+                    <!-- Delete Confirmation Message -->
+                    <div class="p-4 md:p-5 text-center">
+                        <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>
+                        <h3 id="delete-modal-message" class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this product?</h3>
+
+                        <!-- Confirm Deletion Button -->
+                        <button id="delete-confirm-btn" data-modal-hide="delete-modal" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                            Yes, I'm sure
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Content -->
         <div class="flex-1 p-6">
 
@@ -132,21 +214,43 @@
                 </form>
 
                 <div class="mt-5 animate-fade-in-slow" th:if="${userTransactions != null}">
-                    <div th:each="income : ${userTransactions}" class="bg-white p-4 rounded-2xl shadow-md hover:shadow-lg transition mb-3 border-1 border-[#1f2937] flex justify-between items-center">
+                    <div th:each="income : ${userTransactions}" class="bg-white p-4 rounded-2xl shadow-md hover:shadow-lg transition mb-3 border border-[#1f2937] flex justify-between items-center">
 
-                        <!-- Left: Source and Date -->
-                        <div>
+                        <!-- Left: Income Source and Date -->
+                        <div class="flex flex-col">
                             <p class="text-xl font-semibold text-gray-800" th:text="${income.source}">Income Source</p>
                             <p class="text-sm text-gray-500" th:text="${#temporals.format(income.localDateTime, 'MMMM dd, yyyy')}">Income Date</p>
                         </div>
 
-                        <!-- Right: Amount -->
-                        <div>
+                        <!-- Right: Amount and Action Buttons -->
+                        <div class="flex items-center gap-4">
+                            <!-- Amount -->
                             <p class="text-green-600 text-lg font-bold" th:text="'₹' + ${income.amount}">+₹0.00</p>
+
+                            <!-- Edit Button -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600 hover:text-blue-800 cursor-pointer edit-income-btn transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                 th:data-id="${income.incomeId}"
+                                 th:data-source="${income.source}"
+                                 th:data-amount="${income.amount}"
+                                 th:data-date="${#temporals.format(income.localDateTime, 'yyyy-MM-dd')}"
+                                 title="Edit Income">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+
+                            <!-- Delete Button -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600 hover:text-red-800 cursor-pointer delete-income-btn transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                 th:data-id="${income.incomeId}"
+                                 title="Delete Income">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m4 0H5"/>
+                            </svg>
                         </div>
 
                     </div>
                 </div>
+
+
 
 
                 <!-- Pagination -->
