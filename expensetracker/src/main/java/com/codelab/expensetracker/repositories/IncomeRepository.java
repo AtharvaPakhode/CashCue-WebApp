@@ -26,9 +26,7 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> , JpaSp
     Double findSumOfIncomeOfUserByUser(@Param("user") User user);
 
 
-    @Query("DELETE FROM Income i WHERE i.id = :id")
-    Boolean deleteIncomeById(@Param("id") int id);
-
+    
     @Query("SELECT i FROM Income i WHERE i.id = :id")
     Income searchIncomeByIncomeId(@Param("id") int id);
     

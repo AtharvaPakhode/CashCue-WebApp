@@ -11,10 +11,7 @@ import com.codelab.expensetracker.repositories.CategoryRepository;
 import com.codelab.expensetracker.repositories.ExpenseRepository;
 import com.codelab.expensetracker.repositories.IncomeRepository;
 import com.codelab.expensetracker.repositories.UserRepository;
-import com.codelab.expensetracker.services.CategoryService;
-import com.codelab.expensetracker.services.ChartImageService;
-import com.codelab.expensetracker.services.PDFservice;
-import com.codelab.expensetracker.services.ReportService;
+import com.codelab.expensetracker.services.*;
 import com.codelab.expensetracker.specification.ExpenseSpecification;
 import com.codelab.expensetracker.specification.IncomeSpecification;
 import com.itextpdf.text.DocumentException;
@@ -68,6 +65,9 @@ public class UserAccessUrlController {
 
     @Autowired
     private CategoryService categoryService;
+    
+    @Autowired
+    private IncomeService incomeService;
 
     @Autowired
     private ExpenseSpecification ExpenseSpecifications;
@@ -505,8 +505,10 @@ public class UserAccessUrlController {
              * This is useful for saving precise timestamps even if only a date is selected.
              */
             if (income.getDate() != null) {
+                
                 LocalTime currentTime = LocalTime.now();
                 income.setLocalDateTime(LocalDateTime.of(income.getDate(), currentTime));
+                
             }
 
             // Attach the user and save the income entry
@@ -518,6 +520,8 @@ public class UserAccessUrlController {
                     "Income entry added successfully.",
                     "alert-success"
             ));
+
+            System.out.println(income.getDate());
 
             
 
@@ -593,7 +597,7 @@ public class UserAccessUrlController {
     @DeleteMapping("/deleteIncome/{id}")
     public ResponseEntity<String> deleteIncome(@PathVariable("id") int id ) {
         // Logic to delete the category from the database or any other source
-        boolean isDeleted = incomeRepository.deleteIncomeById(id);
+        boolean isDeleted = incomeService.deleteIncomeById(id);
 
         if (isDeleted) {
             // Success response with a custom message
@@ -616,14 +620,10 @@ public class UserAccessUrlController {
         model.addAttribute("user", user);
         
 
-        System.out.println(amountChange);
-
-
-
         // Find the existing income record
         Income existingIncome = incomeRepository.searchIncomeByIncomeId(incomeId);
 
-        System.out.println("1");
+        
 
         try{
             // If the income is found, update the necessary fields
@@ -631,8 +631,8 @@ public class UserAccessUrlController {
 
                 LocalDateTime originalDateTime = existingIncome.getLocalDateTime();  // Original date (we'll keep it as is)
                 String originalDescription = existingIncome.getDescription(); // Original description
-                LocalDate originalDate =existingIncome.getDate();
-                System.out.println(originalDateTime);
+                LocalDate originalDate =originalDateTime.toLocalDate();
+                
 
                 // Keep other fields (date, description) as they were
                 existingIncome.setLocalDateTime(originalDateTime); // Retain the original date

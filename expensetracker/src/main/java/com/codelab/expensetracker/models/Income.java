@@ -80,6 +80,7 @@ public class Income {
 
     public void setDate(LocalDate date) {
         this.date = date;
+        
     }
 
     public LocalDateTime getLocalDateTime() {

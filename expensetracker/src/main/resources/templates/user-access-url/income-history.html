@@ -35,7 +35,7 @@
 
                     <!-- Modal Body (Form for Editing Category) -->
                     <div class="p-4 md:p-5">
-                        <form id="editIncomeForm" class="space-y-4" action="#" method="post" th:object="${income}">
+                        <form id="editIncomeForm" class="space-y-4" action="#" method="post" >
                             <!-- Category Name Field -->
                             <div>
                                 <label for="incomeSourceChange" class="block mb-2 text-sm font-medium ">Source</label>
@@ -232,7 +232,6 @@
                                  th:data-id="${income.incomeId}"
                                  th:data-source="${income.source}"
                                  th:data-amount="${income.amount}"
-                                 th:data-date="${#temporals.format(income.localDateTime, 'yyyy-MM-dd')}"
                                  title="Edit Income">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
