@@ -1,128 +1,131 @@
-/*--------------- sidebar style start ---------------*/
+/*---------------------- Base styles for fonts ----------------------*/
+body {
+    font-family: 'Verdana', 'Book Antiqua', Palatino, serif; !important
+}
+
+/*---------------------- Sidebar styles ----------------------*/
 .sidebar {
-    height: 100vh;                /* Full height of the viewport */
-    width: 250px;                 /* Sidebar width */
-    position: fixed;             /* Fixed position */
-    top: 0;                      /* Align to top */
-    left: 0;                     /* Align to left */
-    background-color: white;     /* Background color */
-    padding-top: 60px;           /* Space at the top */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: white;
+    padding-top: 60px;
 }
 
 .sidebar a {
-    color: black;                /* Link text color */
-    padding: 10px 20px;          /* Padding around the text */
-    text-decoration: none;       /* Remove underline */
-    font-size: 16px;             /* Font size */
-    display: block;              /* Block-level links */
-    font-family: 'Roboto', sans-serif; /* Font family */
-    font-weight: 10;             /* Font weight */
+    display: block;
+    color: black;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    font-family: 'Verdana', 'Book Antiqua', Palatino, serif;
+    font-weight: 500;
+    transition: background-color 0.3s;
 }
 
 .sidebar a:hover {
-    background: linear-gradient(to right, #c2edda, #a0d6d2); /* Hover background */
-    color: black;                /* Hover text color */
+    background: linear-gradient(to right, #c2edda, #a0d6d2);
+    color: black;
 }
 
 .sidebar a i {
-    margin-right: 5px;           /* Space between icon and text */
+    margin-right: 8px;
 }
 
+/* Sidebar Profile Section */
 .sidebar .profile {
-    position: absolute;          /* Position at the bottom */
-    bottom: 0;                   /* Align bottom */
-    width: 100%;                 /* Full width */
-    height: 180px;                /* Height of profile section */
-    padding: 10px;               /* Inner padding */
-    background: linear-gradient(to right, #c2edda, #a0d6d2); /* Profile background */
-    text-align: center;          /* Centered content */
-    display: flex;               /* Use flexbox */
-    flex-direction: column;      /* Stack items vertically */
-    align-items: center;         /* Center align items */
-    animation: fadeSlideIn 0.8s ease-out; /* Animation */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover transition */
-    padding: 20px;               /* Padding override */
-    border-radius: 16px;         /* Rounded corners */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Shadow */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(to right, #c2edda, #a0d6d2);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    animation: fadeSlideIn 0.8s ease-out;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .profile img {
-    border-radius: 50%;          /* Circular image */
-    width: 70px;                 /* Width */
-    height: 70px;                /* Height */
-    margin-top: 10px;            /* Margin top */
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    margin-top: 10px;
 }
 
 .profile .username {
-    color: black;                /* Text color */
-    font-size: 16px;             /* Font size */
-    margin-top: 10px;            /* Space from image */
-    font-family: 'Roboto', sans-serif; /* Font family */
+    color: black;
+    font-size: 16px;
+    margin-top: 10px;
+    font-family: 'Verdana', 'Book Antiqua', Palatino, serif;
 }
 
 .profile:hover {
-    transform: translateY(-5px); /* Hover lift effect */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
-/*--------------- sidebar style end ---------------*/
 
-/*--------------- navbar style start ---------------*/
+/*---------------------- Navbar styles ----------------------*/
 .navbar {
-    display: flex;                   /* Flex layout */
-    justify-content: space-between; /* Space between items */
-    align-items: center;            /* Align items center */
-    background-color: white;        /* Background color */
-    padding: 10px 20px;             /* Padding */
-    margin-left: 250px;             /* Offset due to sidebar */
-    position: absolute;             /* Absolute positioning */
-    width: calc(100% - 250px);      /* Adjust width */
-    top: 0;                         /* Align to top */
-    z-index: 1000;                  /* High z-index */
-    height: 60px;                   /* Fixed height */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px 20px;
+    margin-left: 250px;
+    position: absolute;
+    width: calc(100% - 250px);
+    top: 0;
+    z-index: 1000;
+    height: 60px;
 }
 
 .navbar .app-name {
-    color: black;                   /* Fallback color */
-    font-size: 24px;                /* Font size */
-    font-family: 'Roboto', sans-serif; /* Font family */
-    font-weight: bolder;            /* Bold text */
-    background: linear-gradient(to right, #9faeaa, #2f3d3b); /* Gradient */
-    -webkit-background-clip: text;  /* Clip text to background */
-    color: transparent;             /* Make text transparent */
+    font-size: 24px;
+    font-family: 'Verdana', 'Book Antiqua', Palatino, serif;
+    font-weight: bold;
+    background: linear-gradient(to right, #9faeaa, #2f3d3b);
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
 .navbar .nav-links a {
-    color: black;                   /* Text color */
-    text-decoration: none;          /* No underline */
-    padding: 8px 16px;              /* Link padding */
-    font-size: 14px;                /* Font size */
-    font-family: 'Roboto', sans-serif; /* Font */
-    font-weight: 300;               /* Light font weight */
-    transition: background-color 0.3s ease; /* Hover transition */
+    color: black;
+    text-decoration: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-family: 'Verdana', 'Book Antiqua', Palatino, serif;
+    font-weight: 400;
+    transition: background-color 0.3s ease;
 }
 
 .navbar .nav-links a:hover {
-    background: linear-gradient(to right, #c2edda, #a0d6d2) !important; /* Hover background */
-    color: black;                   /* Hover text color */
+    background: linear-gradient(to right, #c2edda, #a0d6d2);
+    color: black;
 }
-/*--------------- navbar style end ---------------*/
 
-/*--------------- main content style start ---------------*/
+/*---------------------- Main content area ----------------------*/
 .dynamic-content {
-    margin-left: 250px;             /* Space for sidebar */
-    margin-top: 100px;              /* Space for navbar */
+    margin-left: 250px;
+    margin-top: 100px;
+    padding: 20px;
 }
-/*--------------- main content style end ---------------*/
 
-/*--------------- animations start ---------------*/
+/*---------------------- Animations ----------------------*/
 @keyframes fadeSlideIn {
     from {
-        opacity: 0;                 /* Start invisible */
-        transform: translateY(20px); /* Slide from bottom */
+        opacity: 0;
+        transform: translateY(20px);
     }
     to {
-        opacity: 1;                 /* Fade in */
-        transform: translateY(0);   /* Settle in place */
+        opacity: 1;
+        transform: translateY(0);
     }
 }
-/*--------------- animations end ---------------*/

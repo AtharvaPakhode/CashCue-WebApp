@@ -28,7 +28,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p      th:classappend="${session.customMessage.type == 'alert-success'} ? ' text-lg' : ' text-base'"
+                        <p      th:classappend="${session.customMessage.type == 'alert-success'} ? ' text-base' : ' text-sm'"
                                 class="text-white " th:text="${session.customMessage.content}">Message here</p>
 
                     </div>
@@ -75,7 +75,7 @@
                                 </svg>
                             </div>
                             <div
-                                    class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                                    class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-base font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
                             >
                                 Update Image
                             </div>
@@ -117,7 +117,7 @@
                                 </svg>
                             </div>
                             <div
-                                    class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                                    class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-sm font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
                             >
                                 Change Password
                             </div>
@@ -154,7 +154,7 @@
                                 </svg>
                             </div>
                             <div
-                                    class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                                    class="absolute right-5 transform translate-x-full whitespace-nowrap opacity-0 text-white text-sm font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
                             >
                                 Save changes
                             </div>

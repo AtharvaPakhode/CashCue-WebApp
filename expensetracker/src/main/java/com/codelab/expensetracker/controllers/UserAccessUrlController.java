@@ -1,7 +1,6 @@
 package com.codelab.expensetracker.controllers;
 
 
-import com.codelab.expensetracker.ExpensetrackerApplication;
 import com.codelab.expensetracker.helper.CustomDisplayMessage;
 import com.codelab.expensetracker.models.Category;
 import com.codelab.expensetracker.models.Expense;
@@ -40,12 +39,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.security.Principal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.*;
 import java.util.*;
 
-import java.text.NumberFormat;
+
 
 @Controller
 @RequestMapping("/user")
@@ -356,27 +353,28 @@ public class UserAccessUrlController {
      * Displays the form for adding a new income entry.
      * Initializes a blank Income object and passes user and page context to the view.
      *
-     * @param model     the Spring model to pass data to the view
-     * @param principal contains the name of the currently authenticated user
-     * @return the Thymeleaf view name for the add-income form page
+     * @param model     The Spring model used to pass data to the view.
+     * @param principal Contains the name of the currently authenticated user.
+     * @return The Thymeleaf view name for the add-income form page.
      */
     @GetMapping("/add-income")
     public String addIncome(Model model, Principal principal) {
 
-        // Get the currently authenticated user's name and details
+        // Get the currently authenticated user's name and retrieve user details from the repository
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
 
-        // Add user and page-specific information to the model
-        model.addAttribute("user", user);
-        model.addAttribute("page", "addIncome"); // for page specific CSS (Active page on UI)
+        // Add user details and page-specific information to the model
+        model.addAttribute("user", user); // Pass the user details to the view
+        model.addAttribute("page", "addIncome"); // Use this for setting the active page in the UI (CSS styling)
 
-        // Add a new empty Income object to bind form data
+        // Create and add a new empty Income object for form binding
         model.addAttribute("income", new Income());
 
-        // Return the Thymeleaf template for the add-income form
+        // Return the Thymeleaf template for the add-income form page
         return "user-access-url/add-income";
     }
+
 
 
 
@@ -384,12 +382,12 @@ public class UserAccessUrlController {
      * Handles the submission of the income form.
      * Validates input, attaches user details, and saves the income entry.
      *
-     * @param income         the submitted income form, validated
-     * @param bindingResult  holds validation results
-     * @param model          the Spring model to pass data to the view
-     * @param principal      contains the name of the currently authenticated user
-     * @param session        current HTTP session for displaying feedback messages
-     * @return the Thymeleaf view for the add-income page (same page, with feedback)
+     * @param income         The submitted income form, validated.
+     * @param bindingResult  Holds the validation results from the form.
+     * @param model          The Spring model to pass data to the view.
+     * @param principal      Contains the name of the currently authenticated user.
+     * @param session        The current HTTP session for displaying feedback messages.
+     * @return The Thymeleaf view for the add-income page (same page, with feedback).
      */
     @PostMapping("/add-income-process")
     public String addIncomeForm(
@@ -399,211 +397,309 @@ public class UserAccessUrlController {
             Principal principal,
             HttpSession session) {
 
-        // Get the currently authenticated user's name and details
+        // Get the currently authenticated user's name and retrieve user details from the repository
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
 
         try {
             /**
-             * If validation errors exist in the form,
-             * return to the same page with an error message.
+             * If validation errors exist in the form, return to the same page with an error message.
              */
             if (bindingResult.hasErrors()) {
                 session.setAttribute("customMessage", new CustomDisplayMessage(
                         "Something went wrong",
                         "alert-danger"
                 ));
-                model.addAttribute("page", "addIncome"); // for page specific CSS (Active page on UI)
+                model.addAttribute("page", "addIncome"); // for page-specific CSS (Active page on UI)
                 return "user-access-url/add-income";
             }
 
             /**
              * If a date was entered, convert it to a LocalDateTime using the current time.
-             * This is useful for saving precise timestamps even if only a date is selected.
+             * This ensures that we save the precise timestamp (with current time) even if only the date is selected.
              */
             if (income.getDate() != null) {
-                
                 LocalTime currentTime = LocalTime.now();
                 income.setLocalDateTime(LocalDateTime.of(income.getDate(), currentTime));
-                
             }
 
-            // Attach the user and save the income entry
+            // Attach the user and save the income entry to the repository
             income.setUser(user);
             this.incomeRepository.save(income);
 
-            // Success message after saving
+            // Success message after saving the income entry
             session.setAttribute("customMessage", new CustomDisplayMessage(
                     "Income entry added successfully.",
                     "alert-success"
             ));
 
-            System.out.println(income.getDate());
-
-            
+            System.out.println(income.getDate());  // For debugging purposes, prints the date
 
         } catch (Exception e) {
+            // Catch any unexpected errors and print stack trace for debugging
             e.printStackTrace();
         }
 
-        // Add user info back to model for consistency
+        // Add user info back to the model for consistency
         model.addAttribute("user", user);
 
-        model.addAttribute("page", "addIncome"); // for page specific CSS (Active page on UI)
+        model.addAttribute("page", "addIncome"); // for page-specific CSS (Active page on UI)
 
-        // Return to the same form page (can be improved to redirect for PRG pattern)
+        // Return to the same form page (could be improved to redirect for PRG pattern)
         return "user-access-url/add-income";
     }
 
 
 
+
+    /**
+     * Displays the user's income history with optional filters for amount range and date range.
+     * The results are paginated and sorted in descending order by date.
+     * Filters are applied only if provided by the user.
+     *
+     * @param model        The Spring model to pass data to the view.
+     * @param principal    Contains the name of the currently authenticated user.
+     * @param minAmount    Optional filter for minimum income amount.
+     * @param maxAmount    Optional filter for maximum income amount.
+     * @param startDate    Optional filter for the start date of the income entries.
+     * @param endDate      Optional filter for the end date of the income entries.
+     * @param page         The page number for pagination.
+     * @return The Thymeleaf view for the income history page, with filtered and paginated results.
+     */
     @GetMapping("/income-history/{page}")
     public String incomeHistory(
             Model model,
-            Principal principal,            
+            Principal principal,
             @RequestParam(value = "minAmount", required = false) Double minAmount,
-            @RequestParam(value = "maxAmount", required = false) Double maxAmount,            
+            @RequestParam(value = "maxAmount", required = false) Double maxAmount,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @PathVariable("page") int page
     ) {
-        String name = principal.getName();
-        User user = userRepository.getUserByName(name);
+        try {
+            // Retrieve the name of the currently authenticated user
+            String name = principal.getName();
+            User user = userRepository.getUserByName(name);
 
-        model.addAttribute("user", user);
-        model.addAttribute("page", "incomeHistory");
+            // Add user details and page-specific information to the model
+            model.addAttribute("user", user);
+            model.addAttribute("page", "incomeHistory");
 
-        Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "dateTime"));
+            // Set up pagination with a page size of 6, sorted by dateTime in descending order
+            Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "dateTime"));
 
-        Specification<Income> spec;
+            Specification<Income> spec;
 
-        boolean noFilters = (
-                minAmount == null &&
-                maxAmount == null &&               
-                startDate == null &&
-                endDate == null);
+            // Determine if no filters are applied (if all filter values are null)
+            boolean noFilters = (
+                    minAmount == null &&
+                            maxAmount == null &&
+                            startDate == null &&
+                            endDate == null
+            );
 
-        if (noFilters) {
-            spec = (root, query, cb) -> cb.equal(root.get("user"), user);
-        } else {
-            spec = IncomeSpecification.withFilters(user, minAmount, maxAmount, startDate, endDate);
+            // If no filters are applied, create a simple specification for retrieving incomes by user
+            if (noFilters) {
+                spec = (root, query, cb) -> cb.equal(root.get("user"), user);
+            } else {
+                // Otherwise, apply the filters using a custom specification
+                spec = IncomeSpecification.withFilters(user, minAmount, maxAmount, startDate, endDate);
+            }
+
+            // Retrieve the filtered and paginated income entries
+            Page<Income> filteredIncomes = incomeRepository.findAll(spec, pageable);
+
+            // Add filtered results and pagination details to the model
+            model.addAttribute("userTransactions", filteredIncomes);
+            model.addAttribute("totalPages", filteredIncomes.getTotalPages());
+            model.addAttribute("currentPage", page);
+
+            // Preserve filter values for displaying in the form
+            model.addAttribute("minAmount", minAmount);
+            model.addAttribute("maxAmount", maxAmount);
+            model.addAttribute("startDate", startDate);
+            model.addAttribute("endDate", endDate);
+
+            // Return the Thymeleaf template for displaying the income history
+            return "user-access-url/income-history";
+
+        } catch (Exception e) {
+            // Log the error for debugging purposes
+            e.printStackTrace();
+
+            // Add a custom error message to the model
+            model.addAttribute("customMessage", new CustomDisplayMessage("An error occurred while fetching the income history. Please try again.", "alert-danger"));
+
+            // Return the error page or redirect as needed
+            return "error-page";  // Adjust this based on your error handling strategy
         }
-
-        Page<Income> filteredIncomes = incomeRepository.findAll(spec, pageable);
-        
-        
-
-        model.addAttribute("userTransactions", filteredIncomes);
-        model.addAttribute("totalPages", filteredIncomes.getTotalPages());
-        model.addAttribute("currentPage", page);
-
-        // Preserve filters
-        
-        model.addAttribute("minAmount", minAmount);
-        model.addAttribute("maxAmount", maxAmount);        
-        model.addAttribute("startDate", startDate);
-        model.addAttribute("endDate", endDate);
-
-
-
-        return "user-access-url/income-history";
     }
 
 
 
+
+    /**
+     * Deletes an income entry by its ID.
+     *
+     * @param id The ID of the income entry to be deleted.
+     * @return A ResponseEntity containing the result of the deletion operation.
+     */
     @DeleteMapping("/deleteIncome/{id}")
-    public ResponseEntity<String> deleteIncome(@PathVariable("id") int id ) {
-        // Logic to delete the category from the database or any other source
-        boolean isDeleted = incomeService.deleteIncomeById(id);
+    public ResponseEntity<String> deleteIncome(@PathVariable("id") int id) {
+        try {
+            // Check if the income entry exists before attempting to delete
+            Optional<Income> income = incomeRepository.findById(id);
 
-        if (isDeleted) {
-            // Success response with a custom message
-            return ResponseEntity.ok("Incomne entry deleted successfully.");
-        } else {
-            // Failure response
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete income entry.");
+            if (!income.isPresent()) {
+                // If the income entry is not found, return a 404 (Not Found) response
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Income entry not found.");
+            }
+
+            // Proceed to delete the income entry if it exists
+            boolean isDeleted = incomeService.deleteIncomeById(id);
+
+            if (isDeleted) {
+                // Success response with a custom message
+                return ResponseEntity.ok("Income entry deleted successfully.");
+            } else {
+                // Failure response in case of an internal issue
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete income entry.");
+            }
+
+        } catch (Exception e) {
+            // Log the exception and return a generic error message
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while trying to delete the income entry.");
         }
     }
 
-    @PostMapping("/updateIncome/{incomeId}")
-        public String updateIncome(@PathVariable("incomeId") int incomeId,
-                                 @RequestParam String sourceNameChange,
-                                 @RequestParam double amountChange,
-                                 Model model, Principal principal) {
 
+    /**
+     * Handles the update of an existing income entry.
+     *
+     * @param incomeId       The ID of the income to be updated.
+     * @param sourceNameChange The updated source name.
+     * @param amountChange   The updated amount.
+     * @param model          The model to pass data to the view.
+     * @param principal      Contains the name of the currently authenticated user.
+     * @return A redirect to the income history page.
+     */
+    @PostMapping("/updateIncome/{incomeId}")
+    public String updateIncome(@PathVariable("incomeId") int incomeId,
+                               @RequestParam String sourceNameChange,
+                               @RequestParam double amountChange,
+                               Model model, Principal principal) {
+
+        // Get the currently authenticated user's name
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
-        int id = user.getUserId();
         model.addAttribute("user", user);
-        
 
         // Find the existing income record
         Income existingIncome = incomeRepository.searchIncomeByIncomeId(incomeId);
 
-        
-
-        try{
-            // If the income is found, update the necessary fields
-            if (existingIncome != null) {
-
-                LocalDateTime originalDateTime = existingIncome.getLocalDateTime();  // Original date (we'll keep it as is)
-                String originalDescription = existingIncome.getDescription(); // Original description
-                LocalDate originalDate =originalDateTime.toLocalDate();
-                
-
-                // Keep other fields (date, description) as they were
-                existingIncome.setLocalDateTime(originalDateTime); // Retain the original date
-                existingIncome.setDescription(originalDescription); // Retain the original description
-                existingIncome.setDate(originalDate);
-                existingIncome.setSource(sourceNameChange);
-                existingIncome.setAmount(amountChange);
-                existingIncome.setUser(user);
-                
-                this.incomeRepository.save(existingIncome);
-                this.userRepository.save(user);
-
-                
-            }
+        if (existingIncome == null) {
+            // If the income is not found, show an error message
+            model.addAttribute("customMessage", new CustomDisplayMessage("Income entry not found.", "alert-danger"));
+            return "redirect:/user/income-history/0";  // Redirect back to the income history page
         }
-        catch(Exception e){
+
+        try {
+            // Retain the original fields (date, description)
+            LocalDateTime originalDateTime = existingIncome.getLocalDateTime();
+            String originalDescription = existingIncome.getDescription();
+            LocalDate originalDate = originalDateTime.toLocalDate();
+
+            // Update the income with the new details
+            existingIncome.setLocalDateTime(originalDateTime); // Retain original date
+            existingIncome.setDescription(originalDescription); // Retain original description
+            existingIncome.setDate(originalDate);
+            existingIncome.setSource(sourceNameChange);
+            existingIncome.setAmount(amountChange);
+            existingIncome.setUser(user);  // Ensure the user is associated with the income entry
+
+            // Save the updated income entry
+            incomeRepository.save(existingIncome);
+
+            // Optional: Save the user again if needed (though it's likely not necessary in this case)
+            // userRepository.save(user);
+
+            // Optional: Add a success message
+            model.addAttribute("customMessage", new CustomDisplayMessage("Income entry updated successfully.", "alert-success"));
+
+        } catch (Exception e) {
+            // Log the exception and provide a failure message
             e.printStackTrace();
+            model.addAttribute("customMessage", new CustomDisplayMessage("An error occurred while updating the income entry.", "alert-danger"));
         }
 
-        return "redirect:/user/income-history/0";  // Redirect back to category page after updating
+        // Redirect back to the income history page
+        return "redirect:/user/income-history/0";
     }
+
 
 
 
 
 
     //----------------------------------------------------------------------------------------------------------------
-    
+
+    /**
+     * Displays the "Add Expense" form for the user, including a list of categories.
+     *
+     * @param model     The Spring model used to pass data to the view.
+     * @param principal Contains the name of the currently authenticated user.
+     * @return The Thymeleaf template for the "Add Expense" form page.
+     */
     @GetMapping("/add-expense")
-    public String addExpense(Model model, Principal principal){
-        String name = principal.getName();
-        User user = this.userRepository.getUserByName(name);
-        
+    public String addExpense(Model model, Principal principal) {
+        // Get the currently authenticated user's name
+        String username = principal.getName();
+
+        // Fetch the user from the repository using the username
+        User user = this.userRepository.getUserByName(username);
+
+        if (user == null) {
+            // Handle case where the user doesn't exist (in case of authentication issues)
+            model.addAttribute("customMessage", new CustomDisplayMessage("User not found.", "alert-danger"));
+            return "redirect:/login";  // Redirect to login page if the user is not found
+        }
+
+        // Get the list of categories associated with the user
         List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
-        
-        model.addAttribute("categories",categoryList);
-        model.addAttribute("user",user);
-        model.addAttribute("page","addExpense"); // for page specific CSS
-        model.addAttribute("expense", new Expense());
-        
-        
+
+        // Add the categories, user, and other necessary attributes to the model
+        model.addAttribute("categories", categoryList);
+        model.addAttribute("user", user);
+        model.addAttribute("page", "addExpense"); // Add the page-specific CSS class
+        model.addAttribute("expense", new Expense()); // Initialize an empty Expense object
+
+        // Return the Thymeleaf view for the "Add Expense" form
         return "user-access-url/add-expense";
     }
 
 
+
+    /**
+     * Handles the submission of the expense form, including validation and saving the expense.
+     *
+     * @param expense        The submitted expense form (validated).
+     * @param bindingResult  Holds validation results.
+     * @param model          The Spring model to pass data to the view.
+     * @param principal      Contains the name of the currently authenticated user.
+     * @return The Thymeleaf template for the add-expense form page (with validation feedback).
+     */
     @PostMapping("/add-expense-process")
     public String addExpenseForm(@Valid @ModelAttribute("expense") Expense expense,
                                  BindingResult bindingResult,
                                  Model model,
                                  Principal principal) {
-        String name = principal.getName();
-        User user = this.userRepository.getUserByName(name);
+
+        String username = principal.getName();
+        User user = this.userRepository.getUserByName(username);
         model.addAttribute("user", user);
 
+        // If there are validation errors, return the form with error messages
         if (bindingResult.hasErrors()) {
             List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
             model.addAttribute("categories", categoryList);
@@ -611,180 +707,293 @@ public class UserAccessUrlController {
             return "user-access-url/add-expense";
         }
 
-        // Set user and datetime
+        // Set user and datetime for the expense
         expense.setUser(user);
         if (expense.getDate() != null) {
             expense.setLocalDateTime(LocalDateTime.of(expense.getDate(), LocalTime.now()));
         }
 
+        // Save the expense to the repository
         this.expenseRepository.save(expense);
-        List<Category> categoryList = this.categoryRepository.ListOfCategoryByUser(user.getUserId());
-        model.addAttribute("categories", categoryList);
-        model.addAttribute("page", "addExpense");
 
-        return "user-access-url/add-expense";
+        // Optional: Add a success message if needed
+        model.addAttribute("customMessage", new CustomDisplayMessage("Expense added successfully!", "alert-success"));
+
+        // Redirect to the expense history page after adding the expense (PRG Pattern)
+        return "redirect:/user/expense-history/0";  // Adjust the URL as needed for your history page
     }
 
 
+    /**
+     * Handles the display of the expense history for the currently authenticated user.
+     *
+     * This method supports various filters such as categories, amount ranges, payment methods,
+     * and date ranges to allow the user to view their expenses based on selected criteria.
+     * It also implements pagination for displaying expenses across multiple pages.
+     *
+     * @param model          The Spring model to pass data to the view.
+     * @param principal      The currently authenticated user.
+     * @param categoryNames  List of category names for filtering expenses (optional).
+     * @param minAmount      The minimum amount for filtering expenses (optional).
+     * @param maxAmount      The maximum amount for filtering expenses (optional).
+     * @param paymentMethod  The payment method for filtering expenses (optional).
+     * @param startDate      The start date for filtering expenses (optional).
+     * @param endDate        The end date for filtering expenses (optional).
+     * @param page           The current page number for pagination.
+     * @return The Thymeleaf template for the expense history page.
+     */
     @GetMapping("/expense-history/{page}")
-public String expenseHistory(
-        Model model,
-        Principal principal,
-        @RequestParam(value = "categories", required = false) List<String> categoryNames,
-        @RequestParam(value = "minAmount", required = false) Double minAmount,
-        @RequestParam(value = "maxAmount", required = false) Double maxAmount,
-        @RequestParam(value = "paymentMethod", required = false) String paymentMethod,
-        @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-        @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-        @PathVariable("page") int page
-) {
-    String name = principal.getName();
-    User user = userRepository.getUserByName(name);
+    public String expenseHistory(
+            Model model,
+            Principal principal,
+            @RequestParam(value = "categories", required = false) List<String> categoryNames,
+            @RequestParam(value = "minAmount", required = false) Double minAmount,
+            @RequestParam(value = "maxAmount", required = false) Double maxAmount,
+            @RequestParam(value = "paymentMethod", required = false) String paymentMethod,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @PathVariable("page") int page
+    ) {
+        // Get the currently authenticated user's details
+        String name = principal.getName();
+        User user = userRepository.getUserByName(name);
 
-    model.addAttribute("user", user);
-    model.addAttribute("page", "expenseHistory");
+        model.addAttribute("user", user);
+        model.addAttribute("page", "expenseHistory");
 
-    Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "dateTime"));
+        Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "dateTime"));
 
-    List<Category> categories = new ArrayList<>();
-    if (categoryNames != null && !categoryNames.isEmpty()) {
-        categories = categoryRepository.findByCategoryNameInAndUserId(categoryNames, user.getUserId());
+        // Initialize categories list
+        List<Category> categories = new ArrayList<>();
+        try {
+            // Get the categories for filtering (if any)
+            if (categoryNames != null && !categoryNames.isEmpty()) {
+                categories = categoryRepository.findByCategoryNameInAndUserId(categoryNames, user.getUserId());
+            }
+        } catch (Exception e) {
+            // Log the error and show a user-friendly message
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Failed to load categories. Please try again later.");
+        }
+
+        // Determine if any filters are applied
+        boolean noFilters = (categoryNames == null || categoryNames.isEmpty()) &&
+                minAmount == null &&
+                maxAmount == null &&
+                (paymentMethod == null || paymentMethod.isEmpty()) &&
+                startDate == null &&
+                endDate == null;
+
+        // Create the specification based on filter conditions
+        Specification<Expense> spec = null;
+        try {
+            if (noFilters) {
+                spec = (root, query, cb) -> cb.equal(root.get("user"), user);  // No filters applied, get all expenses for user
+            } else {
+                spec = ExpenseSpecifications.withFilters(user, categories, minAmount, maxAmount, paymentMethod, startDate, endDate);
+            }
+        } catch (Exception e) {
+            // Log the error and show a user-friendly message
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Failed to apply filters. Please try again.");
+        }
+
+        // Fetch filtered expenses from the repository
+        Page<Expense> filteredExpenses = null;
+        try {
+            filteredExpenses = expenseRepository.findAll(spec, pageable);
+        } catch (Exception e) {
+            // Log the error and show a user-friendly message
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Failed to fetch expense records. Please try again later.");
+        }
+
+        if (filteredExpenses != null) {
+            // Add attributes to the model
+            model.addAttribute("userTransactions", filteredExpenses);
+            model.addAttribute("userCategories", categoryRepository.ListOfCategoryByUser(user.getUserId()));
+            model.addAttribute("totalPages", filteredExpenses.getTotalPages());
+            model.addAttribute("currentPage", page);
+        }
+
+        // Preserve the filter parameters in the model
+        model.addAttribute("filterCategories", categoryNames);
+        model.addAttribute("minAmount", minAmount);
+        model.addAttribute("maxAmount", maxAmount);
+        model.addAttribute("paymentMethod", paymentMethod);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
+        return "user-access-url/expense-history";
     }
 
-    Specification<Expense> spec;
-
-    boolean noFilters = (categoryNames == null || categoryNames.isEmpty()) &&
-            minAmount == null &&
-            maxAmount == null &&
-            (paymentMethod == null || paymentMethod.isEmpty()) &&
-            startDate == null &&
-            endDate == null;
-
-    if (noFilters) {
-        spec = (root, query, cb) -> cb.equal(root.get("user"), user);
-    } else {
-        spec = ExpenseSpecifications.withFilters(user, categories, minAmount, maxAmount, paymentMethod, startDate, endDate);
-    }
-
-    Page<Expense> filteredExpenses = expenseRepository.findAll(spec, pageable);
-
-    model.addAttribute("userTransactions", filteredExpenses);
-    model.addAttribute("userCategories", categoryRepository.ListOfCategoryByUser(user.getUserId()));
-    model.addAttribute("totalPages", filteredExpenses.getTotalPages());
-    model.addAttribute("currentPage", page);
-
-    // Preserve filters
-    model.addAttribute("filterCategories", categoryNames);
-    model.addAttribute("minAmount", minAmount);
-    model.addAttribute("maxAmount", maxAmount);
-    model.addAttribute("paymentMethod", paymentMethod);
-    model.addAttribute("startDate", startDate);
-    model.addAttribute("endDate", endDate);
-
-    
-
-    return "user-access-url/expense-history";
-}
 
 
 
+    /**
+     * Handles the deletion of an expense entry based on the provided expense ID.
+     *
+     * This method deletes an expense from the database using the provided ID. It returns
+     * a response indicating whether the deletion was successful or not.
+     *
+     * @param id The ID of the expense to be deleted.
+     * @return A ResponseEntity with a status code and a message indicating the result of the deletion operation.
+     */
     @DeleteMapping("/deleteExpense/{id}")
-    public ResponseEntity<String> deleteExpense(@PathVariable("id") int id ) {
-        // Logic to delete the expense from the database or any other source
+    public ResponseEntity<String> deleteExpense(@PathVariable("id") int id) {
+        // Call the service layer to delete the expense by its ID
         boolean isDeleted = expenseService.deleteIncomeById(id);
 
         if (isDeleted) {
-            // Success response with a custom message
-            return ResponseEntity.ok("Incomne entry deleted successfully.");
+            // If deletion is successful, return a success response
+            return ResponseEntity.ok("Income entry deleted successfully.");
         } else {
-            // Failure response
+            // If deletion fails, return an error response with a failure message
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete expense entry.");
         }
     }
 
+
+    /**
+     * Handles the updating of an existing expense entry based on the provided expense ID.
+     *
+     * This method updates the details of an expense entry (title and amount), while preserving
+     * the original date and description. After updating, it redirects the user back to the expense
+     * history page.
+     *
+     * @param expenseId    The ID of the expense entry to be updated.
+     * @param titleChange  The new title (name) for the expense.
+     * @param amountChange The new amount for the expense.
+     * @param model        The Spring model to pass data to the view.
+     * @param principal    The currently authenticated user.
+     * @return A redirect to the expense history page after updating the expense.
+     */
     @PostMapping("/updateExpense/{expenseId}")
     public String updateExpense(@PathVariable("expenseId") int expenseId,
-                               @RequestParam String titleChange,
-                               @RequestParam double amountChange,
-                               Model model, Principal principal) {
+                                @RequestParam String titleChange,
+                                @RequestParam double amountChange,
+                                Model model, Principal principal) {
 
+        // Get the username of the currently authenticated user
         String name = principal.getName();
+        // Retrieve the user from the repository based on the username
         User user = this.userRepository.getUserByName(name);
         int id = user.getUserId();
         model.addAttribute("user", user);
 
-
-        // Find the existing income record
+        // Find the existing expense record by its ID
         Expense existingExpense = expenseRepository.searchExpenseByExpenseId(expenseId);
 
-
-
-        try{
-            // If the income is found, update the necessary fields
+        try {
+            // If the expense is found, proceed to update it
             if (existingExpense != null) {
-
-                LocalDateTime originalDateTime = existingExpense.getLocalDateTime();  // Original date (we'll keep it as is)
+                // Preserve the original date and description
+                LocalDateTime originalDateTime = existingExpense.getLocalDateTime();  // Original date-time
                 String originalDescription = existingExpense.getDescription(); // Original description
-                LocalDate originalDate =originalDateTime.toLocalDate();
+                LocalDate originalDate = originalDateTime.toLocalDate(); // Extract the original date
 
-
-                // Keep other fields (date, description) as they were
-                existingExpense.setLocalDateTime(originalDateTime); // Retain the original date
+                // Set the new title and amount while keeping the original date and description
+                existingExpense.setLocalDateTime(originalDateTime); // Retain the original date-time
                 existingExpense.setDescription(originalDescription); // Retain the original description
-                existingExpense.setDate(originalDate);
-                existingExpense.setName(titleChange);
-                existingExpense.setAmount(amountChange);
-                existingExpense.setUser(user);
+                existingExpense.setDate(originalDate); // Retain the original date
+                existingExpense.setName(titleChange); // Update the title (name)
+                existingExpense.setAmount(amountChange); // Update the amount
+                existingExpense.setUser(user); // Associate the updated expense with the current user
 
+                // Save the updated expense back to the repository
                 this.expenseRepository.save(existingExpense);
-                this.userRepository.save(user);
-
-
+                this.userRepository.save(user); // Save any changes to the user (if needed)
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
+            // Print the stack trace if an exception occurs
             e.printStackTrace();
         }
 
-        return "redirect:/user/expense-history/0";  // Redirect back to category page after updating
+        // Redirect back to the expense history page after the update
+        return "redirect:/user/expense-history/0";  // Adjust the URL if needed
     }
 
 
 
-    
-    
-//----------------------------------------------------------------------------------------------------------------
+
+
+
+    //----------------------------------------------------------------------------------------------------------------
+    /**
+     * Handles the display of categories for the currently authenticated user.
+     *
+     * This method supports pagination for displaying categories and provides
+     * a search functionality to filter categories by a search term. If no search
+     * term is provided, it returns a paginated list of categories; otherwise, it
+     * returns categories that match the search term.
+     *
+     * @param page    The current page number for pagination.
+     * @param search  The search term for filtering categories (optional).
+     * @param model   The Spring model to pass data to the view.
+     * @param principal The currently authenticated user.
+     * @return The Thymeleaf template for displaying the user's categories.
+     */
     @GetMapping("/category/{page}")
-    public String category(@PathVariable("page") Integer page, 
+    public String category(@PathVariable("page") Integer page,
                            @RequestParam(name = "search", required = false) String search,
                            Model model, Principal principal){
-        
+
+        // Get the username of the currently authenticated user
         String name = principal.getName();
+        // Retrieve the user from the repository based on the username
         User user = this.userRepository.getUserByName(name);
 
         int id = user.getUserId();
+
+        // If no search term is provided, retrieve categories with pagination
         if(search == null || search.isEmpty()){
-            
-            Pageable pageable =  PageRequest.of(page, 8);
-            Page<Category> CategoryList = this.categoryRepository.findCategoriesByUser(id,  pageable);
-            // If there are no categories, set totalPages to 1 to avoid errors in pagination
+
+            // Set up pagination (8 categories per page)
+            Pageable pageable = PageRequest.of(page, 8);
+
+            // Retrieve the paginated categories for the user
+            Page<Category> CategoryList = this.categoryRepository.findCategoriesByUser(id, pageable);
+
+            // If no categories are found, set totalPages to 1 to prevent pagination errors
             int totalPages = (CategoryList.getTotalElements() == 0) ? 0 : CategoryList.getTotalPages();
+
+            // Add the categories and pagination information to the model
             model.addAttribute("totalPages", CategoryList.getTotalPages());
             model.addAttribute("categories", CategoryList);
-            
         }
+        // If a search term is provided, search for categories matching the term
         else {
-            Category categories = categoryService.searchCategories(search,id);
+            Category categories = categoryService.searchCategories(search, id);
             model.addAttribute("categories", categories);
         }
-        
+
+        // Add the current page, user, and category model to the view
         model.addAttribute("currentPage", page);
-        model.addAttribute("user",user);
-        model.addAttribute("category", new Category());
-        model.addAttribute("page","category");
+        model.addAttribute("user", user);
+        model.addAttribute("category", new Category()); // To initialize a new Category object
+        model.addAttribute("page", "category");
+
+        // Return the Thymeleaf view for the user's category page
         return "user-access-url/view-user-category";
     }
 
+
+    /**
+     * Handles the saving of a new category for the currently authenticated user.
+     *
+     * This method processes the form submission for creating a new category. It checks
+     * whether the category already exists for the user. If not, it saves the category
+     * to the database and redirects back to the category page. If the category already
+     * exists, it simply redirects back to the category page.
+     *
+     * @param category             The category object to be saved.
+     * @param model                The Spring model to pass data to the view.
+     * @param principal            The currently authenticated user.
+     * @param session              The HTTP session for the current user session.
+     * @param categoryName         The name of the category entered by the user.
+     * @param categoryMonthlyBudget The monthly budget for the category.
+     * @return A redirect to the category page after processing the form.
+     */
     @PostMapping("/process-save-category")
     public String saveCategory(@ModelAttribute("category") Category category,
                                Model model, Principal principal,
@@ -793,53 +1002,78 @@ public String expenseHistory(
                                @RequestParam("categoryMonthlyBudget") double categoryMonthlyBudget) {
 
         try {
+            // Retrieve the current authenticated user's username
             String name = principal.getName();
+            // Get the user details from the repository based on the username
             User user = this.userRepository.getUserByName(name);
             model.addAttribute("user", user);
-            
-            
-            boolean isCategoryAlreadyExisted = categoryRepository.isThisCategoryExisted(categoryName.toUpperCase(),user.getUserId());
-            System.out.println("existed");
-            
-            if(!isCategoryAlreadyExisted){
+
+            // Check if the category with the provided name already exists for the user
+            boolean isCategoryAlreadyExisted = categoryRepository.isThisCategoryExisted(categoryName.toUpperCase(), user.getUserId());
+
+            // If the category does not exist, proceed to save it
+            if (!isCategoryAlreadyExisted) {
+                // Set the user and other category properties
                 category.setUser(user);
                 category.setCategoryName(categoryName.toUpperCase());
                 category.setCategoryMonthlyBudget(categoryMonthlyBudget);
 
-                // Save the category to the database
+                // Save the new category to the database
                 this.categoryRepository.save(category);
-                this.userRepository.save(user);
+                this.userRepository.save(user);  // Save the user (if any updates are necessary)
+            } else {
+                // If the category already exists, redirect to the category page without saving
+                return "redirect:/user/category/0";  // Redirect back to category page after checking existence
             }
-            else {
-                return "redirect:/user/category/0";  // Redirect back to category page after saving
-            }
-
-
-
-            
-
         } catch (Exception e) {
+            // Print any exceptions that occur for troubleshooting
             e.printStackTrace();
         }
 
-        return "redirect:/user/category/0";  // Redirect back to category page after saving
+        // Redirect back to the category page after the category has been saved
+        return "redirect:/user/category/0";  // Return to the category page after saving
     }
 
 
+
+    /**
+     * Handles the deletion of a category based on its name.
+     *
+     * This method attempts to delete a category from the database using the provided category name.
+     * It returns a response indicating whether the deletion was successful or not.
+     *
+     * @param name The name of the category to be deleted.
+     * @return A ResponseEntity with a status code and a message indicating the result of the deletion operation.
+     */
     @DeleteMapping("/deleteCategory/{name}")
     public ResponseEntity<String> deleteCategory(@PathVariable("name") String name) {
-        // Logic to delete the category from the database or any other source
+        // Call the service to delete the category by its name
         boolean isDeleted = categoryService.deleteCategoryByName(name);
 
         if (isDeleted) {
-            // Success response with a custom message
+            // If deletion is successful, return a success response
             return ResponseEntity.ok("Category deleted successfully.");
         } else {
-            // Failure response
+            // If deletion fails, return an error response with a failure message
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete category.");
         }
     }
 
+
+    /**
+     * Handles the updating of an existing category for the currently authenticated user.
+     *
+     * This method allows the user to update the name and monthly budget of a category.
+     * After updating the category, it redirects back to the category list page.
+     *
+     * @param category             The category object being updated.
+     * @param categoryName         The original name of the category to be updated.
+     * @param categoryNameChange   The new name for the category.
+     * @param categoryMonthlyBudget The new monthly budget for the category.
+     * @param model                The Spring model to pass data to the view.
+     * @param principal            The currently authenticated user.
+     * @return A redirect to the category page after updating the category.
+     */
     @PostMapping("/updateCategory/{name}")
     public String updateCategory(@ModelAttribute("category") Category category,
                                  @PathVariable("name") String categoryName,
@@ -847,61 +1081,80 @@ public String expenseHistory(
                                  @RequestParam double categoryMonthlyBudget,
                                  Model model, Principal principal) {
 
+        // Retrieve the currently authenticated user's details using their username
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
         int id = user.getUserId();
+
+        // Add the user and the category to the model for view access
         model.addAttribute("user", user);
         model.addAttribute("category", category);
 
-        
-        // Logic to find and update the category
+        // Logic to find the existing category by its original name and user ID
         category = categoryService.searchCategories(categoryName, id);
+
+        // Update the category with the new name and monthly budget
         category.setCategoryName(categoryNameChange);
         category.setCategoryMonthlyBudget(categoryMonthlyBudget);
 
         // Save the updated category to the database
         this.categoryRepository.save(category);
-        return "redirect:/user/category/0";  // Redirect back to category page after updating
+
+        // Redirect back to the category page after the update
+        return "redirect:/user/category/0";  // Redirect to the category page after updating
     }
+
 
 //----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Generates a report based on the selected period (monthly, quarterly, or yearly).
+     * Displays total income, total expense, and net savings for the selected period.
+     * Also generates line and pie charts for trends, as well as top spending categories.
+     *
+     * @param period    The period for the report (monthly, quarterly, or yearly).
+     * @param model     The Spring model to pass data to the view.
+     * @param principal The currently authenticated user.
+     * @return The view name for the reports page.
+     */
     @GetMapping("/reports")
-    public String reports(@RequestParam(name = "period", required = false, defaultValue = "monthly") String period
-            , Model model, Principal principal) {
+    public String reports(@RequestParam(name = "period", required = false, defaultValue = "monthly") String period,
+                          Model model, Principal principal) {
 
+        // Get the currently authenticated user's details
         String name = principal.getName();
         User user = this.userRepository.getUserByName(name);
 
-        String duration = period;
+        // Initialize variables for total income, total expense, and net savings
         Double totalExpense = null;
-        Double totalIncome = null;  
+        Double totalIncome = null;
         Double netSavings = null;
 
-
-
+        // Set the time range for the current month
         LocalDateTime startOfMonth = YearMonth.now().atDay(1).atStartOfDay();
         LocalDateTime endOfMonth = YearMonth.now().atEndOfMonth().atTime(LocalTime.MAX);
 
-
+        // Get the current month and year
         int month = LocalDate.now().getMonthValue();
         int year = LocalDate.now().getYear();
-        LocalDate startDate;
-        LocalDate endDate;
 
-        // for expenses in numbers ------------------------------------------------------>
-        switch (duration) {
+        // Switch based on the selected period (monthly, quarterly, yearly)
+        switch (period) {
             case "monthly":
+                // Calculate monthly totals
                 totalExpense = this.expenseRepository.findSumOfExpensesForCurrentMonth(user, startOfMonth, endOfMonth);
                 totalIncome = this.incomeRepository.findSumOfIncomeForCurrentMonth(user, startOfMonth, endOfMonth);
                 totalExpense = (totalExpense == null) ? 0.0 : totalExpense;
                 totalIncome = (totalIncome == null) ? 0.0 : totalIncome;
-                
                 netSavings = totalIncome - totalExpense;
                 netSavings = (netSavings <= 0.0) ? 0.0 : netSavings;
                 break;
 
             case "quarterly":
+                // Set the time range for the current quarter
+                LocalDate startDate = null;
+                LocalDate endDate = null;
+
                 if (month >= 1 && month <= 3) {
                     startDate = LocalDate.of(year, 1, 1);
                     endDate = LocalDate.of(year, 3, 31);
@@ -915,34 +1168,36 @@ public String expenseHistory(
                     startDate = LocalDate.of(year, 10, 1);
                     endDate = LocalDate.of(year, 12, 31);
                 }
+
+                // Convert start and end date to LocalDateTime
                 LocalDateTime startOfQuarter = startDate.atStartOfDay();
                 LocalDateTime endOfQuarter = endDate.atTime(LocalTime.MAX);
 
+                // Calculate quarterly totals
                 totalExpense = this.expenseRepository.findSumOfExpenseForCurrentQuarter(user, startOfQuarter, endOfQuarter);
                 totalIncome = this.incomeRepository.findSumOfIncomeForCurrentQuarter(user, startOfQuarter, endOfQuarter);
                 totalExpense = (totalExpense != null) ? totalExpense : 0.0;
                 totalIncome = (totalIncome != null) ? totalIncome : 0.0;
-
                 netSavings = totalIncome - totalExpense;
                 netSavings = (netSavings <= 0.0) ? 0.0 : netSavings;
-
                 break;
 
             case "yearly":
-                startDate = LocalDate.of(year, 1, 1);
-                endDate = LocalDate.of(year, 12, 31);
+                // Set the time range for the current year
+                LocalDate startDateYear = LocalDate.of(year, 1, 1);
+                LocalDate endDateYear = LocalDate.of(year, 12, 31);
 
-                LocalDateTime startOfYear = startDate.atStartOfDay();
-                LocalDateTime endOfYear = endDate.atTime(LocalTime.MAX);
+                // Convert start and end date to LocalDateTime
+                LocalDateTime startOfYear = startDateYear.atStartOfDay();
+                LocalDateTime endOfYear = endDateYear.atTime(LocalTime.MAX);
 
+                // Calculate yearly totals
                 totalIncome = this.incomeRepository.findSumOfIncomeForCurrentYear(user, startOfYear, endOfYear);
                 totalExpense = this.expenseRepository.findSumOfExpenseForCurrentYear(user, startOfYear, endOfYear);
                 totalExpense = (totalExpense != null) ? totalExpense : 0.0;
                 totalIncome = (totalIncome != null) ? totalIncome : 0.0;
-
                 netSavings = totalIncome - totalExpense;
                 netSavings = (netSavings <= 0.0) ? 0.0 : netSavings;
-
                 break;
 
             default:
@@ -950,7 +1205,7 @@ public String expenseHistory(
                 break;
         }
 
-        // For dynamic trends (expense, savings, and income cards)
+        // Set dynamic period labels for display
         String periodLabel = switch (period.toLowerCase()) {
             case "monthly" -> "current month";
             case "quarterly" -> "current quarter";
@@ -958,6 +1213,7 @@ public String expenseHistory(
             default -> "Selected Period";
         };
 
+        // Add basic report data to the model
         model.addAttribute("user", user);
         model.addAttribute("page", "reports");
         model.addAttribute("period", period);
@@ -966,36 +1222,23 @@ public String expenseHistory(
         model.addAttribute("netSavings", netSavings);
         model.addAttribute("periodLabel", periodLabel);
 
-        // For dynamic trends (Line chart)
-        String periodLabel2 = switch (period.toLowerCase()) {
-            case "monthly" -> "Monthly";
-            case "quarterly" -> "Quarterly";
-            case "yearly" -> "Yearly";
-            default -> "Selected Period";
-        };
-        String periodLabel2Description = periodLabel2 + " Expense Trend";
-        String periodTrendDescription = "Line chart showing " + periodLabel2.toLowerCase() + " expense trends";
-
-        // For dynamic trends (Pie chart)
-        String periodLabel3 = switch (period.toLowerCase()) {
-            case "monthly" -> "for current month";
-            case "quarterly" -> "for current quarter";
-            case "yearly" -> "for current year";
-            default -> "Selected Period";
-        };
-        String periodLabel3Description = "Pie chart showing distribution of expenses across categories " + periodLabel3;
+        // Prepare descriptions for the charts
+        String periodLabel2Description = periodLabel + " Expense Trend";
+        String periodTrendDescription = "Line chart showing " + periodLabel.toLowerCase() + " expense trends";
+        String periodLabel3Description = "Pie chart showing distribution of expenses across categories " + periodLabel.toLowerCase();
 
         model.addAttribute("periodTrendDescription", periodTrendDescription);
         model.addAttribute("periodLabel2Description", periodLabel2Description);
         model.addAttribute("periodLabel3Description", periodLabel3Description);
 
-        // For line chart and pie chart values
+        // Fetch data for line and pie charts (income and expense trends by month, quarter, or year)
         List<Double> income;
         List<Double> expense;
         List<String> months;
         List<String> quarters;
         List<String> years;
 
+        // Fetch data based on the selected period
         switch (period.toLowerCase()) {
             case "monthly" -> {
                 income = this.reportService.getMonthlyIncomeSums(user);
@@ -1027,10 +1270,8 @@ public String expenseHistory(
                 income = this.reportService.getYearlyIncomeSums(user);
                 expense = this.reportService.getYearlyExpenseSums(user);
 
-                // Get the current year
+                // Get the current year and generate the year list
                 int currentYear = Year.now().getValue();
-
-                // Generate the year list as [current year - 4, current year - 3, current year - 2, current year - 1, current year]
                 years = new ArrayList<>();
                 for (int i = -4; i <= 0; i++) {
                     years.add(String.valueOf(currentYear + i));
@@ -1046,12 +1287,12 @@ public String expenseHistory(
                 break;
             }
             default -> {
-                System.out.println("invalid");
+                System.out.println("Invalid period.");
             }
         }
 
-        // for Top spending categories
-        Double totalExpenseByUser= null;
+        // Fetch top spending categories based on the selected period
+        Double totalExpenseByUser = null;
         Map<String, Double> currentCategorySums = null;
         Map<String, Double> pastCategorySums = null;
         switch (period.toLowerCase()) {
@@ -1059,85 +1300,58 @@ public String expenseHistory(
                 currentCategorySums = this.categoryService.getCurrentMonthCategorySums(user);
                 pastCategorySums = this.categoryService.getPastMonthCategorySums(user);
                 totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentMonth(user);
-
-                // Handle null values for the totalExpenseByUser and category sums
-                totalExpenseByUser = (totalExpenseByUser != null) ? totalExpenseByUser : 0.0;
-                currentCategorySums = (currentCategorySums != null) ? currentCategorySums : new HashMap<>();
-                pastCategorySums = (pastCategorySums != null) ? pastCategorySums : new HashMap<>();
-
-                model.addAttribute("currentCategorySums", currentCategorySums);
-                model.addAttribute("pastCategorySums", pastCategorySums);
-                model.addAttribute("totalExpenseByUser", totalExpenseByUser);
+                break;
             }
-
             case "quarterly" -> {
-                 currentCategorySums = this.categoryService.getCurrentQuarterCategorySums(user);
-                System.out.println(currentCategorySums);
-                 pastCategorySums = this.categoryService.getPastQuarterCategorySums(user);
+                currentCategorySums = this.categoryService.getCurrentQuarterCategorySums(user);
+                pastCategorySums = this.categoryService.getPastQuarterCategorySums(user);
                 totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentQuarter(user);
-                System.out.println(totalExpenseByUser);
-
-                // Handle null values for the totalExpenseByUser and category sums
-                totalExpenseByUser = (totalExpenseByUser != null) ? totalExpenseByUser : 0.0;
-                currentCategorySums = (currentCategorySums != null) ? currentCategorySums : new HashMap<>();
-                pastCategorySums = (pastCategorySums != null) ? pastCategorySums : new HashMap<>();
-
-                model.addAttribute("currentCategorySums", currentCategorySums);
-                model.addAttribute("pastCategorySums", pastCategorySums);
-                model.addAttribute("totalExpenseByUser", totalExpenseByUser);
-
-                
+                break;
             }
-
             case "yearly" -> {
                 currentCategorySums = this.categoryService.getCurrentYearCategorySums(user);
                 pastCategorySums = this.categoryService.getPastYearCategorySums(user);
                 totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentYear(user);
-
-                // Handle null values for the totalExpenseByUser and category sums
-                totalExpenseByUser = (totalExpenseByUser != null) ? totalExpenseByUser : 0.0;
-                currentCategorySums = (currentCategorySums != null) ? currentCategorySums : new HashMap<>();
-                pastCategorySums = (pastCategorySums != null) ? pastCategorySums : new HashMap<>();
-
-                model.addAttribute("currentCategorySums", currentCategorySums);
-                model.addAttribute("pastCategorySums", pastCategorySums);
-                model.addAttribute("totalExpenseByUser", totalExpenseByUser);
-            }
-
-            default -> {
-                System.out.println("Invalid");
+                break;
             }
         }
-        
-        
 
-        return "user-access-url/reports";
+        // Add top spending categories data to the model
+        totalExpenseByUser = (totalExpenseByUser != null) ? totalExpenseByUser : 0.0;
+        currentCategorySums = (currentCategorySums != null) ? currentCategorySums : new HashMap<>();
+        pastCategorySums = (pastCategorySums != null) ? pastCategorySums : new HashMap<>();
+
+        model.addAttribute("currentCategorySums", currentCategorySums);
+        model.addAttribute("pastCategorySums", pastCategorySums);
+        model.addAttribute("totalExpenseByUser", totalExpenseByUser);
+
+        return "user-access-url/reports"; // Return the view name for reports page
     }
+
 
 
     @PostMapping("/save-chart-image")
     public String saveChartImage(@RequestBody ChartImageService chartImageServicerequest) {
-        
+
         String chartType = chartImageServicerequest.getChartType();
         String imgData = chartImageServicerequest.getChartImgData();
-        String tableData= chartImageServicerequest.getTableImgData();
-        
-        
+        String tableData = chartImageServicerequest.getTableImgData();
 
         // Decode the base64 image data
         String base64Image = imgData.split(",")[1];
         String base64Table = tableData.split(",")[1];
-        
+
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-        byte[]tableBytes=Base64.getDecoder().decode(base64Table);
+        byte[] tableBytes = Base64.getDecoder().decode(base64Table);
 
-        // Define the folder path where the new image will be stored
-        String folderChart =  chartType.equals("line-chart-image") ? lineChartImagePath : pieChartImagePath;
-        String folderTable =  chartType.equals("line-chart-image") ? lineTableImagePath : pieTableImagePath;
+        // Define folder paths where the images will be stored
+        String folderChart = chartType.equals("line-chart-image") ? lineChartImagePath : pieChartImagePath;
+        String folderTable = chartType.equals("line-chart-image") ? lineTableImagePath : pieTableImagePath;
+
+        // Create the directories if they don't exist
         File directory1 = new File(folderChart);
-        File directory2= new File(folderTable);
+        File directory2 = new File(folderTable);
 
-        // Create the folder if it does not exist
         if (!directory1.exists()) {
             directory1.mkdir();
         }
@@ -1146,19 +1360,24 @@ public String expenseHistory(
             directory2.mkdir();
         }
 
-        Path targetLocation1 = Paths.get(directory1.getAbsolutePath() + File.separator + "chart.png");
-        Path targetLocation2 = Paths.get(directory2.getAbsolutePath() + File.separator + "table.png");
-        
-              
+        // Generate unique file names based on the current timestamp
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        Path targetLocation1 = Paths.get(directory1.getAbsolutePath() + File.separator + "chart_" + timestamp + ".png");
+        Path targetLocation2 = Paths.get(directory2.getAbsolutePath() + File.separator + "table_" + timestamp + ".png");
+
         try {
-            // Save the image
-            Files.write( targetLocation1,imageBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING );
-            Files.write( targetLocation2,tableBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING );
-            return "redirect:/user/reports";
+            // Save the images
+            Files.write(targetLocation1, imageBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(targetLocation2, tableBytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+
+            // Optionally, add a success message or log the success
+            return "redirect:/user/reports?success=true"; // You can add query params for success notification
         } catch (IOException e) {
-            return "redirect:/user/reports";
+            // Optionally, log the error or send a failure message
+            return "redirect:/user/reports?error=true"; // Or show a different view for error feedback
         }
     }
+
 
 
 

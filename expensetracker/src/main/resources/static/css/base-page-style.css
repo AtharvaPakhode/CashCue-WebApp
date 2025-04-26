@@ -18,7 +18,7 @@
 .navbar .app-name {
     color: black;                           /* Text color for the app name */
     font-size: 24px;                        /* Font size for the app name */
-    font-family: 'Roboto', sans-serif;      /* Font family for app name */
+    font-family: 'Verdana', 'Book Antiqua', Palatino, serif;      /* Font family for app name */
     font-weight: Bolder;                    /* Slightly bold for the app name */
     background: linear-gradient(to right, #9faeaa, #2f3d3b);  /* Gradient background */
     -webkit-background-clip: text;          /* Clip background to the text */
@@ -32,7 +32,7 @@
     text-decoration: none;                  /* Remove underline from links */
     padding: 8px 16px;                      /* Padding around the navbar links */
     font-size: 14px;                        /* Font size for the navbar links */
-    font-family: 'Roboto', sans-serif;      /* Font family for navbar links */
+    font-family: 'Verdana', 'Book Antiqua', Palatino, serif;      /* Font family for navbar links */
     font-weight: 300;                       /* Lighter font weight */
     transition: background-color 0.3s ease;  /* Smooth transition for hover effect */
 }
