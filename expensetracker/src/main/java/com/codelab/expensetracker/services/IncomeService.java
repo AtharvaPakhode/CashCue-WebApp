@@ -13,7 +13,7 @@ public class IncomeService {
 
     // Method to delete Income by Id
     public boolean deleteIncomeById(int id) {
-        // Check if the category exists
+        // Check if the Income exists
         if (incomeRepository.existsById(id)) {
 
             incomeRepository.deleteById(id);

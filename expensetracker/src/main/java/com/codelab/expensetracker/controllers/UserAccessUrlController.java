@@ -68,6 +68,9 @@ public class UserAccessUrlController {
     
     @Autowired
     private IncomeService incomeService;
+    
+    @Autowired
+    private ExpenseService expenseService;
 
     @Autowired
     private ExpenseSpecification ExpenseSpecifications;
@@ -228,93 +231,7 @@ public class UserAccessUrlController {
      * @param session The HttpSession object that holds session attributes, such as success messages.
      * @return A redirect to the user settings page after the profile image has been updated.
      */
-//    @PostMapping("/change-profile-image")
-//    public String changeProfileImage(Model model, Principal principal,
-//                                     @RequestParam("profileImage") MultipartFile profileImage,
-//                                     HttpSession session){
-//        try {
-//            // Retrieve the username of the currently authenticated user
-//            String name = principal.getName();
-//            // Fetch the user details from the database based on the username
-//            User user = this.userRepository.getUserByName(name);
-//
-//            // Get the current user's profile image URL
-//            String oldImage = user.getUserImageURL();
-//            
-//
-//            // Prepare the file name for the image to be deleted (if any)
-//            String fileNameToDelete = oldImage;
-//
-//            // Define the folder path where the profile images are stored
-//            String folderPath = "static/userprofileimages";
-//            File directory = new File(folderPath);
-//
-//            // Construct the full path to the old profile image that needs to be deleted
-//            Path targetLocation = Paths.get(directory.getAbsolutePath() + File.separator + fileNameToDelete);
-//            
-//
-//            // Create a File object for the image to be deleted
-//            File fileToDelete = targetLocation.toFile();
-//
-//            // Check if the file exists and is a valid file, then delete it
-//            if (fileToDelete.exists() && fileToDelete.isFile()) {
-//                fileToDelete.delete();
-//               
-//            } 
-//
-//            // If the uploaded image file is empty, set the default profile image
-//            if (profileImage.isEmpty()) {
-//                user.setUserImageURL("userDefault.png");
-//                session.setAttribute("customMessage", new CustomDisplayMessage("Please select the valid image file", "alert-danger"));
-//            } else {
-//                // If a new image is uploaded, process it
-//                String originalFileName = profileImage.getOriginalFilename();
-//
-//                // Generate a unique image name based on the user's ID
-//                String userID = String.valueOf(user.getUserId());
-//                String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-//                String imageName = userID + "_PROFILE_IMAGE" + fileExtension;
-//
-//                // Set the new profile image URL for the user
-//                user.setUserImageURL(imageName);
-//
-//                // Define the folder path where the new image will be stored
-//                String folder = "static/userprofileimages";
-//                directory = new File(folder);
-//
-//                // Create the folder if it does not exist
-//                if (!directory.exists()) {
-//                    directory.mkdir();
-//                }
-//
-//                // Construct the target path for the new image file
-//                targetLocation = Paths.get(directory.getAbsolutePath() + File.separator + imageName);
-//
-//                // Copy the uploaded file to the target location, replacing any existing file with the same name
-//                Files.copy(profileImage.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-//                
-//
-//                // Save the updated user data in the repository
-//                this.userRepository.save(user);
-//                model.addAttribute("user", user);
-//
-//                // Set a success message in the session to be displayed on the frontend
-//                session.setAttribute("customMessage", new CustomDisplayMessage("Profile image updated successfully", "alert-success"));
-//            }
-//
-//        } catch (Exception e) {
-//            // Log the exception if an error occurs during the file upload process
-//            session.setAttribute("customMessage", new CustomDisplayMessage("Something went wrong", "alert-danger"));
-//        }
-//
-//        // Redirect to the user settings page after the update process is complete
-//        return "redirect:/user/settings";
-//    }
-
-
-    
-
-    @PostMapping("/change-profile-image")
+   @PostMapping("/change-profile-image")
     public String changeProfileImage(Model model, Principal principal,
                                      @RequestParam("profileImage") MultipartFile profileImage,
                                      HttpSession session) {
@@ -768,6 +685,69 @@ public String expenseHistory(
 
     return "user-access-url/expense-history";
 }
+
+
+
+    @DeleteMapping("/deleteExpense/{id}")
+    public ResponseEntity<String> deleteExpense(@PathVariable("id") int id ) {
+        // Logic to delete the expense from the database or any other source
+        boolean isDeleted = expenseService.deleteIncomeById(id);
+
+        if (isDeleted) {
+            // Success response with a custom message
+            return ResponseEntity.ok("Incomne entry deleted successfully.");
+        } else {
+            // Failure response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete expense entry.");
+        }
+    }
+
+    @PostMapping("/updateExpense/{expenseId}")
+    public String updateExpense(@PathVariable("expenseId") int expenseId,
+                               @RequestParam String titleChange,
+                               @RequestParam double amountChange,
+                               Model model, Principal principal) {
+
+        String name = principal.getName();
+        User user = this.userRepository.getUserByName(name);
+        int id = user.getUserId();
+        model.addAttribute("user", user);
+
+
+        // Find the existing income record
+        Expense existingExpense = expenseRepository.searchExpenseByExpenseId(expenseId);
+
+
+
+        try{
+            // If the income is found, update the necessary fields
+            if (existingExpense != null) {
+
+                LocalDateTime originalDateTime = existingExpense.getLocalDateTime();  // Original date (we'll keep it as is)
+                String originalDescription = existingExpense.getDescription(); // Original description
+                LocalDate originalDate =originalDateTime.toLocalDate();
+
+
+                // Keep other fields (date, description) as they were
+                existingExpense.setLocalDateTime(originalDateTime); // Retain the original date
+                existingExpense.setDescription(originalDescription); // Retain the original description
+                existingExpense.setDate(originalDate);
+                existingExpense.setName(titleChange);
+                existingExpense.setAmount(amountChange);
+                existingExpense.setUser(user);
+
+                this.expenseRepository.save(existingExpense);
+                this.userRepository.save(user);
+
+
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return "redirect:/user/expense-history/0";  // Redirect back to category page after updating
+    }
 
 
 

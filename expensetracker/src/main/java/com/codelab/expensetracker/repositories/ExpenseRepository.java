@@ -2,6 +2,7 @@ package com.codelab.expensetracker.repositories;
 
 import com.codelab.expensetracker.models.Category;
 import com.codelab.expensetracker.models.Expense;
+import com.codelab.expensetracker.models.Income;
 import com.codelab.expensetracker.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer>, JpaS
     @Query("SELECT SUM(e.amount)  From Expense e WHERE e.user = :user ")
     Double findSumOfExpensesOfUserByUser(@Param("user") User user);
 
-
+    @Query("SELECT e FROM Expense e WHERE e.id = :id")
+    Expense searchExpenseByExpenseId(@Param("id") int id);
 
 
 

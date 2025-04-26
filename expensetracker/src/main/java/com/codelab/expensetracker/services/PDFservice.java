@@ -324,7 +324,7 @@ public class PDFservice {
             document.newPage();
             
             // Load chart image
-            Path chartPath = Paths.get("/uploads/line-chart-image/chart.png");
+            Path chartPath = Paths.get("uploads/line-chart-image/chart.png");
             if (Files.exists(chartPath)) {
                 byte[] chartBytes = Files.readAllBytes(chartPath);
                 System.out.println(chartBytes);
@@ -339,7 +339,7 @@ public class PDFservice {
             }
 
             // Load table image
-            Path tablePath = Paths.get("/uploads/line-chart-table-image/table.png");
+            Path tablePath = Paths.get("uploads/line-chart-table-image/table.png");
             if (Files.exists(tablePath)) {
                 byte[] tableBytes = Files.readAllBytes(tablePath);
                 System.out.println(tableBytes);
@@ -364,7 +364,7 @@ public class PDFservice {
             document.newPage();
 
             // Load chart image
-            Path chartPath = Paths.get("/uploads/pie-chart-image/chart.png");
+            Path chartPath = Paths.get("uploads/pie-chart-image/chart.png");
             if (Files.exists(chartPath)) {
                 byte[] chartBytes = Files.readAllBytes(chartPath);
                 System.out.println(chartBytes);
@@ -379,7 +379,7 @@ public class PDFservice {
             }
 
             // Load table image
-            Path tablePath = Paths.get("/uploads/pie-chart-table-image/table.png");
+            Path tablePath = Paths.get("uploads/pie-chart-table-image/table.png");
             if (Files.exists(tablePath)) {
                 byte[] tableBytes = Files.readAllBytes(tablePath);
                 System.out.println(tableBytes);
