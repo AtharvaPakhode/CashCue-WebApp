@@ -525,29 +525,15 @@ public class UrlController {
         return "open-url/home";
     }
 
-    @GetMapping("/contact-us")
-    public String ContactUs(Model model){
-
-        model.addAttribute("page","contact");
-
-        return "open-url/contactUs";
-    }
-
-    @PostMapping("/contact-us")
-    public String ContactUsForm(Model model){
-
-        model.addAttribute("page","contact");
-
-        return "open-url/contactUs";
-    }
+    
 
 
     @GetMapping("/about-us")
     public String AboutUs(Model model){
 
-        model.addAttribute("page","contact");
+        model.addAttribute("page","about");
 
-        return "open-url/aboutUs";
+        return "open-url/about";
     }
 
 

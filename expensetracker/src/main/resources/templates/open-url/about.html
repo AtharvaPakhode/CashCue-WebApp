@@ -1,10 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base-page-nav-links::layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+<!-- About Us Page -->
+<section class="mt-[60px]">
+    <div class="bg-gray-50 ">
+
+        <!-- Hero Section -->
+        <div class="bg-gray-800 text-white p-10 text-center">
+            <h1 class="text-4xl font-bold">Welcome to Your CashCue</h1>
+            <p class="mt-4 text-xl">Easily track your income and expenses with ease, manage your categories, and generate insightful reports.</p>
+        </div>
+
+        <!-- About Us Section -->
+        <div class="max-w-7xl mx-auto p-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-800">About Us</h2>
+                <p class="mt-4 text-lg text-gray-600">We are a dedicated team focused on making personal finance management effortless. Our platform empowers users to track their spending, categorize transactions, and generate detailed reports to maintain financial health.</p>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="bg-gray-100 py-10">
+            <div class="max-w-7xl mx-auto px-6">
+                <h2 class="text-3xl font-bold text-gray-800 text-center">Key Features</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+
+                    <!-- Add/Edit/Delete Income -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+                        <h3 class="text-xl font-semibold text-gray-700">Add, Edit, Delete Income</h3>
+                        <p class="mt-4 text-gray-600">Easily add, edit, or delete your income entries. Stay on top of your earnings.</p>
+                    </div>
+
+                    <!-- Add/Edit/Delete Expense -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+                        <h3 class="text-xl font-semibold text-gray-700">Add, Edit, Delete Expense</h3>
+                        <p class="mt-4 text-gray-600">Manage your expenses by adding, editing, or deleting them to track your spending effectively.</p>
+                    </div>
+
+                    <!-- Manage Categories -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+                        <h3 class="text-xl font-semibold text-gray-700">Manage Categories</h3>
+                        <p class="mt-4 text-gray-600">Organize your income and expenses by categories to analyze your spending habits better.</p>
+                    </div>
+
+                    <!-- Generate Report -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+                        <h3 class="text-xl font-semibold text-gray-700">Generate Reports</h3>
+                        <p class="mt-4 text-gray-600">Generate detailed financial reports by month, quarter, or year, and keep track of your financial progress.</p>
+                    </div>
+
+                    <!-- Export PDF -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+                        <h3 class="text-xl font-semibold text-gray-700">Export to PDF</h3>
+                        <p class="mt-4 text-gray-600">Export your financial data and reports to PDF for easy sharing and reference.</p>
+                    </div>
+
+                    <!-- Export via Email -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+                        <h3 class="text-xl font-semibold text-gray-700">Export via Email</h3>
+                        <p class="mt-4 text-gray-600">Share your reports directly via email with just a few clicks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="bg-white py-10">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Contact Us</h2>
+                    <p class="mt-4 text-lg text-gray-600">Have questions or feedback? Reach out to us anytime.</p>
+                </div>
+                <div class="mt-6 text-center">
+                    <a href="mailto:support@expensetracker.com" class="bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700">Email Us</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-6">
+            <div class="text-center">
+                <p>&copy; 2025 CashCue, All Rights Reserved.</p>
+                <p>Follow us on social media: <a href="#" class="text-blue-400">Facebook</a>, <a href="#" class="text-blue-400">Twitter</a>, <a href="#" class="text-blue-400">Instagram</a></p>
+            </div>
+        </footer>
+    </div>
+
+</section>
+
+
+<!-- Optional JS Scripts -->
+<div th:fragment="scripts">
+
+</div>
 
 </body>
 </html>

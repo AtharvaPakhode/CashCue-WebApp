@@ -21,13 +21,11 @@
 
         <!-- About Page: Placeholder for future additions -->
         <div th:case="'about'">
-
+            <link rel="stylesheet" type="text/css" th:href="@{/css/base-page-style.css}">
+            <script src="https://cdn.tailwindcss.com"></script>
         </div>
 
-        <!-- Contact Page: Placeholder for future additions -->
-        <div th:case="'contact'">
 
-        </div>
 
         <!-- Default case: Applies when no matching case is found -->
         <div th:case="*">
@@ -45,7 +43,6 @@
     <div class="nav-links">
         <a th:href="@{/home}">Home</a>
         <a th:href="@{/about-us}">About Us</a>
-        <a href="#" th:href="@{/contact-us}">Contact Us</a>
         <a th:href="@{/login}">Login</a>
         <a th:href="@{/register}">Register</a>
     </div>
