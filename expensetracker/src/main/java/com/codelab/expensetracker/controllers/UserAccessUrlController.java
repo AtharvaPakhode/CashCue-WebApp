@@ -807,6 +807,9 @@ public class UserAccessUrlController {
             e.printStackTrace();
             model.addAttribute("errorMessage", "Failed to fetch expense records. Please try again later.");
         }
+        
+        
+        
 
         if (filteredExpenses != null) {
             // Add attributes to the model
@@ -1294,24 +1297,28 @@ public class UserAccessUrlController {
         // Fetch top spending categories based on the selected period
         Double totalExpenseByUser = null;
         Map<String, Double> currentCategorySums = null;
+        Map<String, List<Double>> currentCategorySumsMonth = null;
         Map<String, Double> pastCategorySums = null;
         switch (period.toLowerCase()) {
             case "monthly" -> {
-                currentCategorySums = this.categoryService.getCurrentMonthCategorySums(user);
+                currentCategorySumsMonth = this.categoryService.getCurrentMonthCategorySums(user);
                 pastCategorySums = this.categoryService.getPastMonthCategorySums(user);
                 totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentMonth(user);
+                model.addAttribute("currentCategorySums", currentCategorySumsMonth);
                 break;
             }
             case "quarterly" -> {
                 currentCategorySums = this.categoryService.getCurrentQuarterCategorySums(user);
                 pastCategorySums = this.categoryService.getPastQuarterCategorySums(user);
                 totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentQuarter(user);
+                model.addAttribute("currentCategorySums", currentCategorySums);
                 break;
             }
             case "yearly" -> {
                 currentCategorySums = this.categoryService.getCurrentYearCategorySums(user);
                 pastCategorySums = this.categoryService.getPastYearCategorySums(user);
                 totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentYear(user);
+                model.addAttribute("currentCategorySums", currentCategorySums);
                 break;
             }
         }
@@ -1321,7 +1328,8 @@ public class UserAccessUrlController {
         currentCategorySums = (currentCategorySums != null) ? currentCategorySums : new HashMap<>();
         pastCategorySums = (pastCategorySums != null) ? pastCategorySums : new HashMap<>();
 
-        model.addAttribute("currentCategorySums", currentCategorySums);
+       
+        
         model.addAttribute("pastCategorySums", pastCategorySums);
         model.addAttribute("totalExpenseByUser", totalExpenseByUser);
 
@@ -1362,8 +1370,8 @@ public class UserAccessUrlController {
 
         // Generate unique file names based on the current timestamp
         String timestamp = String.valueOf(System.currentTimeMillis());
-        Path targetLocation1 = Paths.get(directory1.getAbsolutePath() + File.separator + "chart_" + timestamp + ".png");
-        Path targetLocation2 = Paths.get(directory2.getAbsolutePath() + File.separator + "table_" + timestamp + ".png");
+        Path targetLocation1 = Paths.get(directory1.getAbsolutePath() + File.separator + "chart.png");
+        Path targetLocation2 = Paths.get(directory2.getAbsolutePath() + File.separator + "table.png");
 
         try {
             // Save the images

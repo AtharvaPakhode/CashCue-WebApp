@@ -8,7 +8,7 @@ import com.codelab.expensetracker.repositories.UserRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -213,7 +213,8 @@ public class PDFservice {
         categoryTable.setSpacingAfter(10f);
 
 
-        Map<String, Double> currentCategorySums = null;        
+        Map<String, Double> currentCategorySums = null;
+        Map<String, List<Double>> currentCategorySumsMonth = null;
         Double totalExpenseByUser;
         Double percentageOfTotal;
 
@@ -223,32 +224,43 @@ public class PDFservice {
                 addTableHeader(categoryTable, new String[]{
                         "Expense Category",
                         "Total Amount Spend",
-                        "% of Total Expense"
+                        "% of Total Expense",
+                        "Budget Variance"
                 }, tableHeaderFont);
 
-                currentCategorySums = this.categoryService.getCurrentMonthCategorySums(user);
-                for (Map.Entry<String, Double> entry : currentCategorySums.entrySet()) {
+                currentCategorySumsMonth = this.categoryService.getCurrentMonthCategorySums(user);
 
-                    totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentMonth(user);
+                // Find total expense once, not inside the loop
+                totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentMonth(user);
 
+                for (Map.Entry<String, List<Double>> entry : currentCategorySumsMonth.entrySet()) {
                     String category = entry.getKey();
-                    Double categoryAmount = entry.getValue();
+                    Double totalSpent = entry.getValue().get(0);
+                    Double monthlyBudget = entry.getValue().get(1);
 
+                    // Calculate percentage of total
+                    
                     if (totalExpenseByUser != null && totalExpenseByUser > 0) {
-                        percentageOfTotal = (categoryAmount / totalExpenseByUser) * 100;
+                        percentageOfTotal = (totalSpent / totalExpenseByUser) * 100;
                     } else {
                         percentageOfTotal = 0.0;
                     }
 
+                    // Calculate budget variance
+                    double budgetVariance = monthlyBudget - totalSpent;
+
+                    String formattedAmount = "₹ " + String.format("%.2f", totalSpent);
                     String formattedPercentage = String.format("%.2f", percentageOfTotal) + "%";
-                    String formattedAmount = "₹ " + String.format("%.2f", categoryAmount);
+                    String formattedVariance = "₹ " + String.format("%.2f", budgetVariance);
 
-                    addCategoryRow(categoryTable, category, formattedAmount, formattedPercentage, bodyFont, BaseColor.WHITE);
-
+                    // Add row: (category name, total spent, % of total, budget variance)
+                    addCategoryRowMonth(categoryTable, category, formattedAmount, formattedPercentage, formattedVariance, bodyFont, BaseColor.WHITE);
                 }
                 break;
 
-            case "quarterly":
+
+
+        case "quarterly":
                 document.add(new Paragraph("Quarterwise Spending of Category", bodyFont));
                 addTableHeader(categoryTable, new String[]{
                         "Expense Category",
@@ -411,7 +423,27 @@ public class PDFservice {
         }
     }
 
-    private void addCategoryRow(PdfPTable table, String category, String amount, String percentage, Font font, BaseColor backgroundColor) {
+    private void addCategoryRowMonth(PdfPTable table, String category, String amount, String percentage, String Variance, Font font, BaseColor backgroundColor) {
+        PdfPCell categoryCell = new PdfPCell(new Phrase(category, font));
+        categoryCell.setBackgroundColor(backgroundColor);
+        categoryCell.setPadding(8);
+        categoryCell.setBorderWidth(0.5f);
+        table.addCell(categoryCell);
+
+        PdfPCell amountCell = new PdfPCell(new Phrase(amount, font));
+        amountCell.setBackgroundColor(backgroundColor);
+        amountCell.setPadding(8);
+        amountCell.setBorderWidth(0.5f);
+        table.addCell(amountCell);
+
+        PdfPCell percentageCell = new PdfPCell(new Phrase(percentage, font));
+        percentageCell.setBackgroundColor(backgroundColor);
+        percentageCell.setPadding(8);
+        percentageCell.setBorderWidth(0.5f);
+        table.addCell(percentageCell);
+    }
+
+    private void addCategoryRow(PdfPTable table, String category, String amount, String percentage,  Font font, BaseColor backgroundColor) {
         PdfPCell categoryCell = new PdfPCell(new Phrase(category, font));
         categoryCell.setBackgroundColor(backgroundColor);
         categoryCell.setPadding(8);

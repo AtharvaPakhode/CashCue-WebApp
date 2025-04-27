@@ -40,16 +40,29 @@ public interface CategoryRepository  extends JpaRepository<Category, String> {
     // reports
 
     //for current month
-    @Query( "SELECT c.categoryName, SUM(e.amount) " +
-            "FROM Expense e " +
-            "JOIN Category c ON e.category.categoryName = c.categoryName " +
-            "WHERE e.user = :user " +
-            "AND c.user = :user " +
-            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
-            "AND EXTRACT(MONTH FROM e.dateTime) = EXTRACT(MONTH FROM CURRENT_DATE) " +
-            "GROUP BY c.categoryName "+
-            "ORDER BY SUM(e.amount) DESC")
-    List<Object[]> getCurrentMonthCategorySums(@Param("user") User user);
+    @Query(
+            "SELECT c.categoryName, SUM(e.amount), c.categoryMonthlyBudget " +
+                    "FROM Expense e " +
+                    "JOIN Category c ON e.category.categoryName = c.categoryName " +
+                    "WHERE e.user = :user " +
+                    "AND c.user = :user " +
+                    "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+                    "AND EXTRACT(MONTH FROM e.dateTime) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+                    "GROUP BY c.categoryName, c.categoryMonthlyBudget " +
+                    "ORDER BY SUM(e.amount) DESC"
+    )
+    List<Object[]> getCurrentMonthCategorySumsWithBudget(@Param("user") User user);
+
+//    @Query( "SELECT c.categoryName, SUM(e.amount) " +
+//            "FROM Expense e " +
+//            "JOIN Category c ON e.category.categoryName = c.categoryName " +
+//            "WHERE e.user = :user " +
+//            "AND c.user = :user " +
+//            "AND EXTRACT(YEAR FROM e.dateTime) = EXTRACT(YEAR FROM CURRENT_DATE) " +
+//            "AND EXTRACT(MONTH FROM e.dateTime) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+//            "GROUP BY c.categoryName "+
+//            "ORDER BY SUM(e.amount) DESC")
+//    List<Object[]> getCurrentMonthCategorySums(@Param("user") User user);
 
     
     //for past month

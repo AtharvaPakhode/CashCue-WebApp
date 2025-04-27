@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CategoryService {
@@ -43,25 +40,44 @@ public class CategoryService {
     
     
     //report
-    public Map<String, Double> getCurrentMonthCategorySums(User user) {
-        // Fetch the sorted monthly sums in descending order
-        List<Object[]> monthlySortedDescending = this.categoryRepository.getCurrentMonthCategorySums(user);
 
-        // Map to hold the top 3 categories
-        Map<String, Double> top3CategoriesCurrent = new LinkedHashMap<>();
+    public Map<String, List<Double>> getCurrentMonthCategorySums(User user) {
+        List<Object[]> monthlySortedDescending = this.categoryRepository.getCurrentMonthCategorySumsWithBudget(user);
 
-        // Check that the list has enough items (at least 3)
+        Map<String, List<Double>> top3CategoriesCurrent = new LinkedHashMap<>();
+
         int topN = Math.min(3, monthlySortedDescending.size());
 
-        // Add top 3 categories to the map
         for (int i = 0; i < topN; i++) {
             String categoryName = (String) monthlySortedDescending.get(i)[0];
             Double totalAmount = (Double) monthlySortedDescending.get(i)[1];
-            top3CategoriesCurrent.put(categoryName, totalAmount);
+            Double monthlyBudget = (Double) monthlySortedDescending.get(i)[2];
+
+            top3CategoriesCurrent.put(categoryName, Arrays.asList(totalAmount, monthlyBudget));
         }
 
         return top3CategoriesCurrent;
     }
+
+//    public Map<String, Double> getCurrentMonthCategorySums(User user) {
+//        // Fetch the sorted monthly sums in descending order
+//        List<Object[]> monthlySortedDescending = this.categoryRepository.getCurrentMonthCategorySums(user);
+//
+//        // Map to hold the top 3 categories
+//        Map<String, Double> top3CategoriesCurrent = new LinkedHashMap<>();
+//
+//        // Check that the list has enough items (at least 3)
+//        int topN = Math.min(3, monthlySortedDescending.size());
+//
+//        // Add top 3 categories to the map
+//        for (int i = 0; i < topN; i++) {
+//            String categoryName = (String) monthlySortedDescending.get(i)[0];
+//            Double totalAmount = (Double) monthlySortedDescending.get(i)[1];
+//            top3CategoriesCurrent.put(categoryName, totalAmount);
+//        }
+//
+//        return top3CategoriesCurrent;
+//    }
 
 
     public Map<String, Double> getPastMonthCategorySums(User user) {
