@@ -37,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.*;
 import java.security.Principal;
 import java.time.*;
@@ -720,7 +721,7 @@ public class UserAccessUrlController {
         model.addAttribute("customMessage", new CustomDisplayMessage("Expense added successfully!", "alert-success"));
 
         // Redirect to the expense history page after adding the expense (PRG Pattern)
-        return "redirect:/user/expense-history/0";  // Adjust the URL as needed for your history page
+        return "redirect:/user/add-expense";  // Adjust the URL as needed for your history page
     }
 
 
@@ -1299,6 +1300,13 @@ public class UserAccessUrlController {
         Map<String, Double> currentCategorySums = null;
         Map<String, List<Double>> currentCategorySumsMonth = null;
         Map<String, Double> pastCategorySums = null;
+
+        // Add top spending categories data to the model
+        totalExpenseByUser = (totalExpenseByUser != null) ? totalExpenseByUser : 0.0;
+        currentCategorySums = (currentCategorySums != null) ? currentCategorySums : new HashMap<>();
+        pastCategorySums = (pastCategorySums != null) ? pastCategorySums : new HashMap<>();
+        
+        
         switch (period.toLowerCase()) {
             case "monthly" -> {
                 currentCategorySumsMonth = this.categoryService.getCurrentMonthCategorySums(user);
@@ -1323,10 +1331,25 @@ public class UserAccessUrlController {
             }
         }
 
-        // Add top spending categories data to the model
-        totalExpenseByUser = (totalExpenseByUser != null) ? totalExpenseByUser : 0.0;
-        currentCategorySums = (currentCategorySums != null) ? currentCategorySums : new HashMap<>();
-        pastCategorySums = (pastCategorySums != null) ? pastCategorySums : new HashMap<>();
+
+        for (Map.Entry<String, List<Double>> entry : currentCategorySumsMonth.entrySet()) {
+            Double start = entry.getValue().get(0);  // use get(0) not [0]
+            Double end = entry.getValue().get(1);    // use get(1) not [1]
+            Double diff = end - start;               // use '-' not subtract()
+            model.addAttribute("diff", diff);
+
+            if (diff == 0) {
+                String budgetVarianceClass = "text-gray-600";
+                model.addAttribute("budgetVarianceClass", budgetVarianceClass);
+            } else if (diff > 0) {
+                String budgetVarianceClass = "text-green-800";
+                model.addAttribute("budgetVarianceClass", budgetVarianceClass);
+            } else if (diff < 0) {
+                String budgetVarianceClass = "text-red-800";
+                model.addAttribute("budgetVarianceClass", budgetVarianceClass);
+            }
+        }
+        
 
        
         

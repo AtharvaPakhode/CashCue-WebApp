@@ -375,12 +375,20 @@
                                 </div>
 
                                 <!-- Column 4: Budget Variance -->
-                                <div class="w-1/4 text-right">
-                                    <p class="text-gray-800"
-                                       th:text="'₹' + ${#numbers.formatDecimal(entry.value[1] - entry.value[0], 1, 'COMMA', 2, 'POINT')}">
+                                <div class="w-1/4 text-right"
+                                     th:with="start=${entry.value[0]}, end=${entry.value[1]}, diff=${end - start}">
+                                    <p th:class="${budgetVarianceClass}"
+                                       th:text="'₹' + ${#numbers.formatDecimal(diff, 1, 'COMMA', 2, 'POINT')}"
+                                       th:title="${budgetVarianceClass == 'text-red-800' ? 'You have exceeded your budget.' : (budgetVarianceClass == 'text-green-800' ? 'You are within your budget.' : '')}">
+
+                                    >
+
                                         0.00%
                                     </p>
                                 </div>
+
+
+
                             </div>
                         </div>
 

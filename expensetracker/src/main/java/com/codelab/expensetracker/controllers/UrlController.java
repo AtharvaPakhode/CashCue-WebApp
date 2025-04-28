@@ -105,7 +105,7 @@ public class UrlController {
             // Set default properties for the new user
             user.setUserRole("ROLE_USER");
             user.setUserStatus(true);
-            user.setUserImageURL("userDefault.png");
+            user.setUserImageURL("userImageDefault.jpg");
 
             // Encrypt the password before saving to the database
             user.setUserPassword(bCryptPasswordEncoder.encode(user.getUserPassword()));
