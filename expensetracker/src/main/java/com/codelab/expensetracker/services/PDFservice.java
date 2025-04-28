@@ -212,6 +212,11 @@ public class PDFservice {
         categoryTable.setSpacingBefore(10f);
         categoryTable.setSpacingAfter(10f);
 
+        PdfPTable categoryTableMonth = new PdfPTable(4);
+        categoryTableMonth.setWidthPercentage(100);
+        categoryTableMonth.setSpacingBefore(10f);
+        categoryTableMonth.setSpacingAfter(10f);
+
 
         Map<String, Double> currentCategorySums = null;
         Map<String, List<Double>> currentCategorySumsMonth = null;
@@ -221,7 +226,7 @@ public class PDFservice {
         switch (period.toLowerCase()) {
             case "monthly":
                 document.add(new Paragraph("Monthwise Spending of Category", bodyFont));
-                addTableHeader(categoryTable, new String[]{
+                addTableHeader(categoryTableMonth, new String[]{
                         "Expense Category",
                         "Total Amount Spend",
                         "% of Total Expense",
@@ -254,7 +259,7 @@ public class PDFservice {
                     String formattedVariance = "₹ " + String.format("%.2f", budgetVariance);
 
                     // Add row: (category name, total spent, % of total, budget variance)
-                    addCategoryRowMonth(categoryTable, category, formattedAmount, formattedPercentage, formattedVariance, bodyFont, BaseColor.WHITE);
+                    addCategoryRowMonth(categoryTableMonth, category, formattedAmount, formattedPercentage, formattedVariance, bodyFont, BaseColor.WHITE);
                 }
                 break;
 
@@ -328,6 +333,7 @@ public class PDFservice {
         }
 
         document.add(categoryTable);
+        document.add(categoryTableMonth);
 
 
         try {
@@ -336,7 +342,7 @@ public class PDFservice {
             document.newPage();
             
             // Load chart image
-            Path chartPath = Paths.get("uploads/line-chart-image/chart.png");
+            Path chartPath = Paths.get("/uploads/line-chart-image/chart.png");
             if (Files.exists(chartPath)) {
                 byte[] chartBytes = Files.readAllBytes(chartPath);
                 System.out.println(chartBytes);
@@ -351,7 +357,7 @@ public class PDFservice {
             }
 
             // Load table image
-            Path tablePath = Paths.get("uploads/line-chart-table-image/table.png");
+            Path tablePath = Paths.get("/uploads/line-chart-table-image/table.png");
             if (Files.exists(tablePath)) {
                 byte[] tableBytes = Files.readAllBytes(tablePath);
                 System.out.println(tableBytes);
@@ -376,7 +382,7 @@ public class PDFservice {
             document.newPage();
 
             // Load chart image
-            Path chartPath = Paths.get("uploads/pie-chart-image/chart.png");
+            Path chartPath = Paths.get("/uploads/pie-chart-image/chart.png");
             if (Files.exists(chartPath)) {
                 byte[] chartBytes = Files.readAllBytes(chartPath);
                 System.out.println(chartBytes);
@@ -391,7 +397,7 @@ public class PDFservice {
             }
 
             // Load table image
-            Path tablePath = Paths.get("uploads/pie-chart-table-image/table.png");
+            Path tablePath = Paths.get("/uploads/pie-chart-table-image/table.png");
             if (Files.exists(tablePath)) {
                 byte[] tableBytes = Files.readAllBytes(tablePath);
                 System.out.println(tableBytes);
@@ -441,6 +447,12 @@ public class PDFservice {
         percentageCell.setPadding(8);
         percentageCell.setBorderWidth(0.5f);
         table.addCell(percentageCell);
+
+        PdfPCell variaceCell = new PdfPCell(new Phrase(Variance, font));
+        variaceCell.setBackgroundColor(backgroundColor);
+        variaceCell.setPadding(8);
+        variaceCell.setBorderWidth(0.5f);
+        table.addCell(variaceCell);
     }
 
     private void addCategoryRow(PdfPTable table, String category, String amount, String percentage,  Font font, BaseColor backgroundColor) {

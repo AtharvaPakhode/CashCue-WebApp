@@ -1,34 +1,46 @@
 # === Build Stage ===
 FROM maven:3.8.5-openjdk-17 AS build
 
+# Set working directory for the build stage
 WORKDIR /app
 
+# Copy the pom.xml and download dependencies
 COPY pom.xml ./
 RUN mvn dependency:go-offline
 
+# Copy the entire project and build the application
 COPY . ./
 RUN mvn clean package -DskipTests
 
 # === Runtime Stage ===
 FROM openjdk:17-slim
 
-# Create writable folders for uploaded content
+# Create necessary directories for uploaded content
 RUN mkdir -p \
-    /uploads/userimages \
-    /uploads/line-chart-image \
-    /uploads/pie-chart-image \
-    /uploads/line-chart-table-image \
-    /uploads/pie-chart-table-image && \
-    chmod -R 777 /uploads
+    /app/uploads/userimages \
+    /app/uploads/line-chart-image \
+    /app/uploads/pie-chart-image \
+    /app/uploads/line-chart-table-image \
+    /app/uploads/pie-chart-table-image && \
+    chmod -R 777 /app/uploads
 
+# Set working directory for runtime stage
 WORKDIR /app
 
-COPY --from=build /app/target/ExpenseTracker-0.0.1-SNAPSHOT.jar ExpenseTracker.jar
+# Copy the built JAR file from the build stage
+COPY --from=build /app/target/ExpenseTracker-0.0.1-SNAPSHOT.jar /app/ExpenseTracker.jar
 
-COPY uploads/ /uploads/
+# Copy the local `uploads` folder into the container's `/app/uploads` directory
+COPY uploads/ /app/uploads/
 
+# Expose port 8080 for the application
 EXPOSE 8080
 
-# Pass all image/chart paths to the application
-ENTRYPOINT ["java", "-Duser.images.path=/uploads/userimages", "-Dchart.line.image.path=/uploads/line-chart-image", "-Dchart.pie.image.path=/uploads/pie-chart-image", "-Dchart.line.table.path=/uploads/line-chart-table-image", "-Dchart.pie.table.path=/uploads/pie-chart-table-image", "-jar", "ExpenseTracker.jar"]
-
+# Set entrypoint for the application, passing paths for image storage
+ENTRYPOINT ["java", \
+    "-Duser.images.path=/app/uploads/userimages", \
+    "-Dchart.line.image.path=/app/uploads/line-chart-image", \
+    "-Dchart.pie.image.path=/app/uploads/pie-chart-image", \
+    "-Dchart.line.table.path=/app/uploads/line-chart-table-image", \
+    "-Dchart.pie.table.path=/app/uploads/pie-chart-table-image", \
+    "-jar", "/app/ExpenseTracker.jar"]

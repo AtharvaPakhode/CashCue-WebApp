@@ -1313,6 +1313,24 @@ public class UserAccessUrlController {
                 pastCategorySums = this.categoryService.getPastMonthCategorySums(user);
                 totalExpenseByUser = this.expenseRepository.findSumOfExpensesCurrentMonth(user);
                 model.addAttribute("currentCategorySums", currentCategorySumsMonth);
+
+                for (Map.Entry<String, List<Double>> entry : currentCategorySumsMonth.entrySet()) {
+                    Double start = entry.getValue().get(0);  // use get(0) not [0]
+                    Double end = entry.getValue().get(1);    // use get(1) not [1]
+                    Double diff = end - start;               // use '-' not subtract()
+                    model.addAttribute("diff", diff);
+
+                    if (diff == 0) {
+                        String budgetVarianceClass = "text-gray-600";
+                        model.addAttribute("budgetVarianceClass", budgetVarianceClass);
+                    } else if (diff > 0) {
+                        String budgetVarianceClass = "text-green-800";
+                        model.addAttribute("budgetVarianceClass", budgetVarianceClass);
+                    } else if (diff < 0) {
+                        String budgetVarianceClass = "text-red-800";
+                        model.addAttribute("budgetVarianceClass", budgetVarianceClass);
+                    }
+                }
                 break;
             }
             case "quarterly" -> {
@@ -1332,23 +1350,7 @@ public class UserAccessUrlController {
         }
 
 
-        for (Map.Entry<String, List<Double>> entry : currentCategorySumsMonth.entrySet()) {
-            Double start = entry.getValue().get(0);  // use get(0) not [0]
-            Double end = entry.getValue().get(1);    // use get(1) not [1]
-            Double diff = end - start;               // use '-' not subtract()
-            model.addAttribute("diff", diff);
-
-            if (diff == 0) {
-                String budgetVarianceClass = "text-gray-600";
-                model.addAttribute("budgetVarianceClass", budgetVarianceClass);
-            } else if (diff > 0) {
-                String budgetVarianceClass = "text-green-800";
-                model.addAttribute("budgetVarianceClass", budgetVarianceClass);
-            } else if (diff < 0) {
-                String budgetVarianceClass = "text-red-800";
-                model.addAttribute("budgetVarianceClass", budgetVarianceClass);
-            }
-        }
+        
         
 
        
@@ -1395,6 +1397,8 @@ public class UserAccessUrlController {
         String timestamp = String.valueOf(System.currentTimeMillis());
         Path targetLocation1 = Paths.get(directory1.getAbsolutePath() + File.separator + "chart.png");
         Path targetLocation2 = Paths.get(directory2.getAbsolutePath() + File.separator + "table.png");
+
+        System.out.println(directory1.getAbsolutePath());
 
         try {
             // Save the images
