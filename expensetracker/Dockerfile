@@ -25,6 +25,8 @@ WORKDIR /app
 
 COPY --from=build /app/target/ExpenseTracker-0.0.1-SNAPSHOT.jar ExpenseTracker.jar
 
+COPY uploads/ /uploads/
+
 EXPOSE 8080
 
 # Pass all image/chart paths to the application
